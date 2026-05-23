@@ -48,12 +48,12 @@ module Lutaml
 
       def format(node) # rubocop:disable Metrics/CyclomaticComplexity
         case node
-        when ::Lutaml::Uml::Node::Attribute then format_attribute(node)
-        when ::Lutaml::Uml::Node::Operation then format_operation(node)
-        when ::Lutaml::Uml::Node::Relationship then format_relationship(node)
-        when ::Lutaml::Uml::Node::ClassRelationship
+        when ::Lutaml::Lml::Node::Attribute then format_attribute(node)
+        when ::Lutaml::Lml::Node::Operation then format_operation(node)
+        when ::Lutaml::Lml::Node::Relationship then format_relationship(node)
+        when ::Lutaml::Lml::Node::ClassRelationship
           format_class_relationship(node)
-        when ::Lutaml::Uml::Node::ClassNode then format_class(node)
+        when ::Lutaml::Lml::Node::ClassNode then format_class(node)
         when ::Lutaml::Uml::Document then format_document(node)
         end
       end

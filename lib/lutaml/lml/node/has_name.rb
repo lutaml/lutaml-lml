@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Lutaml
-  module Uml
+  module Lml
     module Node
       module HasName
         attr_reader :name

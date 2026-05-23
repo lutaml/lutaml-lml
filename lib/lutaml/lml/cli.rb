@@ -2,14 +2,10 @@
 
 require "thor"
 require "pathname"
+require "lutaml/lml"
 
 module Lutaml
   module Cli
-    # LmlCommands provides CLI commands for LutaML DSL diagram generation
-    #
-    # This subcommand handles operations related to the LutaML textual DSL
-    # notation (.lutaml files), including generating diagrams and validating
-    # DSL syntax.
     class LmlCommands < Thor
       include ::Lutaml::Uml::HasAttributes
 
@@ -18,7 +14,6 @@ module Lutaml
 
       def initialize(*args)
         super
-        # Only initialize Graphviz formatter if available
         if defined?(::Lutaml::Formatter::Graphviz)
           @formatter = ::Lutaml::Formatter::Graphviz.new
         end
@@ -140,13 +135,13 @@ module Lutaml
         end
       end
 
-      no_commands do # rubocop:disable Metrics/BlockLength
+      no_commands do
         def parse_document(input_path)
           case @input_format
           when "lutaml"
-            Lutaml::Uml::Parsers::Dsl.parse(File.new(input_path))
+            Lutaml::Lml::Parser.parse(File.new(input_path))
           when "yaml", "yml"
-            Lutaml::Uml::Parsers::Yaml.parse(input_path.to_s)
+            Lutaml::Lml::YamlParser.parse(input_path.to_s)
           when "exp"
             require "lutaml/express"
             Lutaml::Express::Parsers::Exp.parse(File.new(input_path))
@@ -156,7 +151,7 @@ module Lutaml
           end
         end
 
-        def setup_options # rubocop:disable Metrics/AbcSize
+        def setup_options
           @formatter = options[:formatter] if options[:formatter]
           @type = options[:type] if options[:type]
           @output_path = Pathname.new(options[:output]) if options[:output]
@@ -165,31 +160,38 @@ module Lutaml
           setup_formatter_options
         end
 
-        def setup_formatter_options # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
+        def parse_kv_string(str)
+          str.split(",").to_h do |pair|
+            key, value = pair.split("=", 2)
+            [key.strip, value&.strip]
+          end
+        end
+
+        def setup_formatter_options
           return unless @formatter
 
           @formatter.type = @type if @type
 
           if options[:graph]
-            Parsers::Attribute.parse(options[:graph]).each do |key, value|
+            parse_kv_string(options[:graph]).each do |key, value|
               @formatter.graph[key] = value
             end
           end
 
           if options[:edge]
-            Parsers::Attribute.parse(options[:edge]).each do |key, value|
+            parse_kv_string(options[:edge]).each do |key, value|
               @formatter.edge[key] = value
             end
           end
 
           if options[:node]
-            Parsers::Attribute.parse(options[:node]).each do |key, value|
+            parse_kv_string(options[:node]).each do |key, value|
               @formatter.node[key] = value
             end
           end
 
           if options[:all]
-            Parsers::Attribute.parse(options[:all]).each do |key, value|
+            parse_kv_string(options[:all]).each do |key, value|
               @formatter.graph[key] = value
               @formatter.edge[key] = value
               @formatter.node[key] = value

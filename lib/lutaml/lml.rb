@@ -9,6 +9,8 @@ module Lutaml
   module Lml
     class Error < Lutaml::Error; end
     class ParsingError < Error; end
+
+    module Node; end
   end
 end
 
