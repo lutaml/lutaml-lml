@@ -4,53 +4,9 @@ require "spec_helper"
 
 RSpec.describe Lutaml::Lml::Converter do
   let(:host) do
-    Class.new do
-      include Lutaml::Lml::Converter
-
-      def create_class(hash)
-        Lutaml::Uml::Class.new.tap { |m| set_model(m, hash) }
-      end
-
-      def create_enum(hash)
-        Lutaml::Uml::Enum.new.tap { |m| set_model(m, hash) }
-      end
-
-      def create_attribute(hash)
-        Lutaml::Uml::TopElementAttribute.new.tap { |m| set_model(m, hash) }
-      end
-
-      def create_cardinality(hash)
-        Lutaml::Uml::Cardinality.new(min: hash[:min], max: hash[:max])
-      end
-
-      def create_association(hash)
-        Lutaml::Uml::Association.new.tap { |m| set_model(m, hash) }
-      end
-
-      def create_package(hash)
-        Lutaml::Uml::Package.new.tap { |m| set_model(m, hash) }
-      end
-
-      def create_data_type(hash)
-        Lutaml::Uml::DataType.new.tap { |m| set_model(m, hash) }
-      end
-
-      def create_diagram(hash)
-        Lutaml::Uml::Diagram.new.tap { |m| set_model(m, hash) }
-      end
-
-      def create_operation(hash)
-        Lutaml::Uml::Operation.new.tap { |m| set_model(m, hash) }
-      end
-
-      def create_constraint(hash)
-        Lutaml::Uml::Constraint.new.tap { |m| set_model(m, hash) }
-      end
-
-      def create_value(hash)
-        Lutaml::Uml::Value.new.tap { |m| set_model(m, hash) }
-      end
-    end.new
+    obj = Object.new
+    obj.extend(Lutaml::Lml::UmlConverter)
+    obj
   end
 
   describe "#set_model_attribute" do
@@ -132,5 +88,75 @@ RSpec.describe Lutaml::Lml::Converter do
                     attributes associations operations constraints values]
       expect(Lutaml::Lml::Converter::MEMBER_FACTORIES.keys).to match_array(expected)
     end
+  end
+
+  describe "#model_registry" do
+    it "raises NotImplementedError on base Converter" do
+      base = Object.new
+      base.extend(Lutaml::Lml::Converter)
+      expect { base.model_registry }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe "#create_cardinality" do
+    it "creates a cardinality with min and max" do
+      card = host.create_cardinality({ min: "0", max: "*" })
+      expect(card).to be_a(Lutaml::Uml::Cardinality)
+      expect(card.min).to eq("0")
+      expect(card.max).to eq("*")
+    end
+  end
+end
+
+RSpec.describe Lutaml::Lml::LmlConverter do
+  let(:converter) do
+    obj = Object.new
+    obj.extend(described_class)
+    obj
+  end
+
+  describe "MODEL_REGISTRY" do
+    it "maps all factory types to Lml model classes" do
+      registry = described_class::MODEL_REGISTRY
+      expect(registry[:document]).to eq(Lutaml::Lml::Document)
+      expect(registry[:class]).to eq(Lutaml::Lml::Class)
+      expect(registry[:enum]).to eq(Lutaml::Lml::Enum)
+      expect(registry[:data_type]).to eq(Lutaml::Lml::DataType)
+      expect(registry[:association]).to eq(Lutaml::Lml::Association)
+    end
+
+    it "uses Uml::Diagram for diagram (no Lml subclass)" do
+      expect(described_class::MODEL_REGISTRY[:diagram]).to eq(Lutaml::Uml::Diagram)
+    end
+  end
+
+  it "creates Lml model instances" do
+    klass = converter.create_class({ name: "LmlClass" })
+    expect(klass).to be_a(Lutaml::Lml::Class)
+    expect(klass.name).to eq("LmlClass")
+  end
+end
+
+RSpec.describe Lutaml::Lml::UmlConverter do
+  let(:converter) do
+    obj = Object.new
+    obj.extend(described_class)
+    obj
+  end
+
+  describe "MODEL_REGISTRY" do
+    it "maps all factory types to Uml model classes" do
+      registry = described_class::MODEL_REGISTRY
+      expect(registry[:document]).to eq(Lutaml::Uml::Document)
+      expect(registry[:class]).to eq(Lutaml::Uml::Class)
+      expect(registry[:enum]).to eq(Lutaml::Uml::Enum)
+      expect(registry[:data_type]).to eq(Lutaml::Uml::DataType)
+    end
+  end
+
+  it "creates Uml model instances" do
+    klass = converter.create_class({ name: "UmlClass" })
+    expect(klass).to be_a(Lutaml::Uml::Class)
+    expect(klass.name).to eq("UmlClass")
   end
 end

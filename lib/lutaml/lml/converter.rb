@@ -18,6 +18,12 @@ module Lutaml
         values: :create_value
       }.freeze
 
+      # Override in each converter module to map factory keys to model classes.
+      # Must return a Hash with symbol keys and Class values.
+      def model_registry
+        raise NotImplementedError, "#{self.class}#model_registry must be implemented"
+      end
+
       def set_model(model, hash)
         hash = build_members(model, hash)
         set_model_attribute(model, hash)
@@ -51,6 +57,57 @@ module Lutaml
           end
         end
         hash
+      end
+
+      def create_document(hash)
+        model_registry[:document].new.tap { |m| set_model(m, hash) }
+      end
+
+      def create_package(hash)
+        model_registry[:package].new.tap { |m| set_model(m, hash) }
+      end
+
+      def create_class(hash)
+        model_registry[:class].new.tap { |m| set_model(m, hash) }
+      end
+
+      def create_enum(hash)
+        model_registry[:enum].new.tap { |m| set_model(m, hash) }
+      end
+
+      def create_data_type(hash)
+        model_registry[:data_type].new.tap { |m| set_model(m, hash) }
+      end
+
+      def create_diagram(hash)
+        model_registry[:diagram].new.tap { |m| set_model(m, hash) }
+      end
+
+      def create_attribute(hash)
+        model_registry[:attribute].new.tap { |m| set_model(m, hash) }
+      end
+
+      def create_operation(hash)
+        model_registry[:operation].new.tap { |m| set_model(m, hash) }
+      end
+
+      def create_constraint(hash)
+        model_registry[:constraint].new.tap { |m| set_model(m, hash) }
+      end
+
+      def create_value(hash)
+        model_registry[:value].new.tap { |m| set_model(m, hash) }
+      end
+
+      def create_cardinality(hash)
+        model_registry[:cardinality].new.tap do |c|
+          c.min = hash[:min]
+          c.max = hash[:max]
+        end
+      end
+
+      def create_association(hash)
+        model_registry[:association].new.tap { |m| set_model(m, hash) }
       end
 
       private
