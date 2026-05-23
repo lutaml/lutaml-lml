@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Lutaml::Uml::Parsers::Yaml do
+RSpec.describe Lutaml::Lml::YamlParser do
   describe ".parse" do
     subject(:parse) { described_class.parse(yaml_path) }
 

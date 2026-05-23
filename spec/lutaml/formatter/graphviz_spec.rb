@@ -10,7 +10,7 @@ RSpec.describe Lutaml::Formatter::Graphviz do
 
     context "when parsing `uml/document.yml`" do
       let(:input_document) do
-        Lutaml::Uml::Parsers::Yaml
+        Lutaml::Lml::YamlParser
           .parse(fixtures_path("uml/document.yml"))
       end
 
@@ -25,7 +25,7 @@ RSpec.describe Lutaml::Formatter::Graphviz do
 
     context "when parsing `uml/document_with_fidelity.yml`" do
       let(:input_document) do
-        Lutaml::Uml::Parsers::Yaml
+        Lutaml::Lml::YamlParser
           .parse(fixtures_path("uml/document_with_fidelity.yml"))
       end
 
@@ -40,7 +40,7 @@ RSpec.describe Lutaml::Formatter::Graphviz do
 
     context "when parsing `uml/address_profile_with_associations.yml`" do
       let(:input_document) do
-        Lutaml::Uml::Parsers::Yaml
+        Lutaml::Lml::YamlParser
           .parse(fixtures_path("uml/address_profile_with_associations.yml"))
       end
 
@@ -57,7 +57,7 @@ RSpec.describe Lutaml::Formatter::Graphviz do
 
     context "when parsing `uml/address_class_profile_with_associations.yml`" do
       let(:input_document) do
-        Lutaml::Uml::Parsers::Yaml
+        Lutaml::Lml::YamlParser
           .parse(
             fixtures_path("uml/address_class_profile_with_associations.yml"),
           )
