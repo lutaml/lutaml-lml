@@ -6,24 +6,28 @@ module Lutaml
       class ClassNode < Base
         include HasName
 
+        MEMBER_TYPES = {
+          field: Attribute,
+          method: Operation,
+          relationship: Relationship,
+          class_relationship: ClassRelationship
+        }.freeze
+
         attr_reader :modifier, :members
 
         def modifier=(value)
           @modifier = value.to_s
         end
 
-        def members=(value) # rubocop:disable Metrics/MethodLength
-          @members = value.to_a.map do |member|
-            type       = member.keys.first
+        def members=(value)
+          @members = value.to_a.filter_map do |member|
+            type = member.keys.first
+            klass = MEMBER_TYPES[type]
+            next unless klass
+
             attributes = member.values.first
             attributes[:parent] = self
-
-            case type
-            when :field              then Attribute.new(attributes)
-            when :method             then Operation.new(attributes)
-            when :relationship       then Relationship.new(attributes)
-            when :class_relationship then ClassRelationship.new(attributes)
-            end
+            klass.new(attributes)
           end
         end
 

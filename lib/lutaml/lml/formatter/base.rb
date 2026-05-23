@@ -14,6 +14,15 @@ module Lutaml
     end
 
     class Base
+      FORMAT_HANDLERS = {
+        "Lutaml::Lml::Node::Attribute" => :format_attribute,
+        "Lutaml::Lml::Node::Operation" => :format_operation,
+        "Lutaml::Lml::Node::Relationship" => :format_relationship,
+        "Lutaml::Lml::Node::ClassRelationship" => :format_class_relationship,
+        "Lutaml::Lml::Node::ClassNode" => :format_class,
+        "Lutaml::Uml::Document" => :format_document
+      }.freeze
+
       class << self
         def inherited(subclass) # rubocop:disable Lint/MissingSuper
           Formatter.all << subclass
@@ -46,29 +55,19 @@ module Lutaml
         @type = value.to_s.strip.downcase.to_sym
       end
 
-      def format(node) # rubocop:disable Metrics/CyclomaticComplexity
-        case node
-        when ::Lutaml::Lml::Node::Attribute then format_attribute(node)
-        when ::Lutaml::Lml::Node::Operation then format_operation(node)
-        when ::Lutaml::Lml::Node::Relationship then format_relationship(node)
-        when ::Lutaml::Lml::Node::ClassRelationship
-          format_class_relationship(node)
-        when ::Lutaml::Lml::Node::ClassNode then format_class(node)
-        when ::Lutaml::Uml::Document then format_document(node)
-        end
+      def format(node)
+        handler = FORMAT_HANDLERS[node.class.to_s]
+        return unless handler
+
+        public_send(handler, node)
       end
 
       def format_attribute(_node); raise NotImplementedError; end
-
       def format_operation(_node); raise NotImplementedError; end
-
-      def format_relationship(_node);       raise NotImplementedError; end
-
+      def format_relationship(_node); raise NotImplementedError; end
       def format_class_relationship(_node); raise NotImplementedError; end
-
-      def format_class(_node);              raise NotImplementedError; end
-
-      def format_document(_node);           raise NotImplementedError; end
+      def format_class(_node); raise NotImplementedError; end
+      def format_document(_node); raise NotImplementedError; end
     end
   end
 end
