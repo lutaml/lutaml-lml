@@ -61,16 +61,11 @@ module Lutaml
           next if data.nil?
 
           member = public_send(factory, data)
-          collection = model.public_send(key)
-          if collection.nil?
-            model.public_send("#{key}=", [])
-            collection = model.public_send(key)
-          end
-          collection << member
+          append_to_collection(model, key, member)
         end
       end
 
-      def add_member(model, key, member)
+      def append_to_collection(model, key, member)
         collection = model.public_send(key)
         if collection.nil?
           model.public_send("#{key}=", [])

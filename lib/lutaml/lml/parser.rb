@@ -18,7 +18,7 @@ module Lutaml
         data = Preprocessor.call(input_file)
         reporter = Parslet::ErrorReporter::Deepest.new
         hash = Transform.new.apply(super(data, reporter: reporter))
-        process_data(hash)
+        hash = process_data(hash)
         create_document(hash)
       rescue Parslet::ParseFailed => e
         raise(ParsingError,

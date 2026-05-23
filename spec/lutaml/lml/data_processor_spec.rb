@@ -26,6 +26,13 @@ RSpec.describe Lutaml::Lml::DataProcessor do
       result = processor.process_data(input)
       expect(result).to be_a(Hash)
     end
+
+    it "does not mutate the input hash" do
+      original = { requires: [{ require: { string: "file.lml" } }], name: "test" }
+      original_frozen = original.dup
+      processor.process_data(original)
+      expect(original).to eq(original_frozen)
+    end
   end
 
   describe "#process_value" do
