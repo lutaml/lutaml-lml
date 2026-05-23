@@ -7,10 +7,10 @@ module Lutaml
         include HasName
 
         MEMBER_TYPES = {
-          field: Attribute,
-          method: Operation,
-          relationship: Relationship,
-          class_relationship: ClassRelationship
+          field: [Attribute, :attributes],
+          method: [Operation, :operations],
+          relationship: [Relationship, :relationships],
+          class_relationship: [ClassRelationship, :class_relationships]
         }.freeze
 
         attr_reader :modifier, :members
@@ -20,31 +20,35 @@ module Lutaml
         end
 
         def members=(value)
+          @members_by_type = Hash.new { |h, k| h[k] = [] }
           @members = value.to_a.filter_map do |member|
             type = member.keys.first
-            klass = MEMBER_TYPES[type]
-            next unless klass
+            entry = MEMBER_TYPES[type]
+            next unless entry
 
+            klass, collection_key = entry
             attributes = member.values.first
             attributes[:parent] = self
-            klass.new(attributes)
+            node = klass.new(attributes)
+            @members_by_type[collection_key] << node
+            node
           end
         end
 
         def attributes
-          @members.select { |member| member.instance_of?(Attribute) }
+          @members_by_type[:attributes]
         end
 
         def operations
-          @members.select { |member| member.instance_of?(Operation) }
+          @members_by_type[:operations]
         end
 
         def relationships
-          @members.select { |member| member.instance_of?(Relationship) }
+          @members_by_type[:relationships]
         end
 
         def class_relationships
-          @members.select { |member| member.instance_of?(ClassRelationship) }
+          @members_by_type[:class_relationships]
         end
       end
     end
