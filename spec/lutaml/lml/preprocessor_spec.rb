@@ -58,4 +58,13 @@ RSpec.describe Lutaml::Lml::Preprocessor do
       file.close!
     end
   end
+
+  describe "idempotency" do
+    it "produces the same output when called twice on the same StringIO" do
+      io = StringIO.new("diagram Test // comment\nend")
+      first = described_class.call(io)
+      second = described_class.call(io)
+      expect(second).to eq(first)
+    end
+  end
 end

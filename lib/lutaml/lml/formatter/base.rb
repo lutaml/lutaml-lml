@@ -15,16 +15,18 @@ module Lutaml
 
     class Base
       FORMAT_HANDLERS = {
-        "Lutaml::Lml::Node::Attribute" => :format_attribute,
-        "Lutaml::Lml::Node::Operation" => :format_operation,
-        "Lutaml::Lml::Node::Relationship" => :format_relationship,
-        "Lutaml::Lml::Node::ClassRelationship" => :format_class_relationship,
-        "Lutaml::Lml::Node::ClassNode" => :format_class,
-        "Lutaml::Uml::Document" => :format_document
+        Lml::TopElementAttribute => :format_attribute,
+        Lml::Operation => :format_operation,
+        Lml::Association => :format_relationship,
+        Lml::Document => :format_document,
+        Lml::DataType => :format_class,
+        Lml::UmlClass => :format_class,
+        Lml::Enum => :format_class
       }.freeze
 
       class << self
-        def inherited(subclass) # rubocop:disable Lint/MissingSuper
+        def inherited(subclass)
+          super
           Formatter.all << subclass
         end
 
@@ -33,17 +35,15 @@ module Lutaml
         end
 
         def name
-          to_s.split("::").last.downcase.to_sym
+          to_s.split('::').last.downcase.to_sym
         end
       end
 
-      include ::Lutaml::Uml::HasAttributes
+      include Lml::HasAttributes
 
-      # rubocop:disable Rails/ActiveRecordAliases
       def initialize(attributes = {})
         update_attributes(attributes)
       end
-      # rubocop:enable Rails/ActiveRecordAliases
 
       def name
         self.class.name
@@ -56,18 +56,24 @@ module Lutaml
       end
 
       def format(node)
-        handler = FORMAT_HANDLERS[node.class.to_s]
+        result = dispatch_format(node)
+        return unless result
+
+        result
+      end
+
+      def dispatch_format(node)
+        handler = FORMAT_HANDLERS.find { |type, _| node.is_a?(type) }&.last
         return unless handler
 
         public_send(handler, node)
       end
 
-      def format_attribute(_node); raise NotImplementedError; end
-      def format_operation(_node); raise NotImplementedError; end
-      def format_relationship(_node); raise NotImplementedError; end
-      def format_class_relationship(_node); raise NotImplementedError; end
-      def format_class(_node); raise NotImplementedError; end
-      def format_document(_node); raise NotImplementedError; end
+      def format_attribute(_node) = raise(NotImplementedError)
+      def format_operation(_node) = raise(NotImplementedError)
+      def format_relationship(_node) = raise(NotImplementedError)
+      def format_class(_node) = raise(NotImplementedError)
+      def format_document(_node) = raise(NotImplementedError)
     end
   end
 end

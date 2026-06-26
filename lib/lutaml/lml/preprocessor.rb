@@ -16,7 +16,8 @@ module Lutaml
       end
 
       def call
-        include_root = File.dirname(input_file.path)
+        input_file.rewind
+        include_root = input_file.is_a?(StringIO) ? Dir.pwd : File.dirname(input_file.path)
         input_file.read.split("\n").reduce([]) do |res, line|
           res.push(*process_dsl_line(include_root, line))
         end.join("\n")
