@@ -3,10 +3,20 @@
 require "spec_helper"
 
 RSpec.describe Lutaml::Lml::DataProcessor do
-  let(:processor) do
-    obj = Object.new
-    obj.extend(Lutaml::Lml::DataProcessor)
-    obj
+  let(:processor) { described_class.new }
+
+  describe ".process" do
+    it "processes data without requiring a mixin" do
+      input = { name: "test" }
+      result = described_class.process(input)
+      expect(result).to eq({ name: "test" })
+    end
+
+    it "processes key handlers via class method" do
+      input = { attributes: [{ key: "name", value: { string: "test" } }] }
+      result = described_class.process(input)
+      expect(result[:attributes].first[:name]).to eq("name")
+    end
   end
 
   describe "#process_data" do
@@ -214,6 +224,27 @@ RSpec.describe Lutaml::Lml::DataProcessor do
       }]
       result = processor.process_exports(input)
       expect(result[0][:format_type]).to eq("json")
+    end
+  end
+
+  describe "ViewProcessing" do
+    describe "#process_show_list" do
+      it "extracts entity names from array of hashes" do
+        result = processor.process_show_list([{ entity_name: "Foo" }, { entity_name: "Bar" }])
+        expect(result).to eq(["Foo", "Bar"])
+      end
+
+      it "handles single entity name" do
+        result = processor.process_show_list({ entity_name: "Baz" })
+        expect(result).to eq("Baz")
+      end
+    end
+
+    describe "#process_hide_list" do
+      it "extracts entity names from array" do
+        result = processor.process_hide_list([{ entity_name: "Secret" }])
+        expect(result).to eq(["Secret"])
+      end
     end
   end
 end

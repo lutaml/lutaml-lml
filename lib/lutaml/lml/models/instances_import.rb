@@ -5,7 +5,7 @@ module Lutaml
     class InstancesImport < Lutaml::Model::Serializable
       attribute :format_type, :string
       attribute :file, :string
-      attribute :attributes, "Lutaml::Lml::TopElementAttribute"
+      attribute :attributes, "Lutaml::Lml::TopElementAttribute", collection: true, default: []
     end
   end
 end

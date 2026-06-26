@@ -4,8 +4,8 @@ require "spec_helper"
 
 RSpec.describe Lutaml::Lml::Document do
   describe "inheritance" do
-    it "inherits from Lutaml::Uml::Document" do
-      expect(described_class).to be < Lutaml::Uml::Document
+    it "inherits from Lutaml::Model::Serializable" do
+      expect(described_class).to be < Lutaml::Model::Serializable
     end
   end
 

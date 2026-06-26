@@ -4,8 +4,8 @@ require "spec_helper"
 
 RSpec.describe Lutaml::Lml::TopElementAttribute do
   describe "inheritance" do
-    it "inherits from Lutaml::Uml::TopElementAttribute" do
-      expect(described_class).to be < Lutaml::Uml::TopElementAttribute
+    it "inherits from Lutaml::Model::Serializable" do
+      expect(described_class).to be < Lutaml::Model::Serializable
     end
   end
 

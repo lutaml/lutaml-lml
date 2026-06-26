@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require "parslet"
-require_relative "concerns/instance_rules"
-require_relative "concerns/data_structures"
 
 module Lutaml
   module Lml
@@ -33,7 +31,7 @@ module Lutaml
         end
 
         # -- Root (Full: diagram + models + instances)
-        rule(:diagram) { require_block? >> (models | diagram_definitions | instances | instance) }
+        rule(:diagram) { require_block? >> (models | diagram_definitions | view_definitions | instances | instance) }
       end
     end
   end

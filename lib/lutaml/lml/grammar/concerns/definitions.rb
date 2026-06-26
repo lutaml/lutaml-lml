@@ -156,6 +156,42 @@ module Lutaml
           end
           rule(:diagram_definitions) { diagram_definition >> whitespace? }
 
+          # -- View (extends diagram with import/show/hide)
+          rule(:view_keyword) { kw_view >> spaces? }
+          rule(:view_inner_definitions) do
+            title_definition |
+              caption_definition |
+              fontname_definition |
+              view_import.as(:view_imports) |
+              show_directive |
+              hide_directive |
+              class_definition.as(:classes) |
+              enum_definition.as(:enums) |
+              primitive_definition.as(:primitives) |
+              data_type_definition.as(:data_types) |
+              association_definition.as(:associations) |
+              comment_definition |
+              comment_multiline_definition
+          end
+          rule(:view_inner_definition) do
+            view_inner_definitions >> whitespace?
+          end
+          rule(:view_body) do
+            spaces? >>
+              str("{") >>
+              whitespace? >>
+              view_inner_definition.repeat.as(:members) >>
+              str("}")
+          end
+          rule(:view_definition) do
+            view_keyword >>
+              spaces? >>
+              class_name.as(:name) >>
+              view_body >>
+              whitespace?
+          end
+          rule(:view_definitions) { view_definition >> whitespace? }
+
           # -- Metadata
           rule(:title_keyword) { kw_title >> spaces }
           rule(:title_text) do

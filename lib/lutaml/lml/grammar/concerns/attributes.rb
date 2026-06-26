@@ -7,7 +7,6 @@ module Lutaml
         module Attributes
           include Parslet
 
-          rule(:attribute_value) { key_value_map | value | match("[^\n]").repeat(1) }
           rule(:attribute) do
             comment_definition |
               variable.as(:key) >> spaces? >> str("+").as(:add).maybe >> str("=").maybe >> spaces? >> attribute_value.as(:value)

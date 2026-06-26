@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 require "parslet"
-require_relative "concerns/primitives"
-require_relative "concerns/attributes"
-require_relative "concerns/associations"
-require_relative "concerns/definitions"
 
 module Lutaml
   module Lml
@@ -15,6 +11,7 @@ module Lutaml
         include Concerns::Attributes
         include Concerns::Associations
         include Concerns::Definitions
+        include Concerns::ViewRules
 
         CORE_KEYWORDS = %w[
           abstract
@@ -46,6 +43,7 @@ module Lutaml
           realizes
           static
           title
+          view
         ].freeze
 
         CORE_KEYWORDS.each do |keyword|
