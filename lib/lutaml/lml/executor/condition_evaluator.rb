@@ -23,8 +23,9 @@ module Lutaml
       class ConditionEvaluator
         ConditionError = Class.new(StandardError)
 
-        BLOCK_FORM = /\A\s*(all|any)\?\s*\{\s*\|(\w+)\|\s*([^}]+)\}\s*\z/
-        COMPARISON = /\A\s*(.+?)\s*(>=|<=|==|!=|>|<)\s*(.+?)\s*\z/
+        BLOCK_PREFIX = /\A\s*(all|any)\?/.freeze
+        BLOCK_VAR = /\A\s*\|(\w+)\|/.freeze
+        COMPARISON = /\A\s*(.+?)\s*(>=|<=|==|!=|>|<)\s*(.+?)\s*\z/.freeze
 
         # Evaluate all validation conditions against a collection of instances.
         # Returns an array of error strings (empty if all pass).
@@ -70,11 +71,8 @@ module Lutaml
         end
 
         def evaluate_block(condition)
-          form = condition.match(BLOCK_FORM)
-          raise ConditionError, "Invalid block condition: #{condition}" unless form
-
-          quantifier = form[1]
-          predicate = form[3].strip
+          quantifier, predicate = parse_block(condition)
+          raise ConditionError, "Invalid block condition: #{condition}" if quantifier.nil?
 
           comparator = build_predicate(predicate)
           satisfied = @instances.public_send("#{quantifier}?") do |instance|
@@ -84,6 +82,23 @@ module Lutaml
           return nil if satisfied
 
           raise ConditionError, "#{condition} (failed for #{quantifier == "all" ? "at least one" : "all"} instance)"
+        end
+
+        def parse_block(condition)
+          stripped = condition.strip
+          prefix = stripped.match(BLOCK_PREFIX)
+          return [nil, nil] unless prefix
+
+          open_idx = stripped.index("{")
+          close_idx = stripped.rindex("}")
+          return [nil, nil] unless open_idx && close_idx && close_idx > open_idx
+
+          body = stripped[(open_idx + 1)...close_idx].strip
+          var_match = body.match(BLOCK_VAR)
+          return [nil, nil] unless var_match
+
+          predicate = body[var_match[0].length..].strip
+          [prefix[1], predicate]
         end
 
         # Parses a single comparison predicate "i.path OP literal" into a
