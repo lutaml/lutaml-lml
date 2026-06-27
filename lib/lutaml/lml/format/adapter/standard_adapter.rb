@@ -15,10 +15,6 @@ module Lutaml
             instance_to_hash(doc.instance)
           end
 
-          def initialize(attributes = {}, **options)
-            super
-          end
-
           def to_lml(_options = {})
             attrs = @attributes.dup
             type_name = attrs.delete(TYPE_KEY) || "Data"
