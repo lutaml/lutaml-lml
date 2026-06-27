@@ -56,10 +56,7 @@ module Lutaml
       end
 
       def format(node)
-        result = dispatch_format(node)
-        return unless result
-
-        result
+        dispatch_format(node)
       end
 
       def dispatch_format(node)
