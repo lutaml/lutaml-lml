@@ -2,6 +2,7 @@
 
 require "spec_helper"
 require "tmpdir"
+require "tempfile"
 require "fileutils"
 
 RSpec.describe "LML Grammar" do

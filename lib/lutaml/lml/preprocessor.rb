@@ -40,10 +40,7 @@ module Lutaml
         include_path_match = line.match(/^\s*include\s+(.+)/)
         return line if include_path_match.nil? || line =~ /^\s\*\*/
 
-        path_to_file = include_path_match[1].strip
-        unless path_to_file.match?(/^\//)
-          path_to_file = File.join(include_root, path_to_file)
-        end
+        path_to_file = File.expand_path(include_path_match[1].strip, include_root)
         File.read(path_to_file).split("\n").map do |l|
           process_comment_line(l)
         end

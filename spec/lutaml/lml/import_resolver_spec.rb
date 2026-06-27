@@ -63,6 +63,7 @@ RSpec.describe Lutaml::Lml::ImportResolver do
     end
 
     it "skips unreadable files without crashing" do
+      skip "Unix file modes not enforced on Windows" if Gem.win_platform?
       dir = Dir.mktmpdir
       path = File.join(dir, "unreadable.lutaml")
       File.write(path, "class Foo {}")
