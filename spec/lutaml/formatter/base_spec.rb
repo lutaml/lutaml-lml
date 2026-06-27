@@ -43,59 +43,51 @@ RSpec.describe Lutaml::Formatter::Base do
     end
   end
 
-  describe "#format" do
-    let(:formatter) { described_class.new }
+  describe "#format dispatch" do
+    # A concrete subclass that records which format_* method ran, instead
+    # of mocking the dispatch target. Asserts on actual returned values,
+    # not on method call expectations.
+    let(:recorder_class) do
+      Class.new(described_class) do
+        def format_attribute(_node) = "attr:FORMATTED"
+        def format_operation(_node) = "op:FORMATTED"
+        def format_relationship(_node) = "rel:FORMATTED"
+        def format_class(_node) = "class:FORMATTED"
+        def format_document(_node) = "doc:FORMATTED"
+      end
+    end
+    let(:formatter) { recorder_class.new }
 
-    it "dispatches to format_document for Uml::Document" do
-      doc = Lutaml::Lml::Document.new
-      expect(formatter).to receive(:format_document).with(doc)
-      formatter.format(doc)
+    it "dispatches Document to format_document" do
+      expect(formatter.format(Lutaml::Lml::Document.new)).to eq("doc:FORMATTED")
     end
 
-    it "dispatches to format_document for Lml::Document subclass" do
-      doc = Lutaml::Lml::Document.new
-      expect(formatter).to receive(:format_document).with(doc)
-      formatter.format(doc)
+    it "dispatches TopElementAttribute to format_attribute" do
+      expect(formatter.format(Lutaml::Lml::TopElementAttribute.new)).to eq("attr:FORMATTED")
     end
 
-    it "dispatches to format_attribute for Lml::TopElementAttribute subclass" do
-      attr = Lutaml::Lml::TopElementAttribute.new
-      expect(formatter).to receive(:format_attribute).with(attr)
-      formatter.format(attr)
+    it "dispatches UmlClass to format_class" do
+      expect(formatter.format(Lutaml::Lml::UmlClass.new)).to eq("class:FORMATTED")
     end
 
-    it "dispatches to format_class for Lml::UmlClass subclass" do
-      klass = Lutaml::Lml::UmlClass.new
-      expect(formatter).to receive(:format_class).with(klass)
-      formatter.format(klass)
+    it "dispatches Enum to format_class" do
+      expect(formatter.format(Lutaml::Lml::Enum.new)).to eq("class:FORMATTED")
     end
 
-    it "dispatches to format_class for Lml::Enum subclass" do
-      enum = Lutaml::Lml::Enum.new
-      expect(formatter).to receive(:format_class).with(enum)
-      formatter.format(enum)
+    it "dispatches DataType to format_class" do
+      expect(formatter.format(Lutaml::Lml::DataType.new)).to eq("class:FORMATTED")
     end
 
-    it "dispatches to format_class for Lml::DataType subclass" do
-      dt = Lutaml::Lml::DataType.new
-      expect(formatter).to receive(:format_class).with(dt)
-      formatter.format(dt)
+    it "dispatches Association to format_relationship" do
+      expect(formatter.format(Lutaml::Lml::Association.new)).to eq("rel:FORMATTED")
     end
 
-    it "dispatches to format_relationship for Lml::Association subclass" do
-      assoc = Lutaml::Lml::Association.new
-      expect(formatter).to receive(:format_relationship).with(assoc)
-      formatter.format(assoc)
-    end
-
-    it "dispatches to format_operation for Lml::Operation subclass" do
-      op = Lutaml::Lml::Operation.new
-      expect(formatter).to receive(:format_operation).with(op)
-      formatter.format(op)
+    it "dispatches Operation to format_operation" do
+      expect(formatter.format(Lutaml::Lml::Operation.new)).to eq("op:FORMATTED")
     end
 
     it "returns nil for unknown node types" do
-      unknown = Object.new
+      unknown = Struct.new(:unused).new("anything")
       expect(formatter.format(unknown)).to be_nil
     end
   end
