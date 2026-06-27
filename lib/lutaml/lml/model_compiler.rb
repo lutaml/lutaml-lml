@@ -43,20 +43,24 @@ module Lutaml
         @compiled
       end
 
-      def validate(input_or_instance, compiled: nil)
+      # Validate an instances document against compiled models.
+      #
+      # Accepts the instances input as a String, IO, StringIO, or a
+      # pre-parsed Document. If +compiled:+ is supplied, that registry is
+      # used; otherwise models are compiled from the same input (which
+      # must therefore contain a models section).
+      #
+      # Returns an array of validation error strings (empty if all pass).
+      def validate(input, compiled: nil)
+        doc = input.is_a?(Document) ? input : Pipeline.call(input, resolve: false)
         if compiled
           @compiled = compiled
-        elsif input_or_instance.is_a?(String) || input_or_instance.is_a?(IO) || input_or_instance.is_a?(StringIO)
-          doc = Pipeline.call(input_or_instance, resolve: false)
+        else
           compile_document(doc)
         end
+
         errors = []
-        instance = input_or_instance.is_a?(Lutaml::Lml::Instance) ? input_or_instance : nil
-        unless instance
-          doc ||= Pipeline.call(input_or_instance, resolve: false)
-          instance = doc.instance
-        end
-        validate_instance(instance, errors) if instance
+        validate_instance(doc.instance, errors) if doc.instance
         errors
       end
 
