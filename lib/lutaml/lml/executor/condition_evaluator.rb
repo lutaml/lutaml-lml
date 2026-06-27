@@ -23,7 +23,7 @@ module Lutaml
       class ConditionEvaluator
         ConditionError = Class.new(StandardError)
 
-        BLOCK_FORM = /\A\s*(all|any)\?\s*\{\s*\|(\w+)\|\s*(.+?)\s*\}\s*\z/
+        BLOCK_FORM = /\A\s*(all|any)\?\s*\{\s*\|(\w+)\|\s*([^}]+)\}\s*\z/
         COMPARISON = /\A\s*(.+?)\s*(>=|<=|==|!=|>|<)\s*(.+?)\s*\z/
 
         # Evaluate all validation conditions against a collection of instances.
@@ -74,7 +74,7 @@ module Lutaml
           raise ConditionError, "Invalid block condition: #{condition}" unless form
 
           quantifier = form[1]
-          predicate = form[3]
+          predicate = form[3].strip
 
           comparator = build_predicate(predicate)
           satisfied = @instances.public_send("#{quantifier}?") do |instance|
