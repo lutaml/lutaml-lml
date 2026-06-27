@@ -7,6 +7,17 @@ module Lutaml
         module Definitions
           include Parslet
 
+          # Compose a brace-delimited body parser around an inner rule.
+          # All *_body rules share this scaffold; only the inner rule
+          # differs.
+          def braced_body(inner)
+            spaces? >>
+              str("{") >>
+              whitespace? >>
+              inner.repeat.as(:members) >>
+              str("}")
+          end
+
           # -- Class
           rule(:kw_class_modifier) { kw_abstract | kw_interface }
 
@@ -25,11 +36,7 @@ module Lutaml
             class_inner_definitions >> whitespace?
           end
           rule(:class_body) do
-            spaces? >>
-              str("{") >>
-              whitespace? >>
-              class_inner_definition.repeat.as(:members) >>
-              str("}")
+            braced_body(class_inner_definition)
           end
           rule(:class_body?) { class_body.maybe }
 
@@ -58,23 +65,19 @@ module Lutaml
               str("}")
           end
 
-          # -- Enum
+          # -- Enum and data_type share the same body content
           rule(:enum_keyword) { kw_enum >> spaces }
-          rule(:enum_inner_definitions) do
+          rule(:enum_or_data_type_inner_definitions) do
             definition_body |
               attribute_definition |
               comment_definition |
               comment_multiline_definition
           end
-          rule(:enum_inner_definition) do
-            enum_inner_definitions >> whitespace?
+          rule(:enum_or_data_type_inner_definition) do
+            enum_or_data_type_inner_definitions >> whitespace?
           end
           rule(:enum_body) do
-            spaces? >>
-              str("{") >>
-              whitespace? >>
-              enum_inner_definition.repeat.as(:members) >>
-              str("}")
+            braced_body(enum_or_data_type_inner_definition)
           end
           rule(:enum_body?) { enum_body.maybe }
           rule(:enum_definition) do
@@ -88,21 +91,8 @@ module Lutaml
 
           # -- data_type
           rule(:data_type_keyword) { kw_data_type >> spaces }
-          rule(:data_type_inner_definitions) do
-            definition_body |
-              attribute_definition |
-              comment_definition |
-              comment_multiline_definition
-          end
-          rule(:data_type_inner_definition) do
-            data_type_inner_definitions >> whitespace?
-          end
           rule(:data_type_body) do
-            spaces? >>
-              str("{") >>
-              whitespace? >>
-              data_type_inner_definition.repeat.as(:members) >>
-              str("}")
+            braced_body(enum_or_data_type_inner_definition)
           end
           rule(:data_type_body?) { data_type_body.maybe }
           rule(:data_type_definition) do
@@ -141,11 +131,7 @@ module Lutaml
             diagram_inner_definitions >> whitespace?
           end
           rule(:diagram_body) do
-            spaces? >>
-              str("{") >>
-              whitespace? >>
-              diagram_inner_definition.repeat.as(:members) >>
-              str("}")
+            braced_body(diagram_inner_definition)
           end
           rule(:diagram_definition) do
             diagram_keyword >>
@@ -177,11 +163,7 @@ module Lutaml
             view_inner_definitions >> whitespace?
           end
           rule(:view_body) do
-            spaces? >>
-              str("{") >>
-              whitespace? >>
-              view_inner_definition.repeat.as(:members) >>
-              str("}")
+            braced_body(view_inner_definition)
           end
           rule(:view_definition) do
             view_keyword >>
