@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "forwardable"
+
 module Lutaml
   module Lml
     # Orchestrates instance data I/O: import external data, validate
@@ -12,7 +14,9 @@ module Lutaml
     # Usage:
     #   compiled = ModelCompiler.new.compile(models_file)
     #   doc = Pipeline.call(instances_file, resolve: false)
-    #   instances = Executor.run(doc, compiled: compiled)
+    #   result = Executor.run(doc, compiled: compiled)
+    #   result.instances  # array of hydrated instance objects
+    #   result.errors     # array of validation error strings
     #
     class Executor
       autoload :FormatAdapter, "lutaml/lml/executor/format_adapter"
@@ -21,6 +25,16 @@ module Lutaml
       autoload :XmlAdapter, "lutaml/lml/executor/xml_adapter"
       autoload :ConditionEvaluator, "lutaml/lml/executor/condition_evaluator"
 
+      # Result of running the executor: hydrated instances plus any
+      # validation errors collected along the way. Delegates array-like
+      # methods to instances so existing callers that treated the run
+      # return value as an array continue to work.
+      Result = Struct.new(:instances, :errors) do
+        extend Forwardable
+
+        def_delegators :instances, :length, :each, :map, :[], :empty?
+      end
+
       attr_reader :compiled
 
       def initialize(compiled:)
@@ -28,16 +42,16 @@ module Lutaml
       end
 
       # Run the full import/validate/export cycle on a parsed document.
-      # Returns an array of hydrated instance objects.
+      # Returns a Result with hydrated instances and validation errors.
       def self.run(doc, compiled:)
         new(compiled: compiled).run(doc)
       end
 
       def run(doc)
         instances = run_imports(doc)
-        validate_collections(doc, instances)
+        errors = validate_collections(doc, instances)
         run_exports(doc, instances)
-        instances
+        Result.new(instances, errors)
       end
 
       private
@@ -51,19 +65,16 @@ module Lutaml
       end
 
       def import_one(imp)
-        adapter = FormatAdapter.resolve(imp.format_type)
-        adapter.import(imp, compiled: @compiled)
-      rescue FormatAdapter::AdapterNotFoundError
-        []
+        FormatAdapter.resolve(imp.format_type).import(imp, compiled: @compiled)
       end
 
       # --- Collection validation ---
 
       def validate_collections(doc, instances)
-        return unless doc.instances&.collections
+        return [] unless doc.instances&.collections
 
         collection = doc.instances.collections
-        return unless collection.is_a?(Collection)
+        return [] unless collection.is_a?(Collection)
 
         ConditionEvaluator.evaluate(collection, instances)
       end
@@ -79,10 +90,7 @@ module Lutaml
       end
 
       def export_one(exp, instances)
-        adapter = FormatAdapter.resolve(exp.format_type)
-        adapter.export(exp, instances, compiled: @compiled)
-      rescue FormatAdapter::AdapterNotFoundError
-        nil
+        FormatAdapter.resolve(exp.format_type).export(exp, instances, compiled: @compiled)
       end
     end
   end
