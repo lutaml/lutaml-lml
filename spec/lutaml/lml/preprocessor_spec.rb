@@ -2,6 +2,7 @@
 
 require "spec_helper"
 require "tempfile"
+require "fileutils"
 
 RSpec.describe Lutaml::Lml::Preprocessor do
   def make_file(content, name = "test.lutaml")
@@ -56,6 +57,24 @@ RSpec.describe Lutaml::Lml::Preprocessor do
       result = described_class.call(file)
       expect(result).not_to include("include nonexistent")
       file.close!
+    end
+
+    it "skips unreadable include files without crashing" do
+      skip "Unix file modes not enforced on Windows" if Gem.win_platform?
+      dir = Dir.mktmpdir
+      unreadable = File.join(dir, "unreadable.lutaml")
+      File.write(unreadable, "class Unreadable\nend")
+      FileUtils.chmod(0o000, unreadable)
+      main = Tempfile.new(%w[main .lutaml])
+      main.write("diagram Test\ninclude #{unreadable}\nend")
+      main.rewind
+
+      result = described_class.call(main)
+      expect(result).not_to include("Unreadable")
+        ensure
+          FileUtils.chmod(0o644, unreadable) rescue nil
+          main&.close!
+          FileUtils.rm_rf(dir)
     end
   end
 

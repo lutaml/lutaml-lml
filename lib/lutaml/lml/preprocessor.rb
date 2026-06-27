@@ -44,11 +44,8 @@ module Lutaml
         File.read(path_to_file).split("\n").map do |l|
           process_comment_line(l)
         end
-      rescue Errno::ENOENT
-        $stderr.puts(
-          "No such file or directory @ rb_sysopen - #{path_to_file}, " \
-          "include file paths need to be supplied relative to the main document"
-        )
+      rescue Errno::ENOENT, Errno::EACCES => e
+        warn "Skipping #{path_to_file}: #{e.message}"
         []
       end
     end
