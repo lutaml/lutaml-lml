@@ -15,7 +15,5 @@ on:
 jobs:
   rake:
     uses: metanorma/ci/.github/workflows/generic-rake.yml@main
-    with:
-      after-setup-ruby: 'cd frontend && npm install && npm run build'
     secrets:
       pat_token: ${{ secrets.LUTAML_CI_PAT_TOKEN }}
