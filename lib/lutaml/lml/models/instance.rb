@@ -8,6 +8,14 @@ module Lutaml
       attribute :instance, "Lutaml::Lml::Instance"
       attribute :template, "Lutaml::Lml::TopElementAttribute", collection: true
       attribute :parent, :string
+
+      def each_attribute
+        return enum_for(:each_attribute) unless block_given?
+
+        Array(attributes).each do |attr|
+          yield attr.name, attr.value, Array(attr.instances)
+        end
+      end
     end
   end
 end

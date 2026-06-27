@@ -140,34 +140,28 @@ module Lutaml
       end
 
       def extract_raw_attributes(instance)
-        Array(instance.attributes).each_with_object({}) do |attr, hash|
-          if attr.instances.any?
-            hash[attr.name.to_sym] = attr.instances.map { |i| hydrate_instance(i) }
-          elsif attr.value.is_a?(Array)
-            hash[attr.name.to_sym] = attr.value
-          elsif !attr.value.nil?
-            hash[attr.name.to_sym] = attr.value
-          end
+        instance.each_attribute.each_with_object({}) do |(name, value, nested), hash|
+          hash[name.to_sym] = resolve_instance_value(value, nested)
         end
       end
 
       def extract_instance_attributes(instance, klass)
-        schema_keys = klass.attributes.keys
-        Array(instance.attributes).each_with_object({}) do |attr, hash|
-          key = attr.name.to_sym
+        schema_keys = klass.attributes.keys.to_set
+        instance.each_attribute.each_with_object({}) do |(name, value, nested), hash|
+          key = name.to_sym
           next unless schema_keys.include?(key)
 
-          hash[key] = coerce_attribute_value(attr, klass.attributes[key])
+          hash[key] = resolve_instance_value(value, nested)
         end
       end
 
-      def coerce_attribute_value(attr, _attr_def)
-        if attr.instances.any?
-          attr.instances.map { |i| hydrate_instance(i) }
-        elsif attr.value.is_a?(Array)
-          attr.value
-        elsif !attr.value.nil?
-          attr.value
+      def resolve_instance_value(value, nested)
+        if nested.any?
+          nested.map { |i| hydrate_instance(i) }
+        elsif value.is_a?(Array)
+          value
+        elsif !value.nil?
+          value
         end
       end
 
