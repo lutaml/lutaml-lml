@@ -18,6 +18,10 @@ module Lutaml
         "Hash" => :hash,
       }.freeze
 
+      # Tokens that denote unbounded cardinality in LML attribute
+      # declarations. Anything else must parse as an Integer.
+      UNBOUNDED_TOKENS = %w[* n N unbounded].freeze
+
       def initialize(namespace: nil)
         @namespace = namespace
         @compiled = {}
@@ -302,8 +306,10 @@ module Lutaml
 
       def parse_cardinality_value(val)
         return nil if val.nil?
-        return Float::INFINITY if val == "*" || val == "n"
-        val.to_i
+        return Float::INFINITY if UNBOUNDED_TOKENS.include?(val.to_s)
+        return val.to_i if val.to_s.match?(/\A\d+\z/)
+
+        raise ValidationError, "Unrecognized cardinality token: #{val.inspect}"
       end
 
       def extract_enum_values(enum_def)
