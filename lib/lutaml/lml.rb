@@ -2,13 +2,14 @@
 
 require "lutaml/model"
 
-# Lutaml::Formatter and Lutaml::Layout are in the Lutaml top namespace,
-# not Lutaml::Lml. Require their namespace files to set up autoloads.
-require "lutaml/lml/formatter"
-require "lutaml/lml/layout"
-
 module Lutaml
   class Error < StandardError; end
+
+  # Lutaml::Formatter and Lutaml::Layout live in the Lutaml top namespace
+  # (not Lutaml::Lml) but their files are part of this gem. Declare the
+  # autoloads here so first reference loads them lazily.
+  autoload :Formatter, "lutaml/lml/formatter"
+  autoload :Layout, "lutaml/lml/layout"
 
   module Lml
     class Error < Lutaml::Error; end
