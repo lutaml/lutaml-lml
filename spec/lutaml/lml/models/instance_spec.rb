@@ -54,4 +54,27 @@ RSpec.describe Lutaml::Lml::Instance do
       expect(inst.attributes.map(&:name)).to eq(%w[foo bar])
     end
   end
+
+  describe "#each_attribute" do
+    it "yields (name, value, nested) triplets for each attribute" do
+      nested = Lutaml::Lml::Instance.new(type: "Child")
+      child_attr = Lutaml::Lml::TopElementAttribute.new(
+        name: "items", type: "Item", instances: [nested]
+      )
+      scalar_attr = Lutaml::Lml::TopElementAttribute.new(
+        name: "count", type: "Integer", value: 3
+      )
+      inst = described_class.new(attributes: [child_attr, scalar_attr])
+
+      triplets = []
+      inst.each_attribute { |*t| triplets << t }
+
+      expect(triplets).to eq([["items", nil, [nested]], ["count", 3, []]])
+    end
+
+    it "returns an Enumerator when no block is given" do
+      inst = described_class.new
+      expect(inst.each_attribute).to be_an(Enumerator)
+    end
+  end
 end

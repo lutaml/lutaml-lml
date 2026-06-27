@@ -30,14 +30,14 @@ module Lutaml
             hash = {}
             hash[TYPE_KEY] = instance.type if instance.type
 
-            Array(instance.attributes).each do |attr|
-              if attr.instances.any?
-                hashes = attr.instances.map { |i| instance_to_hash(i) }
-                hash[attr.name] = attr.instances.one? ? hashes.first : hashes
-              elsif attr.value.is_a?(Array)
-                hash[attr.name] = attr.value.map { |v| primitive_value(v) }
-              elsif !attr.value.nil?
-                hash[attr.name] = primitive_value(attr.value)
+            instance.each_attribute do |name, value, nested|
+              if nested.any?
+                hashes = nested.map { |i| instance_to_hash(i) }
+                hash[name] = nested.one? ? hashes.first : hashes
+              elsif value.is_a?(Array)
+                hash[name] = value.map { |v| primitive_value(v) }
+              elsif !value.nil?
+                hash[name] = primitive_value(value)
               end
             end
 
