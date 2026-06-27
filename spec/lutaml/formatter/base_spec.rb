@@ -35,6 +35,8 @@ RSpec.describe Lutaml::Formatter::Base do
 
   describe ".format" do
     it "creates an instance and delegates to #format" do
+      skip "GraphViz 'dot' not available" unless system("which dot > /dev/null 2>&1")
+
       doc = Lutaml::Lml::Document.new
       result = Lutaml::Formatter::Graphviz.format(doc)
       expect(result).to be_a(String)
