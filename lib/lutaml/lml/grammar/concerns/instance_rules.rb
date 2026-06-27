@@ -13,8 +13,7 @@ module Lutaml
 
           rule(:keyword_instance) do
             (
-              kw_instance >> spaces >>
-              namespaced_identifier.as(:instance_type) >> spaces? >>
+              kw_instance >> (spaces >> namespaced_identifier.as(:instance_type)).maybe >> spaces? >>
               str("{") >> whitespace? >>
               ((spaces? >> instance) | attributes) >>
               str("}")

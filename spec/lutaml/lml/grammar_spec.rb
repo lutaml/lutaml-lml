@@ -2,6 +2,7 @@
 
 require "spec_helper"
 require "tmpdir"
+require "tempfile"
 require "fileutils"
 
 RSpec.describe "LML Grammar" do
@@ -15,6 +16,17 @@ RSpec.describe "LML Grammar" do
       file.rewind
       doc = parser.parse(file)
       expect(doc).to be_a(Lutaml::Lml::Document)
+      expect(doc.classes.first.name).to eq("Foo")
+      file.close!
+    end
+
+    it "parses view as alias for diagram" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("view MyView { class Foo {} }")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc).to be_a(Lutaml::Lml::Document)
+      expect(doc.name).to eq("MyView")
       expect(doc.classes.first.name).to eq("Foo")
       file.close!
     end
@@ -256,6 +268,57 @@ RSpec.describe "LML Grammar" do
       expect(doc.classes.map(&:name)).to include("Shared")
       main_file.close!
       FileUtils.rm_rf(dir)
+    end
+  end
+
+  describe "View grammar (import/show/hide)" do
+    it "parses view with import directive" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write('view MyView { import "models/foo.lutaml" }')
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.name).to eq("MyView")
+      expect(doc.view_imports.map(&:path)).to eq(["models/foo.lutaml"])
+      file.close!
+    end
+
+    it "parses view with multiple imports" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("view MyView {\n  import \"models/a.lutaml\"\n  import \"models/b.lutaml\"\n}")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.view_imports.map(&:path)).to eq(["models/a.lutaml", "models/b.lutaml"])
+      file.close!
+    end
+
+    it "parses view with show directive" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write('view MyView { show Foo, Bar, Baz }')
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.show_filter.entity_names).to eq(%w[Foo Bar Baz])
+      file.close!
+    end
+
+    it "parses view with hide directive" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write('view MyView { hide Quux }')
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.hide_filter.entity_names).to eq(%w[Quux])
+      file.close!
+    end
+
+    it "parses view with import, show, hide, and inline class" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("view MyView {\n  import \"models/*.lutaml\"\n  show Foo, Bar, Inline\n  hide Baz\n  class Inline {}\n}")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.view_imports.map(&:path)).to eq(["models/*.lutaml"])
+      expect(doc.show_filter.entity_names).to eq(%w[Foo Bar Inline])
+      expect(doc.hide_filter.entity_names).to eq(%w[Baz])
+      expect(doc.classes.map(&:name)).to eq(%w[Inline])
+      file.close!
     end
   end
 

@@ -7,25 +7,16 @@ module Lutaml
   module Lml
     class Parser < Parslet::Parser
       include Grammar::Full
-      include LmlConverter
-      include DataProcessor
-
-      def self.parse(io, options = {})
-        new.parse(io, options)
-      end
-
-      def parse(input_file, _options = {})
-        data = Preprocessor.call(input_file)
-        reporter = Parslet::ErrorReporter::Deepest.new
-        hash = Transform.new.apply(super(data, reporter: reporter))
-        hash = process_data(hash)
-        create_document(hash)
-      rescue Parslet::ParseFailed => e
-        raise(ParsingError,
-              "#{e.message}\ncause: #{e.parse_failure_cause.ascii_tree}")
-      end
 
       root(:diagram)
+
+      def self.parse(io)
+        Pipeline.call(io)
+      end
+
+      def self.parse_document(io)
+        Pipeline.call(io, resolve: false)
+      end
     end
   end
 end

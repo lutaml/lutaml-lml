@@ -1,39 +1,43 @@
 # frozen_string_literal: true
 
-require_relative "data_processor/value_processing"
-require_relative "data_processor/attribute_processing"
-require_relative "data_processor/instance_processing"
-require_relative "data_processor/collection_processing"
-
 module Lutaml
   module Lml
-    module DataProcessor
+    class DataProcessor
+      autoload :ValueProcessing, "lutaml/lml/data_processor/value_processing"
+      autoload :AttributeProcessing, "lutaml/lml/data_processor/attribute_processing"
+      autoload :InstanceProcessing, "lutaml/lml/data_processor/instance_processing"
+      autoload :CollectionProcessing, "lutaml/lml/data_processor/collection_processing"
+      autoload :ViewProcessing, "lutaml/lml/data_processor/view_processing"
+
       include ValueProcessing
       include AttributeProcessing
       include InstanceProcessing
       include CollectionProcessing
+      include ViewProcessing
+
+      KEY_HANDLERS = {
+        requires: :process_requires,
+        instances: :process_instances,
+        instance: :process_instance,
+        attributes: :process_attributes,
+        show_list: :process_show_list,
+        hide_list: :process_hide_list
+      }.freeze
+
+      def self.process(obj)
+        new.process_data(obj)
+      end
 
       def process_data(obj)
-        case obj
-        when Array
-          obj.map { |item| process_data(item) }
-        when Hash
-          obj.each_with_object({}) do |(key, value), result|
-            result[key] = case key
-                          when :requires
-                            process_requires(value)
-                          when :instances
-                            process_instances(value)
-                          when :instance
-                            process_instance(value)
-                          when :attributes
-                            process_attributes(value)
-                          else
-                            process_data(value)
-                          end
-          end
-        else
-          obj
+        return obj unless obj.is_a?(Hash) || obj.is_a?(Array)
+
+        obj.is_a?(Array) ? obj.map { |item| process_data(item) } : process_hash(obj)
+      end
+
+      def process_hash(obj)
+        obj.each_with_object({}) do |(key, value), result|
+          handler = KEY_HANDLERS[key]
+          result[key] = handler ? public_send(handler, value) : process_data(value)
         end
       end
 

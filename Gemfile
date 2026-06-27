@@ -4,4 +4,6 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "lutaml-uml", path: "../lutaml-uml"
+gem "rspec"
+gem "rubocop"
+gem "rake"

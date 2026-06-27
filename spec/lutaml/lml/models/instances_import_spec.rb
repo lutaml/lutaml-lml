@@ -10,8 +10,18 @@ RSpec.describe Lutaml::Lml::InstancesImport do
   end
 
   it "holds attributes as TopElementAttribute collection" do
-    attr = Lutaml::Lml::TopElementAttribute.new(name: "map_to", value: "Product")
-    imp = described_class.new(format_type: "csv", attributes: attr)
-    expect(imp.attributes).to eq(attr)
+    attrs = [
+      Lutaml::Lml::TopElementAttribute.new(name: "map_to", value: "Product"),
+      Lutaml::Lml::TopElementAttribute.new(name: "id", value: "product_id")
+    ]
+    imp = described_class.new(format_type: "csv", attributes: attrs)
+    expect(imp.attributes.length).to eq(2)
+    expect(imp.attributes[0].name).to eq("map_to")
+    expect(imp.attributes[1].name).to eq("id")
+  end
+
+  it "defaults to empty attributes" do
+    imp = described_class.new(format_type: "csv")
+    expect(imp.attributes).to eq([])
   end
 end

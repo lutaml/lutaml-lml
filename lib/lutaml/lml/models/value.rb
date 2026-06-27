@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-require "lutaml/uml/value"
-
 module Lutaml
   module Lml
-    class Value < Uml::Value
+    class Value < Lutaml::Model::Serializable
+      attribute :name, :string
+      attribute :id, :string
+      attribute :type, :string
+      attribute :definition, :string
     end
   end
 end

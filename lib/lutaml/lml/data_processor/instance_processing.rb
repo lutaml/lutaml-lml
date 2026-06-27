@@ -2,40 +2,60 @@
 
 module Lutaml
   module Lml
-    module DataProcessor
+    class DataProcessor
       module InstanceProcessing
+        INSTANCE_KEY_HANDLERS = {
+          instance: :process_instance,
+          collections: :process_collections,
+          imports: :process_imports,
+          exports: :process_exports
+        }.freeze
+
+        INSTANCE_FIELD_HANDLERS = {
+          instance_type: :handle_instance_type,
+          instance: :handle_instance_nested,
+          attributes: :handle_instance_attributes,
+          template: :handle_instance_template
+        }.freeze
+
         def process_instances(obj)
           return [] unless obj.is_a?(Array)
 
           obj.each_with_object({}) do |instance, acc|
             acc[:instances] ||= []
-            if instance.key?(:instance)
-              acc[:instances] << process_instance(instance[:instance])
-            elsif instance.key?(:collections)
-              acc[:collections] = process_collections(instance[:collections])
-            elsif instance.key?(:imports)
-              acc[:imports] = process_imports(instance[:imports])
-            elsif instance.key?(:exports)
-              acc[:exports] = process_exports(instance[:exports])
-            end
+            key = INSTANCE_KEY_HANDLERS.keys.find { |k| instance.key?(k) }
+            next unless key
+
+            result = public_send(INSTANCE_KEY_HANDLERS[key], instance[key])
+            key == :instance ? (acc[:instances] << result) : (acc[key] = result)
           end
         end
 
         def process_instance(hash)
           hash.each_with_object({}) do |(key, value), result|
-            case key
-            when :instance_type
-              result[:type] = process_value(value).last
-            when :instance
-              result[:instance] = process_instance(value)
-            when :attributes
-              result[:attributes] = process_attributes(value)
-            when :template
-              result[:template] = process_attributes(value[:attributes])
+            handler = INSTANCE_FIELD_HANDLERS[key]
+            if handler
+              public_send(handler, value, result)
             else
               result[key] = process_value(value).last
             end
           end
+        end
+
+        def handle_instance_type(value, result)
+          result[:type] = process_value(value).last
+        end
+
+        def handle_instance_nested(value, result)
+          result[:instance] = process_instance(value)
+        end
+
+        def handle_instance_attributes(value, result)
+          result[:attributes] = process_attributes(value)
+        end
+
+        def handle_instance_template(value, result)
+          result[:template] = process_attributes(value[:attributes])
         end
       end
     end

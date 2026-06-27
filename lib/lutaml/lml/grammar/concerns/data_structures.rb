@@ -7,7 +7,7 @@ module Lutaml
         module DataStructures
           include Parslet
 
-          rule(:attribute_value) { list | key_value_map | value | match("[^\n]").repeat(1) }
+          rule(:attribute_value) { instance | list | key_value_map | value | match("[^\n]").repeat(1) }
 
           rule(:list_item) { instance | value }
           rule(:list) do

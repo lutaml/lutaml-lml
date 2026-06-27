@@ -23,7 +23,7 @@ module Lutaml
             str('"') >> (str('"').absent? >> any).repeat.as(:string) >> str('"')
           end
           rule(:boolean) { (str("true") | str("false")).as(:boolean) }
-          rule(:number) { match("[0-9]").repeat(1).as(:number) }
+          rule(:number) { (match("[0-9]").repeat(1) >> str(".") >> match("[0-9]").repeat(1)).as(:float) | match("[0-9]").repeat(1).as(:number) }
           rule(:variable) { (quoted_string | match("[a-zA-Z0-9_]").repeat(1)) }
           rule(:reference) do
             str("reference:(") >>

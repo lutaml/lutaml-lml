@@ -10,7 +10,7 @@ module Lutaml
       end
 
       def parse(yaml_path, _options = {})
-        Lutaml::Uml::Document.from_yaml(File.read(yaml_path))
+        Lutaml::Lml::Document.from_yaml(File.read(yaml_path))
       end
     end
   end

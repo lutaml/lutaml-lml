@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "lutaml/uml/cardinality"
-
 module Lutaml
   module Lml
-    class Cardinality < Uml::Cardinality
+    class Cardinality < Lutaml::Model::Serializable
+      attribute :min, :string
+      attribute :max, :string
     end
   end
 end
