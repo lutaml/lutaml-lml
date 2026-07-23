@@ -73,10 +73,9 @@ module Lutaml
       def validate_collections(doc, instances)
         return [] unless doc.instances&.collections
 
-        collection = doc.instances.collections
-        return [] unless collection.is_a?(Collection)
-
-        ConditionEvaluator.evaluate(collection, instances)
+        Array(doc.instances.collections).flat_map do |collection|
+          ConditionEvaluator.evaluate(collection, instances)
+        end
       end
 
       # --- Export ---
