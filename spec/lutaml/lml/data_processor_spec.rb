@@ -237,7 +237,7 @@ RSpec.describe Lutaml::Lml::DataProcessor do
         { collections: { name: { string: "c1" }, includes: [{ string: "x" }] } },
         { collections: { name: { string: "c2" }, includes: [{ string: "y" }] } },
         { imports: [{ format_type: "xml", file: "a.xml" }] },
-        { imports: [{ format_type: "csv", file: "b.xml" }] },
+        { imports: [{ format_type: "csv", file: "b.csv" }] },
         { exports: [{ format_type: "xml" }] },
         { exports: [{ format_type: "step" }] }
       ]
@@ -245,7 +245,7 @@ RSpec.describe Lutaml::Lml::DataProcessor do
       result = processor.process_instances(input)
 
       expect(result[:collections].map { |c| c[:name] }).to eq(%w[c1 c2])
-      expect(result[:imports].map { |i| i[:file] }).to eq(%w[a.xml b.xml])
+      expect(result[:imports].map { |i| i[:file] }).to eq(%w[a.xml b.csv])
       expect(result[:exports].map { |e| e[:format_type] }).to eq(%w[xml step])
     end
   end
