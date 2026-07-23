@@ -185,6 +185,10 @@ RSpec.describe Lutaml::Lml::DataProcessor do
       expect(result).to have_key(:instances)
       expect(result[:instances].length).to eq(1)
     end
+
+    it "returns an empty array for an empty attributes body" do
+      expect(processor.process_attributes_array([])).to eq([])
+    end
   end
 
   describe "#process_requires" do
@@ -224,6 +228,25 @@ RSpec.describe Lutaml::Lml::DataProcessor do
       }]
       result = processor.process_exports(input)
       expect(result[0][:format_type]).to eq("json")
+    end
+  end
+
+  describe "#process_instances" do
+    it "accumulates repeated collection, import, and export blocks" do
+      input = [
+        { collections: { name: { string: "c1" }, includes: [{ string: "x" }] } },
+        { collections: { name: { string: "c2" }, includes: [{ string: "y" }] } },
+        { imports: [{ format_type: "xml", file: "a.xml" }] },
+        { imports: [{ format_type: "csv", file: "b.xml" }] },
+        { exports: [{ format_type: "xml" }] },
+        { exports: [{ format_type: "step" }] }
+      ]
+
+      result = processor.process_instances(input)
+
+      expect(result[:collections].map { |c| c[:name] }).to eq(%w[c1 c2])
+      expect(result[:imports].map { |i| i[:file] }).to eq(%w[a.xml b.xml])
+      expect(result[:exports].map { |e| e[:format_type] }).to eq(%w[xml step])
     end
   end
 

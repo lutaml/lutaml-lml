@@ -14,6 +14,7 @@ module Lutaml
         end
 
         def process_attributes_array(obj)
+          return [] if obj.empty?
           return obj.map { |item| process_attributes(item) } unless single_key_hashes?(obj)
 
           obj.each_with_object({}) do |item, hash|

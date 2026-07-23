@@ -26,8 +26,7 @@ module Lutaml
             key = INSTANCE_KEY_HANDLERS.keys.find { |k| instance.key?(k) }
             next unless key
 
-            result = public_send(INSTANCE_KEY_HANDLERS[key], instance[key])
-            key == :instance ? (acc[:instances] << result) : (acc[key] = result)
+            append_result(acc, key, public_send(INSTANCE_KEY_HANDLERS[key], instance[key]))
           end
         end
 
@@ -56,6 +55,16 @@ module Lutaml
 
         def handle_instance_template(value, result)
           result[:template] = process_attributes(value[:attributes])
+        end
+
+        private
+
+        def append_result(acc, key, result)
+          case key
+          when :instance then acc[:instances] << result
+          when :collections then (acc[:collections] ||= []) << result
+          else (acc[key] ||= []).concat(result)
+          end
         end
       end
     end

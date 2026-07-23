@@ -6,7 +6,7 @@ module Lutaml
       attribute :instances, "Lutaml::Lml::Instance", collection: true, default: []
       attribute :imports, "Lutaml::Lml::InstancesImport", collection: true, default: []
       attribute :exports, "Lutaml::Lml::InstancesExport", collection: true, default: []
-      attribute :collections, "Lutaml::Lml::Collection", default: []
+      attribute :collections, "Lutaml::Lml::Collection", collection: true, default: []
     end
   end
 end

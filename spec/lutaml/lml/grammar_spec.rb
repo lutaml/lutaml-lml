@@ -195,6 +195,18 @@ RSpec.describe "LML Grammar" do
       expect(doc.requires).to include("deps.lml")
       file.close!
     end
+
+    it "parses single-quoted require statements" do
+      file = Tempfile.new(%w[test .lml])
+      file.write <<~LML
+        require 'deps.lml'
+        models Test { class Foo {} }
+      LML
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.requires).to include("deps.lml")
+      file.close!
+    end
   end
 
   describe "Grammar composition" do
