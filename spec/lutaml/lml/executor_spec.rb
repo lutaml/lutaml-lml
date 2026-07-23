@@ -55,19 +55,21 @@ RSpec.describe Lutaml::Lml::Executor do
         .to raise_error(Lutaml::Lml::Executor::FormatAdapter::AdapterNotFoundError)
     end
 
-    it "collects validation errors from collection validations" do
-      collection = Lutaml::Lml::Collection.new(
-        name: "test",
-        validations: ["count >= 1"]
-      )
+    it "collects validation errors from every collection block" do
       instances = Lutaml::Lml::InstanceCollection.new(
-        collections: collection
+        collections: [
+          Lutaml::Lml::Collection.new(name: "a", validations: ["count >= 1"]),
+          Lutaml::Lml::Collection.new(name: "b", validations: ["count >= 2"])
+        ]
       )
       doc = Lutaml::Lml::Document.new(instances: instances)
 
       result = described_class.run(doc, compiled: {})
       expect(result.instances).to eq([])
-      expect(result.errors).to include(a_string_matching(/count >= 1/))
+      expect(result.errors).to include(
+        a_string_matching(/count >= 1/),
+        a_string_matching(/count >= 2/)
+      )
     end
   end
 end

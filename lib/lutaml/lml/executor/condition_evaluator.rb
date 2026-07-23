@@ -30,8 +30,8 @@ module Lutaml
         # Evaluate all validation conditions against a collection of instances.
         # Returns an array of error strings (empty if all pass).
         def self.evaluate(collection, instances)
-          return [] unless collection.validations&.any?
           return [] unless collection.is_a?(Collection)
+          return [] unless collection.validations&.any?
 
           new(instances).evaluate_all(collection.validations)
         end
