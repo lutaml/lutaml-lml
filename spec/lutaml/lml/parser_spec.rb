@@ -235,12 +235,13 @@ RSpec.describe Lutaml::Lml::Parser do
         expect(doc.instances).to be_a(Lutaml::Lml::InstanceCollection)
       end
 
-      it "maps collections correctly" do
+      it "maps every collection block, in order" do
         collections = doc.instances.collections
-        expect(collections).to be_a(Lutaml::Lml::Collection)
-        expect(collections.name).to eq("test_suite_1")
-        expect(collections.includes).to eq(["laptop_123", "desktop_1", "desktop_2"])
-        expect(collections.validations).to eq(["count >= 3", "all? { |i| i.components.count > 0 }"])
+        expect(collections.map(&:name)).to eq(%w[test_suite_1 test_suite_2])
+        suite = collections.first
+        expect(suite.includes).to eq(["laptop_123", "desktop_1", "desktop_2"])
+        expect(suite.validations).to eq(["count >= 3", "all? { |i| i.components.count > 0 }"])
+        expect(collections.last.includes).to eq(["gaming_pc"])
       end
 
       it "maps imports correctly" do
@@ -254,6 +255,18 @@ RSpec.describe Lutaml::Lml::Parser do
         csv_import = imports.find { |imp| imp.format_type == "csv" }
         expect(csv_import.file).to eq("test_data/components.csv")
         expect(csv_import.attributes.map(&:name)).to include("map_to", "columns")
+      end
+
+      it "preserves a map-valued attribute without dropping keys" do
+        csv_import = doc.instances.imports.find { |imp| imp.format_type == "csv" }
+        columns = csv_import.attributes.find { |a| a.name == "columns" }
+        expect(columns.value.value).to eq(
+          id: "component_id", type: "component_type", quantity: "count",
+        )
+      end
+
+      it "serializes parsed instance data without type errors" do
+        expect { doc.to_yaml }.not_to raise_error
       end
 
       it "maps exports correctly" do

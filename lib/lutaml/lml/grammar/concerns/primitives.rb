@@ -19,12 +19,18 @@ module Lutaml
           rule(:whitespace?) { whitespace.maybe }
           rule(:newline) { match('[\r\n]') }
 
-          rule(:quoted_string_content) do
-            (str('"').absent? >> any).repeat
+          # Body of a string delimited by `char`, captured as `label`.
+          def quoted(char, label)
+            str(char) >> (str(char).absent? >> any).repeat.as(label) >> str(char)
           end
-          rule(:quoted_string) do
-            str('"') >> quoted_string_content.as(:string) >> str('"')
+
+          # A string in either quote style. Delimiters must match, so `"a'`
+          # stays a parse error.
+          def any_quoted(label)
+            quoted('"', label) | quoted("'", label)
           end
+
+          rule(:quoted_string) { any_quoted(:string) }
           rule(:boolean) { (str("true") | str("false")).as(:boolean) }
           rule(:number) { (match("[0-9]").repeat(1) >> str(".") >> match("[0-9]").repeat(1)).as(:float) | match("[0-9]").repeat(1).as(:number) }
           rule(:variable) { (quoted_string | match("[a-zA-Z0-9_]").repeat(1)) }
