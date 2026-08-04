@@ -52,6 +52,9 @@ module Lutaml
     autoload :HasAttributes, "lutaml/lml/has_attributes"
     autoload :VERSION, "lutaml/lml/version"
 
+    # Type classes (Lutaml::Model::Type::Value subclasses, not models)
+    autoload :LiteralValue, "lutaml/lml/literal_value"
+
     # Model classes (in Lutaml::Lml namespace, files in models/ directory)
     autoload :Action, "lutaml/lml/models/action"
     autoload :Association, "lutaml/lml/models/association"
