@@ -265,8 +265,29 @@ RSpec.describe Lutaml::Lml::Parser do
         )
       end
 
-      it "serializes parsed instance data without type errors" do
-        expect { doc.to_yaml }.not_to raise_error
+      # JSON has no symbol type, so the keys come back as strings.
+      it "reloads a map-valued attribute through Document.from_json" do
+        reloaded = Lutaml::Lml::Document.from_json(doc.to_json)
+
+        csv_import = reloaded.instances.imports.find { |imp| imp.format_type == "csv" }
+        columns = csv_import.attributes.find { |a| a.name == "columns" }
+        expect(columns.value.value).to eq(
+          "id" => "component_id", "type" => "component_type", "quantity" => "count",
+        )
+      end
+
+      it "serializes a map-valued attribute to YAML without a ruby object tag" do
+        expect(doc.to_yaml).not_to include("!ruby/object")
+      end
+
+      it "reloads a map-valued attribute through Document.from_yaml" do
+        reloaded = Lutaml::Lml::Document.from_yaml(doc.to_yaml)
+
+        csv_import = reloaded.instances.imports.find { |imp| imp.format_type == "csv" }
+        columns = csv_import.attributes.find { |a| a.name == "columns" }
+        expect(columns.value.value).to eq(
+          id: "component_id", type: "component_type", quantity: "count",
+        )
       end
 
       it "maps exports correctly" do

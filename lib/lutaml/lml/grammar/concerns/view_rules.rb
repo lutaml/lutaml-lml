@@ -22,9 +22,7 @@ module Lutaml
           end
 
           rule(:view_import) do
-            kw_view_import >>
-              str('"') >> quoted_string_content.as(:path) >> str('"') >>
-              whitespace?
+            kw_view_import >> any_quoted(:path) >> whitespace?
           end
 
           # Entity names in show/hide lists must be space-free: general

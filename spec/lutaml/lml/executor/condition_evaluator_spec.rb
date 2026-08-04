@@ -373,6 +373,12 @@ RSpec.describe Lutaml::Lml::Executor::ConditionEvaluator do
       expect(errors.first).to include("must reference i")
     end
 
+    # Object.new specifically: the type guard has to run before the
+    # validations call, so the argument must not respond to `validations`.
+    it "returns no errors for an argument that is not a Collection" do
+      expect(described_class.evaluate(Object.new, [])).to eq([])
+    end
+
     it "rescues NoMethodError on undefined instance attributes" do
       collection = Lutaml::Lml::Collection.new(
         name: "test",
