@@ -121,6 +121,21 @@ RSpec.describe "LML format adapter" do
       expect(lml).to include("name = second")
     end
 
+    # StandardAdapter.instance_to_hash branches on `value.is_a?(Array)` to map
+    # a list element-wise. `value_from` decides the in-memory shape after a
+    # reload, so this pins that a reloaded list still arrives as a bare Array
+    # and does not get stringified into a single scalar.
+    it "maps a list-valued attribute element-wise after a YAML reload" do
+      lml = "instance Checklist {\n  type AuditList\n  items = [\"verify\", \"validate\"]\n}\n"
+      doc = Lutaml::Lml::Document.from_yaml(
+        Lutaml::Lml::Parser.parse(StringIO.new(lml)).to_yaml,
+      )
+
+      hash = Lutaml::Lml::Format::Adapter::StandardAdapter.instance_to_hash(doc.instance)
+
+      expect(hash["items"]).to eq(%w[verify validate])
+    end
+
     it "handles nested instances without __type__" do
       data = {
         "name" => "Top",
