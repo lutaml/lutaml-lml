@@ -254,8 +254,9 @@ RSpec.describe "DSL (.lutaml) parsing via Lutaml::Lml::Parser" do
       expect { parse_dsl("diagram_blank_entities.lutaml") }.not_to raise_error
     end
 
-    it "parses non-existing include without error" do
-      expect { parse_dsl("diagram_non_existing_include.lutaml") }.not_to raise_error
+    it "raises on non-existing include (no silent skipping)" do
+      expect { parse_dsl("diagram_non_existing_include.lutaml") }
+        .to raise_error(Lutaml::Lml::Error, /cannot read include/)
     end
 
     it "parses commented preprocessor lines without error" do

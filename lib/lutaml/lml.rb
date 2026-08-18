@@ -14,6 +14,7 @@ module Lutaml
   module Lml
     class Error < Lutaml::Error; end
     class ParsingError < Error; end
+    class ImportError < Error; end
 
     def self.compile(input, namespace: nil)
       ModelCompiler.new(namespace: namespace).compile(input)

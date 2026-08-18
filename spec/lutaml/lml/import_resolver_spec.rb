@@ -37,14 +37,13 @@ RSpec.describe Lutaml::Lml::ImportResolver do
       FileUtils.rm_rf(dir)
     end
 
-    it "handles empty glob results gracefully" do
+    it "raises when a glob matches no files" do
       doc = Lutaml::Lml::Document.new(
         view_imports: [Lutaml::Lml::ViewImport.new(path: "/nonexistent/path/*.lutaml")]
       )
       resolver = described_class.new(nil)
-      entities, associations = resolver.resolve(doc)
-      expect(entities).to be_empty
-      expect(associations).to be_empty
+      expect { resolver.resolve(doc) }
+        .to raise_error(Lutaml::Lml::ImportError, /matched no files/)
     end
 
     it "deduplicates entities by name (first wins)" do
@@ -77,7 +76,7 @@ RSpec.describe Lutaml::Lml::ImportResolver do
       FileUtils.rm_rf(dir)
     end
 
-    it "skips unreadable files without crashing" do
+    it "raises on unreadable files" do
       skip "Unix file modes not enforced on Windows" if Gem.win_platform?
       dir = Dir.mktmpdir
       path = File.join(dir, "unreadable.lutaml")
@@ -87,8 +86,8 @@ RSpec.describe Lutaml::Lml::ImportResolver do
         view_imports: [Lutaml::Lml::ViewImport.new(path: path)]
       )
       resolver = described_class.new(nil)
-      entities, = resolver.resolve(doc)
-      expect(entities).to be_empty
+      expect { resolver.resolve(doc) }
+        .to raise_error(Lutaml::Lml::ImportError, /cannot read import/)
     ensure
       FileUtils.chmod(0o644, File.join(dir, "unreadable.lutaml")) rescue nil
       FileUtils.rm_rf(dir)

@@ -47,8 +47,7 @@ module Lutaml
       def read_included(path)
         File.read(path)
       rescue Errno::ENOENT, Errno::EACCES => e
-        warn "Skipping #{path}: #{e.message}" # TODO.refactor/09: raise
-        ""
+        raise Error, "cannot read include #{path}: #{e.message}"
       end
 
       def strip_comment(line)

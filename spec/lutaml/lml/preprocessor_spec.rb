@@ -52,10 +52,10 @@ RSpec.describe Lutaml::Lml::Preprocessor do
       shared_file.close!
     end
 
-    it "handles missing include files gracefully" do
+    it "raises on missing include files" do
       file = make_file("diagram Test\ninclude nonexistent.lutaml\nend")
-      result = described_class.call(file)
-      expect(result).not_to include("include nonexistent")
+      expect { described_class.call(file) }
+        .to raise_error(Lutaml::Lml::Error, /cannot read include/)
       file.close!
     end
 
@@ -134,7 +134,7 @@ RSpec.describe Lutaml::Lml::Preprocessor do
       file.close!
     end
 
-    it "skips unreadable include files without crashing" do
+    it "raises on unreadable include files" do
       skip "Unix file modes not enforced on Windows" if Gem.win_platform?
       dir = Dir.mktmpdir
       unreadable = File.join(dir, "unreadable.lutaml")
@@ -144,8 +144,8 @@ RSpec.describe Lutaml::Lml::Preprocessor do
       main.write("diagram Test\ninclude #{unreadable}\nend")
       main.rewind
 
-      result = described_class.call(main)
-      expect(result).not_to include("Unreadable")
+      expect { described_class.call(main) }
+        .to raise_error(Lutaml::Lml::Error, /cannot read include/)
         ensure
           FileUtils.chmod(0o644, unreadable) rescue nil
           main&.close!

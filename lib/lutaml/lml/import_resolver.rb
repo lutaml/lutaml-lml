@@ -10,6 +10,7 @@ module Lutaml
       end
 
       def resolve(document)
+        @failures = []
         entities = {}
         associations = []
         visited = Set.new
@@ -17,6 +18,8 @@ module Lutaml
         document.view_imports.each do |import|
           resolve_import(import.path, entities, associations, visited, @base_dir)
         end
+
+        raise ImportError, @failures.join("\n") if @failures.any?
 
         collect_local_entities(document, entities, associations)
 
@@ -27,8 +30,12 @@ module Lutaml
 
       def resolve_import(path, entities, associations, visited, base_dir)
         abs_pattern = File.expand_path(path, base_dir)
+        files = Dir.glob(abs_pattern)
+        if files.empty?
+          @failures << "import matched no files: #{path} (resolved to #{abs_pattern})"
+        end
 
-        Dir.glob(abs_pattern).each do |file_path|
+        files.each do |file_path|
           next if visited.include?(file_path)
           visited.add(file_path)
 
@@ -46,7 +53,7 @@ module Lutaml
       def parse_file(file_path)
         File.open(file_path) { |file| Pipeline.call(file, resolve: false) }
       rescue Errno::ENOENT, Errno::EACCES => e
-        warn "Skipping #{file_path}: #{e.message}" # TODO.refactor/09: raise
+        @failures << "cannot read import #{file_path}: #{e.message}"
         Document.new
       end
 

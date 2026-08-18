@@ -273,22 +273,29 @@ RSpec.describe "LML Grammar" do
 
   describe "View grammar (import/show/hide)" do
     it "parses view with import directive" do
-      file = Tempfile.new(%w[test .lutaml])
-      file.write('view MyView { import "models/foo.lutaml" }')
+      dir = Dir.mktmpdir
+      file = Tempfile.new(%w[test .lutaml], dir)
+      File.write(File.join(dir, "foo.lutaml"), "class Foo {}")
+      file.write('view MyView { import "foo.lutaml" }')
       file.rewind
       doc = parser.parse(file)
       expect(doc.name).to eq("MyView")
-      expect(doc.view_imports.map(&:path)).to eq(["models/foo.lutaml"])
+      expect(doc.view_imports.map(&:path)).to eq(["foo.lutaml"])
       file.close!
+      FileUtils.rm_rf(dir)
     end
 
     it "parses view with multiple imports" do
-      file = Tempfile.new(%w[test .lutaml])
-      file.write("view MyView {\n  import \"models/a.lutaml\"\n  import \"models/b.lutaml\"\n}")
+      dir = Dir.mktmpdir
+      file = Tempfile.new(%w[test .lutaml], dir)
+      File.write(File.join(dir, "a.lutaml"), "class A {}")
+      File.write(File.join(dir, "b.lutaml"), "class B {}")
+      file.write("view MyView {\n  import \"a.lutaml\"\n  import \"b.lutaml\"\n}")
       file.rewind
       doc = parser.parse(file)
-      expect(doc.view_imports.map(&:path)).to eq(["models/a.lutaml", "models/b.lutaml"])
+      expect(doc.view_imports.map(&:path)).to eq(["a.lutaml", "b.lutaml"])
       file.close!
+      FileUtils.rm_rf(dir)
     end
 
     it "parses view with show directive" do
@@ -310,15 +317,18 @@ RSpec.describe "LML Grammar" do
     end
 
     it "parses view with import, show, hide, and inline class" do
-      file = Tempfile.new(%w[test .lutaml])
-      file.write("view MyView {\n  import \"models/*.lutaml\"\n  show Foo, Bar, Inline\n  hide Baz\n  class Inline {}\n}")
+      dir = Dir.mktmpdir
+      file = Tempfile.new(%w[test .lutaml], dir)
+      File.write(File.join(dir, "a.lutaml"), "class Foo {}\nclass Bar {}")
+      file.write("view MyView {\n  import \"*.lutaml\"\n  show Foo, Bar, Inline\n  hide Baz\n  class Inline {}\n}")
       file.rewind
       doc = parser.parse(file)
-      expect(doc.view_imports.map(&:path)).to eq(["models/*.lutaml"])
+      expect(doc.view_imports.map(&:path)).to eq(["*.lutaml"])
       expect(doc.show_filter.entity_names).to eq(%w[Foo Bar Inline])
       expect(doc.hide_filter.entity_names).to eq(%w[Baz])
-      expect(doc.classes.map(&:name)).to eq(%w[Inline])
+      expect(doc.classes.map(&:name)).to contain_exactly("Inline", "Foo", "Bar")
       file.close!
+      FileUtils.rm_rf(dir)
     end
 
     it "separates show and hide directives on the same line" do
