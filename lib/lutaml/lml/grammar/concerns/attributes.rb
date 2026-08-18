@@ -38,7 +38,7 @@ module Lutaml
               attribute_keyword? >>
               spaces? >>
               quotes? >>
-              match['a-zA-Z0-9_\- \/\+'].repeat(1).as(:type) >>
+              match['a-zA-Z0-9_\- :\/\+'].repeat(1).as(:type) >>
               quotes? >>
               spaces?
             )
