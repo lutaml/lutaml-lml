@@ -65,7 +65,6 @@ module Lutaml
 
       def set_model_attributes(model, hash)
         hash.each do |key, value|
-          value = sanitize_definition(value) if key == :definition
           apply_attribute(model, key, value)
         end
       end
@@ -77,11 +76,6 @@ module Lutaml
           set_model_attributes(model, member_hash)
         end
         hash
-      end
-
-      def sanitize_definition(value)
-        value.to_s.gsub(/\\}/, '}').gsub(/\\{/, '{')
-             .split("\n").map(&:strip).join("\n")
       end
 
       def apply_attribute(model, key, value)

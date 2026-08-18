@@ -16,7 +16,7 @@ module Lutaml
       attribute :is_static, :boolean, default: false
       attribute :is_read_only, :boolean, default: false
       attribute :stereotype, :string, collection: true, default: -> { [] }
-      attribute :definition, :string
+      attribute :definition, Lutaml::Lml::Types::TextType
       attribute :association, :string
       attribute :default, :string
 

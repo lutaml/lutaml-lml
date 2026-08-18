@@ -67,5 +67,6 @@ module Lutaml
     # Namespaces with their own autoloads
     autoload :Grammar, "lutaml/lml/grammar"
     autoload :Format, "lutaml/lml/format"
+    autoload :Types, "lutaml/lml/types"
   end
 end

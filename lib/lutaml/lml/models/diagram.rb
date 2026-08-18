@@ -4,7 +4,7 @@ module Lutaml
   module Lml
     class Diagram < Lutaml::Model::Serializable
       attribute :name, :string
-      attribute :definition, :string
+      attribute :definition, Lutaml::Lml::Types::TextType
       attribute :keyword, :string
       attribute :stereotype, :string, collection: true, default: -> { [] }
       attribute :visibility, :string, default: "public"
