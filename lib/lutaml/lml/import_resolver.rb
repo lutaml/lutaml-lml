@@ -9,26 +9,29 @@ module Lutaml
         @base_dir = base_dir
       end
 
+      # Returns [entity_index, associations] where entity_index maps
+      # entity name → entity. ViewResolver consumes the index without
+      # rebuilding it.
       def resolve(document)
         @failures = []
-        entities = {}
+        entity_index = {}
         associations = []
         visited = Set.new
 
         document.view_imports.each do |import|
-          resolve_import(import.path, entities, associations, visited, @base_dir)
+          resolve_import(import.path, entity_index, associations, visited, @base_dir)
         end
+
+        collect_local_entities(document, entity_index, associations)
 
         raise ImportError, @failures.join("\n") if @failures.any?
 
-        collect_local_entities(document, entities, associations)
-
-        [entities.values, associations]
+        [entity_index, associations]
       end
 
       private
 
-      def resolve_import(path, entities, associations, visited, base_dir)
+      def resolve_import(path, entity_index, associations, visited, base_dir)
         abs_pattern = File.expand_path(path, base_dir)
         files = Dir.glob(abs_pattern)
         if files.empty?
@@ -40,10 +43,10 @@ module Lutaml
           visited.add(file_path)
 
           doc = parse_file(file_path)
-          collect_local_entities(doc, entities, associations)
+          collect_local_entities(doc, entity_index, associations)
 
           doc.view_imports.each do |import|
-            resolve_import(import.path, entities, associations, visited, File.dirname(file_path))
+            resolve_import(import.path, entity_index, associations, visited, File.dirname(file_path))
           end
         end
       end
@@ -57,16 +60,26 @@ module Lutaml
         Document.new
       end
 
-      def collect_local_entities(doc, entities, associations)
+      def collect_local_entities(doc, entity_index, associations)
         EntityTypes.all.each do |type|
-          merge_entities(doc.public_send(type.entity_type), entities)
+          merge_entities(doc.public_send(type.entity_type), entity_index)
         end
         associations.concat(doc.associations.to_a)
       end
 
-      def merge_entities(collection, entities)
+      # Re-importing the same entity through two paths is legitimate
+      # (dedup silently); the same name with different content is a
+      # conflict that must not resolve to a silently wrong diagram.
+      def merge_entities(collection, entity_index)
         collection.each do |entity|
-          entities[entity.name] ||= entity
+          next if entity.name.nil?
+
+          existing = entity_index[entity.name]
+          if existing.nil?
+            entity_index[entity.name] = entity
+          elsif existing.to_hash != entity.to_hash
+            @failures << "entity '#{entity.name}' is defined differently in two imports"
+          end
         end
       end
     end

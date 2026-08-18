@@ -3,8 +3,9 @@
 module Lutaml
   module Lml
     class ViewResolver
-      def resolve(document, entities, associations)
-        visible = apply_filters(document, entities)
+      # entity_index is the ImportResolver's name → entity map.
+      def resolve(document, entity_index, associations)
+        visible = apply_filters(document, entity_index)
         filtered_associations = filter_associations(associations, visible)
 
         [visible, filtered_associations]
@@ -12,9 +13,8 @@ module Lutaml
 
       private
 
-      def apply_filters(document, entities)
-        names = entities.each_with_object({}) { |e, h| h[e.name] = e }
-
+      def apply_filters(document, entity_index)
+        names = entity_index.reject { |name, _| name.nil? }
         names = apply_show_filter(names, document.show_filter)
         names = apply_hide_filter(names, document.hide_filter)
 
