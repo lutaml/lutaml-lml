@@ -33,13 +33,13 @@ module Lutaml
       # formatters that need to walk every classifiable type without
       # caring which collection holds it.
       def all_classes
-        classes + enums + data_types + primitives
+        EntityTypes.all.flat_map { |type| public_send(type.entity_type) }
       end
 
       # Class-like entities that can own associations. Excludes enums
       # (which have no attributes/associations of their own).
       def classifiable_classes
-        classes + data_types + primitives
+        EntityTypes.classifiable.flat_map { |type| public_send(type.entity_type) }
       end
     end
   end

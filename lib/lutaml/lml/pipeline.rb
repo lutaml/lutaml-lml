@@ -52,9 +52,9 @@ module Lutaml
       def rebuild_document(document, entities, associations)
         grouped = entities.group_by { |e| e.class.entity_type }
 
-        document.classes = grouped[:classes] || []
-        document.enums = grouped[:enums] || []
-        document.data_types = grouped[:data_types] || []
+        EntityTypes.symbols.each do |symbol|
+          document.public_send("#{symbol}=", grouped[symbol] || [])
+        end
         document.associations = associations
         document
       end

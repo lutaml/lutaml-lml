@@ -23,6 +23,10 @@ module Lutaml
       def self.entity_type
         :enums
       end
+
+      def self.classifiable?
+        false
+      end
     end
   end
 end

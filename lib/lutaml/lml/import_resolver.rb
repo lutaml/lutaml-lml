@@ -72,9 +72,9 @@ module Lutaml
       end
 
       def collect_local_entities(doc, entities, associations)
-        merge_entities(doc.classes, entities)
-        merge_entities(doc.enums, entities)
-        merge_entities(doc.data_types, entities)
+        EntityTypes.all.each do |type|
+          merge_entities(doc.public_send(type.entity_type), entities)
+        end
         associations.concat(doc.associations.to_a)
       end
 

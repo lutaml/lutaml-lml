@@ -21,6 +21,10 @@ module Lutaml
       def self.entity_type
         :primitives
       end
+
+      def self.classifiable?
+        true
+      end
     end
   end
 end

@@ -79,6 +79,10 @@ module Lutaml
       def self.entity_type
         :classes
       end
+
+      def self.classifiable?
+        true
+      end
     end
   end
 end
