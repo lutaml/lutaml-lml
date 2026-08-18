@@ -397,4 +397,27 @@ RSpec.describe "Round-trip: class definitions and instances" do
       end
     end
   end
+
+  describe "view document YAML round trip" do
+    it "survives to_yaml/from_yaml with filters and imports intact" do
+      doc = Lutaml::Lml::Document.new(
+        name: "V",
+        title: "T",
+        classes: [Lutaml::Lml::UmlClass.new(name: "Foo", definition: "a \\{ b \\}")],
+        show_filter: Lutaml::Lml::ViewFilter.new(entity_names: ["Foo"]),
+        view_imports: [Lutaml::Lml::ViewImport.new(path: "m.lutaml")]
+      )
+
+      restored = Lutaml::Lml::Document.from_yaml(doc.to_yaml)
+
+      aggregate_failures do
+        expect(restored.name).to eq("V")
+        expect(restored.title).to eq("T")
+        expect(restored.classes.map(&:name)).to eq(["Foo"])
+        expect(restored.classes.first.definition).to eq("a { b }")
+        expect(restored.show_filter.entity_names).to eq(["Foo"])
+        expect(restored.view_imports.map(&:path)).to eq(["m.lutaml"])
+      end
+    end
+  end
 end

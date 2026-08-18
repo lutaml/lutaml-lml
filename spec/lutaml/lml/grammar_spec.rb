@@ -357,6 +357,21 @@ RSpec.describe "LML Grammar" do
       expect(doc.show_filter.entity_names).to eq(["Foo::Bar", "a.b.C"])
       file.close!
     end
+
+    it "composes view metadata with filter directives" do
+      dir = Dir.mktmpdir
+      file = Tempfile.new(%w[test .lutaml], dir)
+      File.write(File.join(dir, "m.lutaml"), "class Foo {}\nclass Bar {}")
+      file.write('view V { title "t" caption "c" fontname "Arial" import "m.lutaml" hide Bar }')
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.title).to eq("t")
+      expect(doc.caption).to eq("c")
+      expect(doc.fontname).to eq("Arial")
+      expect(doc.classes.map(&:name)).to eq(["Foo"])
+      file.close!
+      FileUtils.rm_rf(dir)
+    end
   end
 
   describe "Bare model files" do

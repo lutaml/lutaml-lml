@@ -2,6 +2,8 @@
 
 require "spec_helper"
 require "lutaml/lml"
+require "tmpdir"
+require "fileutils"
 
 RSpec.describe "View import and filtering" do
   let(:fixtures_dir) { File.expand_path("../../fixtures/view", __dir__) }
@@ -46,6 +48,64 @@ RSpec.describe "View import and filtering" do
       class_names = doc.classes.map(&:name)
       expect(class_names).not_to include("Baz")
       expect(class_names).to include("Foo", "Bar")
+    end
+  end
+
+  describe "inline and imported entities combined" do
+    it "merges inline class definitions with imported ones" do
+      dir = Dir.mktmpdir
+      File.write(File.join(dir, "model.lutaml"), "class Imported {}")
+      view = File.join(dir, "view.lutaml")
+      File.write(view, "view V {\n  import \"model.lutaml\"\n  class Inline {}\n}")
+
+      doc = Lutaml::Lml.parse(File.new(view))
+      expect(doc.classes.map(&:name)).to contain_exactly("Imported", "Inline")
+    ensure
+      FileUtils.rm_rf(dir)
+    end
+  end
+
+  describe "show/hide naming unknown entities" do
+    it "does not error; the name is simply not present" do
+      dir = Dir.mktmpdir
+      File.write(File.join(dir, "model.lutaml"), "class Foo {}")
+      view = File.join(dir, "view.lutaml")
+      File.write(view, "view V {\n  import \"model.lutaml\"\n  show Foo, DoesNotExist\n}")
+
+      doc = Lutaml::Lml.parse(File.new(view))
+      expect(doc.classes.map(&:name)).to eq(["Foo"])
+    ensure
+      FileUtils.rm_rf(dir)
+    end
+  end
+
+  describe "glob mixing model and view files" do
+    it "imports entities from both kinds through one glob" do
+      dir = Dir.mktmpdir
+      File.write(File.join(dir, "a_model.lutaml"), "class FromModel {}")
+      File.write(File.join(dir, "b_view.lutaml"), "view Inner {\n  class FromView {}\n}")
+      view = File.join(dir, "view.lutaml")
+      File.write(view, "view V { import \"*_*.lutaml\" }")
+
+      doc = Lutaml::Lml.parse(File.new(view))
+      expect(doc.classes.map(&:name)).to contain_exactly("FromModel", "FromView")
+    ensure
+      FileUtils.rm_rf(dir)
+    end
+  end
+
+  describe "backward compatibility" do
+    it "diagram keyword with preprocessor include still works" do
+      dir = Dir.mktmpdir
+      shared = File.join(dir, "shared.lutaml")
+      File.write(shared, "class Shared {}")
+      main = File.join(dir, "main.lutaml")
+      File.write(main, "diagram D {\n  include #{shared}\n}")
+
+      doc = Lutaml::Lml.parse(File.new(main))
+      expect(doc.classes.map(&:name)).to eq(["Shared"])
+    ensure
+      FileUtils.rm_rf(dir)
     end
   end
 end
