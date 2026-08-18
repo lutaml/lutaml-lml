@@ -131,8 +131,7 @@ module Lutaml
       end
 
       def build_view_filter(entity_names)
-        names = entity_names.is_a?(Array) ? entity_names : [entity_names]
-        ViewFilter.new(entity_names: names.map(&:to_s))
+        ViewFilter.new(entity_names: Array(entity_names).map(&:to_s))
       end
     end
   end

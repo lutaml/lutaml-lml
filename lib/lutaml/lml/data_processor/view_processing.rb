@@ -4,20 +4,21 @@ module Lutaml
   module Lml
     class DataProcessor
       module ViewProcessing
+        # entity_name_list parses to a Hash (one name) or an Array of
+        # Hashes (several); normalize both to one list of strings.
         def process_show_list(data)
-          extract_entity_names(data)
+          entity_names_from(data)
         end
 
         def process_hide_list(data)
-          extract_entity_names(data)
+          entity_names_from(data)
         end
 
         private
 
-        def extract_entity_names(data)
-          return data.map { |d| extract_entity_names(d) } if data.is_a?(Array)
-          return data[:entity_name].to_s if data.is_a?(Hash) && data.key?(:entity_name)
-          data.to_s
+        def entity_names_from(data)
+          entries = data.is_a?(Array) ? data : [data]
+          entries.map { |entry| entry[:entity_name].to_s }
         end
       end
     end

@@ -236,7 +236,7 @@ RSpec.describe Lutaml::Lml::DataProcessor do
 
       it "handles single entity name" do
         result = processor.process_show_list({ entity_name: "Baz" })
-        expect(result).to eq("Baz")
+        expect(result).to eq(["Baz"])
       end
     end
 

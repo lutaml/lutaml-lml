@@ -320,6 +320,33 @@ RSpec.describe "LML Grammar" do
       expect(doc.classes.map(&:name)).to eq(%w[Inline])
       file.close!
     end
+
+    it "separates show and hide directives on the same line" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("view MyView { show Foo, Bar hide Baz }")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.show_filter.entity_names).to eq(%w[Foo Bar])
+      expect(doc.hide_filter.entity_names).to eq(%w[Baz])
+      file.close!
+    end
+
+    it "does not parse 'important' as an import directive" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write('view MyView { important "x" }')
+      file.rewind
+      expect { parser.parse(file) }.to raise_error(Lutaml::Lml::ParsingError)
+      file.close!
+    end
+
+    it "accepts qualified entity names in show lists" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("view MyView { show Foo::Bar, a.b.C }")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.show_filter.entity_names).to eq(["Foo::Bar", "a.b.C"])
+      file.close!
+    end
   end
 
   describe "MECE keyword separation" do
