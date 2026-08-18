@@ -46,7 +46,7 @@ module Lutaml
 
         collect_local_entities(doc, entities, associations)
 
-        doc.view_imports&.each do |import|
+        doc.view_imports.each do |import|
           resolve_import(import.path, entities, associations, visited, file_path)
         end
       rescue Errno::ENOENT, Errno::EACCES => e

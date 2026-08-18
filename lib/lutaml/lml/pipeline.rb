@@ -42,7 +42,7 @@ module Lutaml
       end
 
       def resolve_document(document)
-        return document unless document.view_imports&.any?
+        return document unless document.view_imports.any?
 
         base_path = @input.is_a?(StringIO) ? nil : @input.path
         entities, associations = ImportResolver.new(base_path).resolve(document)

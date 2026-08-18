@@ -17,7 +17,7 @@ RSpec.describe Lutaml::Lml::TopElementAttribute do
 
     it "has value collection" do
       attr = described_class.new
-      expect(attr.value).to be_nil
+      expect(attr.value).to eq([])
     end
 
     it "has attributes collection" do

@@ -15,14 +15,27 @@ RSpec.describe Lutaml::Lml::Document do
       expect(doc.instance).to be_nil
     end
 
-    it "has requires collection" do
+    it "has requires collection defaulting to empty" do
       doc = described_class.new
-      expect(doc.requires).to be_nil
+      expect(doc.requires).to eq([])
     end
 
     it "has instances attribute" do
       doc = described_class.new
       expect(doc.instances).to be_nil
+    end
+
+    it "defaults view_imports to a fresh empty array per instance" do
+      first = described_class.new
+      second = described_class.new
+      expect(first.view_imports).to eq([])
+      expect(first.view_imports).not_to equal(second.view_imports)
+    end
+
+    it "defaults comments and groups to empty arrays" do
+      doc = described_class.new
+      expect(doc.comments).to eq([])
+      expect(doc.groups).to eq([])
     end
   end
 
