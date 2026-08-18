@@ -22,6 +22,21 @@ RSpec.describe Lutaml::Lml::ImportResolver do
       FileUtils.rm_rf(dir)
     end
 
+    it "imports a model file whose comment mentions view (no sniffing)" do
+      dir = Dir.mktmpdir
+      model = File.join(dir, "model.lutaml")
+      File.write(model, "// this is a view of the sensor domain\nclass Sensor {}")
+
+      doc = Lutaml::Lml::Document.new(
+        view_imports: [Lutaml::Lml::ViewImport.new(path: model)]
+      )
+      resolver = described_class.new(nil)
+      entities, = resolver.resolve(doc)
+      expect(entities.map(&:name)).to eq(["Sensor"])
+    ensure
+      FileUtils.rm_rf(dir)
+    end
+
     it "handles empty glob results gracefully" do
       doc = Lutaml::Lml::Document.new(
         view_imports: [Lutaml::Lml::ViewImport.new(path: "/nonexistent/path/*.lutaml")]

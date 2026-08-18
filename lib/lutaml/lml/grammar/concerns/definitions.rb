@@ -142,6 +142,11 @@ module Lutaml
           end
           rule(:diagram_definitions) { diagram_definition >> whitespace? }
 
+          # A model file: bare top-level definitions with no enclosing
+          # named block. Same inner grammar as a diagram body; labeled
+          # :members so the document builder sees document shape.
+          rule(:model_definitions) { diagram_inner_definition.repeat(1).as(:members) }
+
           # -- View (extends diagram with import/show/hide)
           rule(:view_keyword) { kw_view >> spaces? }
           rule(:view_only_definitions) do

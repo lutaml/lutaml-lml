@@ -349,6 +349,30 @@ RSpec.describe "LML Grammar" do
     end
   end
 
+  describe "Bare model files" do
+    it "parses top-level definitions with no enclosing block" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("class Foo { name: String }\nenum Color { RED GREEN }\nprimitive Time")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc).to be_a(Lutaml::Lml::Document)
+      expect(doc.classes.first.name).to eq("Foo")
+      expect(doc.enums.first.name).to eq("Color")
+      expect(doc.primitives.first.name).to eq("Time")
+      file.close!
+    end
+
+    it "parses a top-level association in a bare file" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("class Foo {}\nclass Bar {}\nassociation FooBar {\n  owner Foo\n  member Bar\n}")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.associations.length).to eq(1)
+      expect(doc.associations.first.owner_end).to eq("Foo")
+      file.close!
+    end
+  end
+
   describe "MECE keyword separation" do
     it "Core grammar defines CORE_KEYWORDS" do
       expect(Lutaml::Lml::Grammar::Core::CORE_KEYWORDS).to include("class", "enum", "attribute", "association")

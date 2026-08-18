@@ -30,8 +30,11 @@ module Lutaml
           rule("kw_#{keyword}") { whitespace? >> str(keyword) }
         end
 
-        # -- Root (Full: diagram + models + instances)
-        rule(:diagram) { require_block? >> (models | diagram_definitions | view_definitions | instances | instance) }
+        # -- Root (Full: diagram + models + instances + bare model files)
+        rule(:diagram) do
+          require_block? >>
+            (models | diagram_definitions | view_definitions | instances | instance | model_definitions)
+        end
       end
     end
   end

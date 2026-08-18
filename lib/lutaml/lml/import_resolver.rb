@@ -32,43 +32,22 @@ module Lutaml
           next if visited.include?(file_path)
           visited.add(file_path)
 
-          if view_file?(file_path)
-            resolve_view_file(file_path, entities, associations, visited)
-          else
-            resolve_model_file(file_path, entities, associations)
+          doc = parse_file(file_path)
+          collect_local_entities(doc, entities, associations)
+
+          doc.view_imports.each do |import|
+            resolve_import(import.path, entities, associations, visited, File.dirname(file_path))
           end
         end
       end
 
-      def resolve_view_file(file_path, entities, associations, visited)
-        doc = Parser.parse_document(File.new(file_path))
-
-        collect_local_entities(doc, entities, associations)
-
-        doc.view_imports.each do |import|
-          resolve_import(import.path, entities, associations, visited, File.dirname(file_path))
-        end
+      # The grammar root accepts every file shape (diagram, view,
+      # models block, bare definitions) — no content sniffing needed.
+      def parse_file(file_path)
+        File.open(file_path) { |file| Pipeline.call(file, resolve: false) }
       rescue Errno::ENOENT, Errno::EACCES => e
-        warn "Skipping #{file_path}: #{e.message}"
-        []
-      end
-
-      def resolve_model_file(file_path, entities, associations)
-        content = File.read(file_path)
-        wrapped = "diagram Fragment {\n#{content}\n}"
-        doc = Parser.parse_document(StringIO.new(wrapped))
-
-        collect_local_entities(doc, entities, associations)
-      rescue Errno::ENOENT, Errno::EACCES => e
-        warn "Skipping #{file_path}: #{e.message}"
-        []
-      end
-
-      def view_file?(file_path)
-        head = File.read(file_path, 200, encoding: "UTF-8")
-        head.match?(/\b(view|diagram)\s+\w/)
-      rescue Errno::ENOENT, Errno::EACCES
-        false
+        warn "Skipping #{file_path}: #{e.message}" # TODO.refactor/09: raise
+        Document.new
       end
 
       def collect_local_entities(doc, entities, associations)
