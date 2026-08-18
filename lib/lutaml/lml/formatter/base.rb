@@ -9,7 +9,7 @@ module Lutaml
 
       def find_by_name(name)
         name = name.to_sym
-        all.detect { |formatter_class| formatter_class.name == name }
+        all.detect { |formatter_class| formatter_class.formatter_name == name }
       end
     end
 
@@ -34,7 +34,10 @@ module Lutaml
           new(attributes).format(node)
         end
 
-        def name
+        # Registry key for Formatter.find_by_name. Deliberately not
+        # `name` — shadowing Class#name breaks Ruby internals and any
+        # library that legitimately calls .name on these classes.
+        def formatter_name
           to_s.split('::').last.downcase.to_sym
         end
       end
@@ -46,7 +49,7 @@ module Lutaml
       end
 
       def name
-        self.class.name
+        self.class.formatter_name
       end
 
       attr_reader :type
@@ -61,7 +64,7 @@ module Lutaml
 
       def dispatch_format(node)
         handler = FORMAT_HANDLERS.find { |type, _| node.is_a?(type) }&.last
-        return unless handler
+        raise Lml::Error, "no format handler for #{node.class}" unless handler
 
         public_send(handler, node)
       end

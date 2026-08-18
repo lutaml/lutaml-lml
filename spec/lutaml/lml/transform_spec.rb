@@ -28,7 +28,7 @@ RSpec.describe Lutaml::Lml::Transform do
   end
 
   describe "simple member rule" do
-    it "strips whitespace from non-nil simple members in nested context" do
+    it "strips whitespace from every scalar leaf in the tree" do
       result = transform.apply({ outer: "  hello  " })
       expect(result[:outer]).to eq("hello")
     end
