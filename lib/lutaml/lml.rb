@@ -23,6 +23,7 @@ module Lutaml
     autoload :Parser, "lutaml/lml/parser"
     autoload :Pipeline, "lutaml/lml/pipeline"
     autoload :Preprocessor, "lutaml/lml/preprocessor"
+    autoload :Source, "lutaml/lml/source"
     autoload :Transform, "lutaml/lml/transform"
     autoload :DataProcessor, "lutaml/lml/data_processor"
     autoload :DocumentBuilder, "lutaml/lml/document_builder"

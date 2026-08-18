@@ -5,8 +5,8 @@ require "set"
 module Lutaml
   module Lml
     class ImportResolver
-      def initialize(base_path)
-        @base_path = base_path
+      def initialize(base_dir)
+        @base_dir = base_dir
       end
 
       def resolve(document)
@@ -15,7 +15,7 @@ module Lutaml
         visited = Set.new
 
         document.view_imports.each do |import|
-          resolve_import(import.path, entities, associations, visited, @base_path)
+          resolve_import(import.path, entities, associations, visited, @base_dir)
         end
 
         collect_local_entities(document, entities, associations)
@@ -25,8 +25,7 @@ module Lutaml
 
       private
 
-      def resolve_import(path, entities, associations, visited, base_path)
-        base_dir = base_path ? File.dirname(base_path) : Dir.pwd
+      def resolve_import(path, entities, associations, visited, base_dir)
         abs_pattern = File.expand_path(path, base_dir)
 
         Dir.glob(abs_pattern).each do |file_path|
@@ -47,7 +46,7 @@ module Lutaml
         collect_local_entities(doc, entities, associations)
 
         doc.view_imports.each do |import|
-          resolve_import(import.path, entities, associations, visited, file_path)
+          resolve_import(import.path, entities, associations, visited, File.dirname(file_path))
         end
       rescue Errno::ENOENT, Errno::EACCES => e
         warn "Skipping #{file_path}: #{e.message}"

@@ -6,7 +6,7 @@ module Lutaml
       attr_reader :input_file
 
       def initialize(input_file)
-        @input_file = input_file
+        @input_file = Source.wrap(input_file)
       end
 
       class << self
@@ -16,15 +16,10 @@ module Lutaml
       end
 
       def call
-        input_file.rewind
-        expand_lines(input_file.read, base_dir, [])
+        expand_lines(@input_file.read, @input_file.base_dir, [])
       end
 
       private
-
-      def base_dir
-        input_file.is_a?(StringIO) ? Dir.pwd : File.dirname(input_file.path)
-      end
 
       def expand_lines(text, base_dir, chain)
         text.split(/\r?\n/)

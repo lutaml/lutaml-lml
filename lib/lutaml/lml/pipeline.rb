@@ -11,7 +11,7 @@ module Lutaml
       end
 
       def initialize(input, resolve: true)
-        @input = input
+        @input = Source.wrap(input)
         @resolve = resolve
       end
 
@@ -44,8 +44,7 @@ module Lutaml
       def resolve_document(document)
         return document unless document.view_imports.any?
 
-        base_path = @input.is_a?(StringIO) ? nil : @input.path
-        entities, associations = ImportResolver.new(base_path).resolve(document)
+        entities, associations = ImportResolver.new(@input.base_dir).resolve(document)
         entities, associations = ViewResolver.new.resolve(document, entities, associations)
         rebuild_document(document, entities, associations)
       end
