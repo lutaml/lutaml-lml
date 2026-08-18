@@ -54,7 +54,7 @@ module Lutaml
       # The grammar root accepts every file shape (diagram, view,
       # models block, bare definitions) — no content sniffing needed.
       def parse_file(file_path)
-        File.open(file_path) { |file| Pipeline.call(file, resolve: false) }
+        File.open(file_path) { |file| Pipeline.call(file) }
       rescue Errno::ENOENT, Errno::EACCES => e
         @failures << "cannot read import #{file_path}: #{e.message}"
         Document.new

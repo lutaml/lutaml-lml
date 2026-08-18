@@ -7,7 +7,7 @@ require "fileutils"
 
 RSpec.describe "LML Grammar" do
   # Use the actual Parser class (Full grammar) for testing
-  let(:parser) { Lutaml::Lml::Parser }
+  let(:parser) { Lutaml::Lml }
 
   describe "Core grammar (.lutaml syntax)" do
     it "parses a minimal diagram" do

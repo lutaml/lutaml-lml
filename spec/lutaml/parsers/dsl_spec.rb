@@ -4,7 +4,7 @@ require "spec_helper"
 
 RSpec.describe "DSL (.lutaml) parsing via Lutaml::Lml::Parser" do
   def parse_dsl(fixture_name)
-    Lutaml::Lml::Parser.parse(File.new(fixtures_path("dsl/#{fixture_name}")))
+    Lutaml::Lml.parse(File.new(fixtures_path("dsl/#{fixture_name}")))
   end
 
   describe "simple diagram without attributes" do

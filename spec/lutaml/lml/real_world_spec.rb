@@ -14,7 +14,7 @@ RSpec.describe "Real-world fixture parsing" do
     file = Tempfile.new(%w[test .lutaml])
     file.write(content)
     file.rewind
-    doc = Lutaml::Lml::Parser.parse(file)
+    doc = Lutaml::Lml.parse(file)
     file.close!
     doc
   end

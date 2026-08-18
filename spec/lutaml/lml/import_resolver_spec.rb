@@ -85,7 +85,7 @@ RSpec.describe Lutaml::Lml::ImportResolver do
       view_file = File.join(dir, "view.lutaml")
       File.write(view_file, "view V { import \"model.lutaml\" }")
 
-      doc = Lutaml::Lml::Parser.parse(File.new(view_file))
+      doc = Lutaml::Lml.parse(File.new(view_file))
       expect(doc.classes.map(&:name)).to include("Baz")
     ensure
       FileUtils.rm_rf(dir)

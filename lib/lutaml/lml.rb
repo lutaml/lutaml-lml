@@ -20,6 +20,19 @@ module Lutaml
       ModelCompiler.new(namespace: namespace).compile(input)
     end
 
+    # Full entry point: parse, then resolve view imports and enrich
+    # association labels.
+    def self.parse(input)
+      source = Source.wrap(input)
+      document = Pipeline.call(source)
+      ViewResolution.call(document, source.base_dir)
+    end
+
+    # Parse only — no import resolution, no label enrichment.
+    def self.parse_document(input)
+      Pipeline.call(input)
+    end
+
     # Top-level autoloads
     autoload :Parser, "lutaml/lml/parser"
     autoload :Pipeline, "lutaml/lml/pipeline"
@@ -31,6 +44,7 @@ module Lutaml
     autoload :ModelCompiler, "lutaml/lml/model_compiler"
     autoload :ImportResolver, "lutaml/lml/import_resolver"
     autoload :ViewResolver, "lutaml/lml/view_resolver"
+    autoload :ViewResolution, "lutaml/lml/view_resolution"
     autoload :EntityTypes, "lutaml/lml/entity_types"
     autoload :AssociationLabelResolver, "lutaml/lml/association_label_resolver"
     autoload :Executor, "lutaml/lml/executor"

@@ -47,7 +47,7 @@ RSpec.describe Lutaml::Lml::EntityTypes do
     view = File.join(dir, "view.lutaml")
     File.write(view, "view V { import \"model.lutaml\" }")
 
-    doc = Lutaml::Lml::Parser.parse(File.open(view))
+    doc = Lutaml::Lml.parse(File.open(view))
     expect(doc.classes.map(&:name)).to eq(["Foo"])
     expect(doc.primitives.map(&:name)).to eq(["Bar"])
   ensure

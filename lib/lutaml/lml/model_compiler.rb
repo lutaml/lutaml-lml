@@ -29,13 +29,13 @@ module Lutaml
       end
 
       def compile(input)
-        doc = Pipeline.call(input, resolve: false)
+        doc = Lutaml::Lml.parse_document(input)
         compile_document(doc)
         @compiled
       end
 
       def hydrate(input)
-        doc = input.is_a?(Document) ? input : Pipeline.call(input, resolve: false)
+        doc = input.is_a?(Document) ? input : Lutaml::Lml.parse_document(input)
         compile_document(doc) unless @compiled.any?
         return {} unless doc.instance
 
@@ -55,7 +55,7 @@ module Lutaml
       #
       # Returns an array of validation error strings (empty if all pass).
       def validate(input, compiled: nil)
-        doc = input.is_a?(Document) ? input : Pipeline.call(input, resolve: false)
+        doc = input.is_a?(Document) ? input : Lutaml::Lml.parse_document(input)
         if compiled
           @compiled = compiled
         else

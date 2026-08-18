@@ -5,26 +5,24 @@ require "parslet/convenience"
 
 module Lutaml
   module Lml
+    # Parse pipeline only: preprocess → parse → transform → process →
+    # build. View resolution and label enrichment are a separate,
+    # explicit post-parse step (ViewResolution) — file I/O for imports
+    # does not belong inside parsing.
     class Pipeline
-      def self.call(input, resolve: true)
-        new(input, resolve: resolve).call
+      def self.call(input)
+        new(input).call
       end
 
-      def initialize(input, resolve: true)
+      def initialize(input)
         @input = Source.wrap(input)
-        @resolve = resolve
       end
 
       def call
         data = Preprocessor.call(@input)
         hash = parse_raw(data)
         hash = DataProcessor.process(hash)
-        document = build_document(hash)
-        if @resolve
-          document = resolve_document(document)
-          AssociationLabelResolver.new.enrich(document)
-        end
-        document
+        build_document(hash)
       end
 
       private
@@ -39,24 +37,6 @@ module Lutaml
 
       def build_document(hash)
         DocumentBuilder.new(DocumentBuilder::DEFAULT_REGISTRY).build(:document, hash)
-      end
-
-      def resolve_document(document)
-        return document unless document.view_imports.any?
-
-        entities, associations = ImportResolver.new(@input.base_dir).resolve(document)
-        entities, associations = ViewResolver.new.resolve(document, entities, associations)
-        rebuild_document(document, entities, associations)
-      end
-
-      def rebuild_document(document, entities, associations)
-        grouped = entities.group_by { |e| e.class.entity_type }
-
-        EntityTypes.symbols.each do |symbol|
-          document.public_send("#{symbol}=", grouped[symbol] || [])
-        end
-        document.associations = associations
-        document
       end
     end
   end

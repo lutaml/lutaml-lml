@@ -11,7 +11,7 @@ module Lutaml
             return data if data.is_a?(Hash)
 
             input = data.is_a?(IO) ? data : StringIO.new(data.to_s)
-            doc = Lutaml::Lml::Pipeline.call(input, resolve: false)
+            doc = Lutaml::Lml.parse_document(input)
             instance_to_hash(doc.instance)
           end
 
