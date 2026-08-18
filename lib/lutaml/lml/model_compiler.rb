@@ -15,7 +15,6 @@ module Lutaml
         "DateTime" => :date_time,
         "Time" => :time,
         "Uri" => :string,
-        "Hash" => :hash,
       }.freeze
 
       # Tokens that denote unbounded cardinality in LML attribute
