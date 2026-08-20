@@ -421,4 +421,61 @@ RSpec.describe "LML Grammar" do
       expect(all.uniq.length).to eq(all.length), "Duplicate keywords found"
     end
   end
+
+  describe "title and definition charset" do
+    def parse_lml(src)
+      file = Tempfile.new(%w[test .lml])
+      file.write(src)
+      file.rewind
+      doc = Lutaml::Lml.parse(file)
+      file.close!
+      doc
+    end
+
+    it "parses a double-quoted title containing parentheses and commas" do
+      doc = parse_lml(%(diagram T { title "MPFA Bibliographic Item (Offering Document)" class Foo {} }))
+      expect(doc.title).to eq("MPFA Bibliographic Item (Offering Document)")
+    end
+
+    it "parses a single-quoted title containing parentheses" do
+      doc = parse_lml(%(diagram T { title 'MPFA Bibliographic Item (Offering Document)' class Foo {} }))
+      expect(doc.title).to eq("MPFA Bibliographic Item (Offering Document)")
+    end
+
+    it "parses a double-quoted title containing Unicode" do
+      doc = parse_lml(%(diagram T { title "国家标准类别" class Foo {} }))
+      expect(doc.title).to eq("国家标准类别")
+    end
+
+    it "parses definition text containing nested braces" do
+      doc = parse_lml(<<~LML)
+        diagram T {
+          class Foo {
+            definition {
+              Format: "ZB{code}", where {code} is the profession code.
+            }
+          }
+        }
+      LML
+      expect(doc.classes.first.definition).to include("ZB{code}")
+    end
+
+    it "parses definition text containing Unicode" do
+      doc = parse_lml(<<~LML)
+        diagram T {
+          enum Scope {
+            definition {
+              Chinese national standard. 国家标准.
+            }
+            guojia {
+              definition {
+                国家标准
+              }
+            }
+          }
+        }
+      LML
+      expect(doc.enums.first.definition).to include("国家标准")
+    end
+  end
 end

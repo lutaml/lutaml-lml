@@ -55,13 +55,21 @@ module Lutaml
           end
 
           # -- Definition
+          # Balanced-brace body: nested "{...}" and "\"-escapes are allowed,
+          # so definition text can contain format templates like "ZB{code}".
+          rule(:definition_content) do
+            (
+              (str("\\") >> any) |
+                (str("{") >> definition_content >> str("}")) |
+                (str("}").absent? >> any)
+            ).repeat(0)
+          end
           rule(:definition_body) do
             spaces? >>
               str("definition") >>
               whitespace? >>
               str("{") >>
-              ((str("\\") >> any) | (str("}").absent? >> any))
-                .repeat.maybe.as(:definition) >>
+              definition_content.as(:definition) >>
               str("}")
           end
 
@@ -174,17 +182,19 @@ module Lutaml
 
           # -- Metadata
           rule(:title_keyword) { kw_title >> spaces }
+          # Quoted titles/captions accept any character (parentheses, commas,
+          # Unicode). Unquoted form keeps a conservative charset.
           rule(:title_text) do
-            quotes? >>
-              match['a-zA-Z0-9_\- ,.:;'].repeat(1).as(:title) >>
-              quotes?
+            (str('"') >> (str('"').absent? >> any).repeat(1).as(:title) >> str('"')) |
+              (str("'") >> (str("'").absent? >> any).repeat(1).as(:title) >> str("'")) |
+              match['a-zA-Z0-9_\- ,.:;()+\'/'].repeat(1).as(:title)
           end
           rule(:title_definition) { title_keyword >> title_text }
           rule(:caption_keyword) { kw_caption >> spaces }
           rule(:caption_text) do
-            quotes? >>
-              match['a-zA-Z0-9_\- ,.:;'].repeat(1).as(:caption) >>
-              quotes?
+            (str('"') >> (str('"').absent? >> any).repeat(1).as(:caption) >> str('"')) |
+              (str("'") >> (str("'").absent? >> any).repeat(1).as(:caption) >> str("'")) |
+              match['a-zA-Z0-9_\- ,.:;()+\'/'].repeat(1).as(:caption)
           end
           rule(:caption_definition) { caption_keyword >> caption_text }
 
