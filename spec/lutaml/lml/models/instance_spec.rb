@@ -69,7 +69,7 @@ RSpec.describe Lutaml::Lml::Instance do
       triplets = []
       inst.each_attribute { |*t| triplets << t }
 
-      expect(triplets).to eq([["items", [], [nested]], ["count", 3, []]])
+      expect(triplets).to eq([["items", nil, [nested]], ["count", 3, []]])
     end
 
     it "returns an Enumerator when no block is given" do

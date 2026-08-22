@@ -298,12 +298,16 @@ RSpec.describe "LML Grammar" do
     end
 
     it "parses view with single-quoted import directive" do
-      file = Tempfile.new(%w[test .lutaml])
+      dir = Dir.mktmpdir
+      file = Tempfile.new(%w[test .lutaml], dir)
+      FileUtils.mkdir_p(File.join(dir, "models"))
+      File.write(File.join(dir, "models", "foo.lutaml"), "class Foo {}")
       file.write("view MyView { import 'models/foo.lutaml' }")
       file.rewind
       doc = parser.parse(file)
       expect(doc.view_imports.map(&:path)).to eq(["models/foo.lutaml"])
       file.close!
+      FileUtils.rm_rf(dir)
     end
 
     it "parses view with multiple imports" do
