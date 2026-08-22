@@ -13,7 +13,7 @@ require "lutaml/lml/cli"
 # format at all - a separate pre-existing defect, not touched here.
 RSpec.describe Lutaml::Cli::LmlCommands do
   def write_yaml(fixture, dir)
-    doc = Lutaml::Lml::Parser.parse(File.new(fixtures_path(fixture)))
+    doc = Lutaml::Lml::Pipeline.call(File.new(fixtures_path(fixture)))
     path = File.join(dir, "#{File.basename(fixture, '.lml')}.yaml")
     File.write(path, doc.to_yaml)
     path

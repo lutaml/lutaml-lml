@@ -128,7 +128,7 @@ RSpec.describe "LML format adapter" do
     it "maps a list-valued attribute element-wise after a YAML reload" do
       lml = "instance Checklist {\n  type AuditList\n  items = [\"verify\", \"validate\"]\n}\n"
       doc = Lutaml::Lml::Document.from_yaml(
-        Lutaml::Lml::Parser.parse(StringIO.new(lml)).to_yaml,
+        Lutaml::Lml::Pipeline.call(StringIO.new(lml)).to_yaml,
       )
 
       hash = Lutaml::Lml::Format::Adapter::StandardAdapter.instance_to_hash(doc.instance)

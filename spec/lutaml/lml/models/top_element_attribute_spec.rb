@@ -15,9 +15,9 @@ RSpec.describe Lutaml::Lml::TopElementAttribute do
       expect(attr.properties).to eq([])
     end
 
-    it "has value collection" do
+    it "defaults value to nil" do
       attr = described_class.new
-      expect(attr.value).to eq([])
+      expect(attr.value).to be_nil
     end
 
     it "has attributes collection" do
@@ -76,7 +76,7 @@ RSpec.describe Lutaml::Lml::TopElementAttribute do
 
     def round_trip(name, body, format)
       lml = "instances {\n  Product \"p\" {\n    #{body}\n  }\n}\n"
-      doc = Lutaml::Lml::Parser.parse(StringIO.new(lml))
+      doc = Lutaml::Lml::Pipeline.call(StringIO.new(lml))
       reloaded = Lutaml::Lml::Document.public_send(
         :"from_#{format}", doc.public_send(:"to_#{format}")
       )
