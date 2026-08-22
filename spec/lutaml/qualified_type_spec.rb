@@ -18,7 +18,7 @@ RSpec.describe "namespace-qualified attribute types" do
     file = Tempfile.new(["qualified", ".lutaml"])
     file.write(src)
     file.rewind
-    doc = Lutaml::Lml::Parser.parse(file)
+    doc = Lutaml::Lml.parse(file)
     file.close
     file.unlink
 

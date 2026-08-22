@@ -5,7 +5,7 @@ module Lutaml
     class Operation < Lutaml::Model::Serializable
       # From TopElement
       attribute :name, :string
-      attribute :definition, :string
+      attribute :definition, Lutaml::Lml::Types::TextType
       attribute :keyword, :string
       attribute :stereotype, :string, collection: true, default: -> { [] }
       attribute :visibility, :string, default: "public"

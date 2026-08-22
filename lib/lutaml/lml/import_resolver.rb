@@ -5,83 +5,81 @@ require "set"
 module Lutaml
   module Lml
     class ImportResolver
-      def initialize(base_path)
-        @base_path = base_path
+      def initialize(base_dir)
+        @base_dir = base_dir
       end
 
+      # Returns [entity_index, associations] where entity_index maps
+      # entity name → entity. ViewResolver consumes the index without
+      # rebuilding it.
       def resolve(document)
-        entities = {}
+        @failures = []
+        entity_index = {}
         associations = []
         visited = Set.new
 
         document.view_imports.each do |import|
-          resolve_import(import.path, entities, associations, visited, @base_path)
+          resolve_import(import.path, entity_index, associations, visited, @base_dir)
         end
 
-        collect_local_entities(document, entities, associations)
+        collect_local_entities(document, entity_index, associations)
 
-        [entities.values, associations]
+        raise ImportError, @failures.join("\n") if @failures.any?
+
+        [entity_index, associations]
       end
 
       private
 
-      def resolve_import(path, entities, associations, visited, base_path)
-        base_dir = base_path ? File.dirname(base_path) : Dir.pwd
+      def resolve_import(path, entity_index, associations, visited, base_dir)
         abs_pattern = File.expand_path(path, base_dir)
+        files = Dir.glob(abs_pattern)
+        if files.empty?
+          @failures << "import matched no files: #{path} (resolved to #{abs_pattern})"
+        end
 
-        Dir.glob(abs_pattern).each do |file_path|
+        files.each do |file_path|
           next if visited.include?(file_path)
           visited.add(file_path)
 
-          if view_file?(file_path)
-            resolve_view_file(file_path, entities, associations, visited)
-          else
-            resolve_model_file(file_path, entities, associations)
+          doc = parse_file(file_path)
+          collect_local_entities(doc, entity_index, associations)
+
+          doc.view_imports.each do |import|
+            resolve_import(import.path, entity_index, associations, visited, File.dirname(file_path))
           end
         end
       end
 
-      def resolve_view_file(file_path, entities, associations, visited)
-        doc = Parser.parse_document(File.new(file_path))
+      # The grammar root accepts every file shape (diagram, view,
+      # models block, bare definitions) — no content sniffing needed.
+      def parse_file(file_path)
+        File.open(file_path) { |file| Pipeline.call(file) }
+      rescue Errno::ENOENT, Errno::EACCES => e
+        @failures << "cannot read import #{file_path}: #{e.message}"
+        Document.new
+      end
 
-        collect_local_entities(doc, entities, associations)
-
-        doc.view_imports&.each do |import|
-          resolve_import(import.path, entities, associations, visited, file_path)
+      def collect_local_entities(doc, entity_index, associations)
+        EntityTypes.all.each do |type|
+          merge_entities(doc.public_send(type.entity_type), entity_index)
         end
-      rescue Errno::ENOENT, Errno::EACCES => e
-        warn "Skipping #{file_path}: #{e.message}"
-        []
-      end
-
-      def resolve_model_file(file_path, entities, associations)
-        content = File.read(file_path)
-        wrapped = "diagram Fragment {\n#{content}\n}"
-        doc = Parser.parse_document(StringIO.new(wrapped))
-
-        collect_local_entities(doc, entities, associations)
-      rescue Errno::ENOENT, Errno::EACCES => e
-        warn "Skipping #{file_path}: #{e.message}"
-        []
-      end
-
-      def view_file?(file_path)
-        head = File.read(file_path, 200, encoding: "UTF-8")
-        head.match?(/\b(view|diagram)\s+\w/)
-      rescue Errno::ENOENT, Errno::EACCES
-        false
-      end
-
-      def collect_local_entities(doc, entities, associations)
-        merge_entities(doc.classes, entities)
-        merge_entities(doc.enums, entities)
-        merge_entities(doc.data_types, entities)
         associations.concat(doc.associations.to_a)
       end
 
-      def merge_entities(collection, entities)
+      # Re-importing the same entity through two paths is legitimate
+      # (dedup silently); the same name with different content is a
+      # conflict that must not resolve to a silently wrong diagram.
+      def merge_entities(collection, entity_index)
         collection.each do |entity|
-          entities[entity.name] ||= entity
+          next if entity.name.nil?
+
+          existing = entity_index[entity.name]
+          if existing.nil?
+            entity_index[entity.name] = entity
+          elsif existing.to_hash != entity.to_hash
+            @failures << "entity '#{entity.name}' is defined differently in two imports"
+          end
         end
       end
     end

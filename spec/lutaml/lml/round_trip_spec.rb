@@ -158,7 +158,7 @@ RSpec.describe "Round-trip: class definitions and instances" do
       LML
 
       with_lml_file(lml) do |f|
-        doc = Lutaml::Lml::Pipeline.call(f, resolve: false)
+        doc = Lutaml::Lml.parse_document(f)
         inst = doc.instance
         expect(inst.type).to eq("Sensor")
 
@@ -179,7 +179,7 @@ RSpec.describe "Round-trip: class definitions and instances" do
       LML
 
       with_lml_file(lml) do |f|
-        doc = Lutaml::Lml::Pipeline.call(f, resolve: false)
+        doc = Lutaml::Lml.parse_document(f)
         inst = doc.instance
         items = inst.attributes.find { |a| a.name == "items" }
         expect(items.value).to eq(["verify", "validate", "report"])
@@ -197,7 +197,7 @@ RSpec.describe "Round-trip: class definitions and instances" do
       LML
 
       with_lml_file(lml) do |f|
-        doc = Lutaml::Lml::Pipeline.call(f, resolve: false)
+        doc = Lutaml::Lml.parse_document(f)
         inner = doc.instance.instance
         expect(inner.type).to eq("Inner")
         inner_attrs = inner.attributes.to_h { |a| [a.name, a.value] }
@@ -233,7 +233,7 @@ RSpec.describe "Round-trip: class definitions and instances" do
     it "round-trips real-world instance data (data_s158_metadata)" do
       require "lutaml/lml/format"
 
-      doc = Lutaml::Lml::Pipeline.call(File.new("spec/fixtures/lml/data_s158_metadata.lml"), resolve: false)
+      doc = Lutaml::Lml.parse_document(File.new("spec/fixtures/lml/data_s158_metadata.lml"))
       inner = doc.instance.instance
       expect(inner.type).to eq("IhoDataModels::IhoMetadata")
 
@@ -394,6 +394,29 @@ RSpec.describe "Round-trip: class definitions and instances" do
       with_lml_file(instance_lml) do |f|
         errors = compiler.validate(f, compiled: compiled)
         expect(errors).to include(a_string_matching(/unknown_field.*not defined/))
+      end
+    end
+  end
+
+  describe "view document YAML round trip" do
+    it "survives to_yaml/from_yaml with filters and imports intact" do
+      doc = Lutaml::Lml::Document.new(
+        name: "V",
+        title: "T",
+        classes: [Lutaml::Lml::UmlClass.new(name: "Foo", definition: "a \\{ b \\}")],
+        show_filter: Lutaml::Lml::ViewFilter.new(entity_names: ["Foo"]),
+        view_imports: [Lutaml::Lml::ViewImport.new(path: "m.lutaml")]
+      )
+
+      restored = Lutaml::Lml::Document.from_yaml(doc.to_yaml)
+
+      aggregate_failures do
+        expect(restored.name).to eq("V")
+        expect(restored.title).to eq("T")
+        expect(restored.classes.map(&:name)).to eq(["Foo"])
+        expect(restored.classes.first.definition).to eq("a { b }")
+        expect(restored.show_filter.entity_names).to eq(["Foo"])
+        expect(restored.view_imports.map(&:path)).to eq(["m.lutaml"])
       end
     end
   end

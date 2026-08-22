@@ -27,9 +27,17 @@ RSpec.describe Lutaml::Formatter::Base do
     end
   end
 
-  describe ".name" do
+  describe ".formatter_name" do
     it "returns downcased last segment of class name" do
-      expect(Lutaml::Formatter::Graphviz.name).to eq(:graphviz)
+      expect(Lutaml::Formatter::Graphviz.formatter_name).to eq(:graphviz)
+    end
+
+    it "does not shadow Class#name" do
+      expect(Lutaml::Formatter::Graphviz.name).to eq("Lutaml::Formatter::Graphviz")
+    end
+
+    it "finds a formatter by name" do
+      expect(Lutaml::Formatter.find_by_name("graphviz")).to eq(Lutaml::Formatter::Graphviz)
     end
   end
 
@@ -86,9 +94,10 @@ RSpec.describe Lutaml::Formatter::Base do
       expect(formatter.format(Lutaml::Lml::Operation.new)).to eq("op:FORMATTED")
     end
 
-    it "returns nil for unknown node types" do
+    it "raises for unknown node types" do
       unknown = Struct.new(:unused).new("anything")
-      expect(formatter.format(unknown)).to be_nil
+      expect { formatter.format(unknown) }
+        .to raise_error(Lutaml::Lml::Error, /no format handler/)
     end
   end
 

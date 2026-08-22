@@ -7,7 +7,7 @@ module Lutaml
       # accesses the same attributes as DataType via format_class.
       attribute :name, :string
       attribute :keyword, :string, default: "primitive"
-      attribute :definition, :string
+      attribute :definition, Lutaml::Lml::Types::TextType
       attribute :stereotype, :string, collection: true, default: -> { [] }
       attribute :visibility, :string, default: "public"
       attribute :is_abstract, :boolean, default: false
@@ -20,6 +20,10 @@ module Lutaml
 
       def self.entity_type
         :primitives
+      end
+
+      def self.classifiable?
+        true
       end
     end
   end

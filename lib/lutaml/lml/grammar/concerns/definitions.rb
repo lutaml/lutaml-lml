@@ -55,13 +55,21 @@ module Lutaml
           end
 
           # -- Definition
+          # Balanced-brace body: nested "{...}" and "\"-escapes are allowed,
+          # so definition text can contain format templates like "ZB{code}".
+          rule(:definition_content) do
+            (
+              (str("\\") >> any) |
+                (str("{") >> definition_content >> str("}")) |
+                (str("}").absent? >> any)
+            ).repeat(0)
+          end
           rule(:definition_body) do
             spaces? >>
               str("definition") >>
               whitespace? >>
               str("{") >>
-              ((str("\\") >> any) | (str("}").absent? >> any))
-                .repeat.maybe.as(:definition) >>
+              definition_content.as(:definition) >>
               str("}")
           end
 
@@ -142,22 +150,20 @@ module Lutaml
           end
           rule(:diagram_definitions) { diagram_definition >> whitespace? }
 
+          # A model file: bare top-level definitions with no enclosing
+          # named block. Same inner grammar as a diagram body; labeled
+          # :members so the document builder sees document shape.
+          rule(:model_definitions) { diagram_inner_definition.repeat(1).as(:members) }
+
           # -- View (extends diagram with import/show/hide)
           rule(:view_keyword) { kw_view >> spaces? }
-          rule(:view_inner_definitions) do
-            title_definition |
-              caption_definition |
-              fontname_definition |
-              view_import.as(:view_imports) |
+          rule(:view_only_definitions) do
+            view_import.as(:view_imports) |
               show_directive |
-              hide_directive |
-              class_definition.as(:classes) |
-              enum_definition.as(:enums) |
-              primitive_definition.as(:primitives) |
-              data_type_definition.as(:data_types) |
-              association_definition.as(:associations) |
-              comment_definition |
-              comment_multiline_definition
+              hide_directive
+          end
+          rule(:view_inner_definitions) do
+            view_only_definitions | diagram_inner_definitions
           end
           rule(:view_inner_definition) do
             view_inner_definitions >> whitespace?
@@ -176,17 +182,19 @@ module Lutaml
 
           # -- Metadata
           rule(:title_keyword) { kw_title >> spaces }
+          # Quoted titles/captions accept any character (parentheses, commas,
+          # Unicode). Unquoted form keeps a conservative charset.
           rule(:title_text) do
-            quotes? >>
-              match['a-zA-Z0-9_\- ,.:;'].repeat(1).as(:title) >>
-              quotes?
+            (str('"') >> (str('"').absent? >> any).repeat(1).as(:title) >> str('"')) |
+              (str("'") >> (str("'").absent? >> any).repeat(1).as(:title) >> str("'")) |
+              match['a-zA-Z0-9_\- ,.:;()+\'/'].repeat(1).as(:title)
           end
           rule(:title_definition) { title_keyword >> title_text }
           rule(:caption_keyword) { kw_caption >> spaces }
           rule(:caption_text) do
-            quotes? >>
-              match['a-zA-Z0-9_\- ,.:;'].repeat(1).as(:caption) >>
-              quotes?
+            (str('"') >> (str('"').absent? >> any).repeat(1).as(:caption) >> str('"')) |
+              (str("'") >> (str("'").absent? >> any).repeat(1).as(:caption) >> str("'")) |
+              match['a-zA-Z0-9_\- ,.:;()+\'/'].repeat(1).as(:caption)
           end
           rule(:caption_definition) { caption_keyword >> caption_text }
 

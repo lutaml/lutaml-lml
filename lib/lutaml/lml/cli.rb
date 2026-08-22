@@ -24,7 +24,7 @@ module Lutaml
       }.freeze
 
       PARSE_HANDLERS = {
-        'lutaml' => ->(path) { Lutaml::Lml::Parser.parse(File.new(path)) },
+        'lutaml' => ->(path) { Lutaml::Lml.parse(File.new(path)) },
         'yaml' => ->(path) { Lutaml::Lml::YamlParser.parse(path.to_s) },
         'yml' => ->(path) { Lutaml::Lml::YamlParser.parse(path.to_s) },
         'exp' => lambda { |path|

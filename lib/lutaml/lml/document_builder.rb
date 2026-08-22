@@ -65,7 +65,6 @@ module Lutaml
 
       def set_model_attributes(model, hash)
         hash.each do |key, value|
-          value = sanitize_definition(value) if key == :definition
           apply_attribute(model, key, value)
         end
       end
@@ -77,11 +76,6 @@ module Lutaml
           set_model_attributes(model, member_hash)
         end
         hash
-      end
-
-      def sanitize_definition(value)
-        value.to_s.gsub(/\\}/, '}').gsub(/\\{/, '{')
-             .split("\n").map(&:strip).join("\n")
       end
 
       def apply_attribute(model, key, value)
@@ -131,8 +125,7 @@ module Lutaml
       end
 
       def build_view_filter(entity_names)
-        names = entity_names.is_a?(Array) ? entity_names : [entity_names]
-        ViewFilter.new(entity_names: names.map(&:to_s))
+        ViewFilter.new(entity_names: Array(entity_names).map(&:to_s))
       end
     end
   end

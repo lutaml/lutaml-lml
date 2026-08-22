@@ -79,7 +79,7 @@ RSpec.describe "End-to-end instance import/export", type: :integration do
       }
     LML
 
-    doc = Lutaml::Lml::Pipeline.call(StringIO.new(instances_lml), resolve: false)
+    doc = Lutaml::Lml.parse_document(StringIO.new(instances_lml))
 
     instances = Lutaml::Lml::Executor.run(doc, compiled: compiled)
 

@@ -6,7 +6,7 @@ module Lutaml
       attribute :name, :string
       attribute :id, :string
       attribute :type, :string
-      attribute :definition, :string
+      attribute :definition, Lutaml::Lml::Types::TextType
     end
   end
 end

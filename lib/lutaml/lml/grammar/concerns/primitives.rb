@@ -19,8 +19,11 @@ module Lutaml
           rule(:whitespace?) { whitespace.maybe }
           rule(:newline) { match('[\r\n]') }
 
+          rule(:quoted_string_content) do
+            (str('"').absent? >> any).repeat
+          end
           rule(:quoted_string) do
-            str('"') >> (str('"').absent? >> any).repeat.as(:string) >> str('"')
+            str('"') >> quoted_string_content.as(:string) >> str('"')
           end
           rule(:boolean) { (str("true") | str("false")).as(:boolean) }
           rule(:number) { (match("[0-9]").repeat(1) >> str(".") >> match("[0-9]").repeat(1)).as(:float) | match("[0-9]").repeat(1).as(:number) }

@@ -3,9 +3,10 @@
 module Lutaml
   module Lml
     class UmlClass < Lutaml::Model::Serializable
-      # From TopElement
+      # From TopElement. TextType unescapes \{ \} and normalizes lines
+      # on every assignment (builder, yaml, direct).
       attribute :name, :string
-      attribute :definition, :string
+      attribute :definition, Lutaml::Lml::Types::TextType
       attribute :keyword, :string
       attribute :stereotype, :string, collection: true, default: -> { [] }
       attribute :visibility, :string, default: "public"
@@ -31,9 +32,7 @@ module Lutaml
         map "name", to: :name
         map "keyword", to: :keyword
         map "is_abstract", to: :is_abstract
-        map "definition", to: :definition, with: {
-          to: :definition_to_yaml, from: :definition_from_yaml
-        }
+        map "definition", to: :definition
         map "modifier", to: :modifier
         map "stereotype", to: :stereotype
         map "visibility", to: :visibility
@@ -42,6 +41,9 @@ module Lutaml
         map "operations", to: :operations
         map "constraints", to: :constraints
         map "data_types", to: :data_types
+        # Owner-side defaulting is a parent-context rule ("an
+        # association nested under a class defaults its owner to that
+        # class"); only a mapping proc can see the containing model.
         map "associations", to: :associations, with: {
           to: :associations_to_yaml, from: :associations_from_yaml
         }
@@ -63,21 +65,12 @@ module Lutaml
         model.associations = associations
       end
 
-      def definition_to_yaml(model, doc)
-        doc["definition"] = model.definition if model.definition
-      end
-
-      def definition_from_yaml(model, value)
-        model.definition = value.to_s
-          .gsub(/\\}/, "}")
-          .gsub(/\\{/, "{")
-          .split("\n")
-          .map(&:strip)
-          .join("\n")
-      end
-
       def self.entity_type
         :classes
+      end
+
+      def self.classifiable?
+        true
       end
     end
   end

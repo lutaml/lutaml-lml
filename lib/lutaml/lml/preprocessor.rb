@@ -6,7 +6,7 @@ module Lutaml
       attr_reader :input_file
 
       def initialize(input_file)
-        @input_file = input_file
+        @input_file = Source.wrap(input_file)
       end
 
       class << self
@@ -16,37 +16,42 @@ module Lutaml
       end
 
       def call
-        input_file.rewind
-        include_root = input_file.is_a?(StringIO) ? Dir.pwd : File.dirname(input_file.path)
-        input_file.read.split("\n").reduce([]) do |res, line|
-          res.push(*process_dsl_line(include_root, line))
-        end.join("\n")
+        expand_lines(@input_file.read, @input_file.base_dir, [])
       end
 
       private
 
-      def process_dsl_line(include_root, line)
-        process_include_line(include_root, process_comment_line(line))
+      def expand_lines(text, base_dir, chain)
+        text.split(/\r?\n/)
+            .flat_map { |line| expand_line(line, base_dir, chain) }
+            .join("\n")
       end
 
-      def process_comment_line(line)
-        has_comment = line.match(%r{//.*})
-        return line if has_comment.nil?
+      def expand_line(line, base_dir, chain)
+        cleaned = strip_comment(line)
+        path = include_path(cleaned, base_dir)
+        return [cleaned] unless path
 
-        line.gsub(%r{//.*}, "")
+        raise Error, "circular include detected: #{path}" if chain.include?(path)
+
+        expand_lines(read_included(path), File.dirname(path), chain + [path])
       end
 
-      def process_include_line(include_root, line)
-        include_path_match = line.match(/^\s*include\s+(.+)/)
-        return line if include_path_match.nil?
+      def include_path(line, base_dir)
+        match = line.match(/^\s*include\s+(.+)/)
+        return nil unless match
 
-        path_to_file = File.expand_path(include_path_match[1].strip, include_root)
-        File.read(path_to_file).split("\n").map do |l|
-          process_comment_line(l)
-        end
+        File.expand_path(match[1].strip, base_dir)
+      end
+
+      def read_included(path)
+        File.read(path)
       rescue Errno::ENOENT, Errno::EACCES => e
-        warn "Skipping #{path_to_file}: #{e.message}"
-        []
+        raise Error, "cannot read include #{path}: #{e.message}"
+      end
+
+      def strip_comment(line)
+        line.sub(%r{//.*}, "")
       end
     end
   end

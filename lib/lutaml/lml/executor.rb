@@ -13,7 +13,7 @@ module Lutaml
     #
     # Usage:
     #   compiled = ModelCompiler.new.compile(models_file)
-    #   doc = Pipeline.call(instances_file, resolve: false)
+    #   doc = Lutaml::Lml.parse_document(instances_file)
     #   result = Executor.run(doc, compiled: compiled)
     #   result.instances  # array of hydrated instance objects
     #   result.errors     # array of validation error strings

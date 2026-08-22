@@ -7,7 +7,7 @@ require "fileutils"
 
 RSpec.describe "LML Grammar" do
   # Use the actual Parser class (Full grammar) for testing
-  let(:parser) { Lutaml::Lml::Parser }
+  let(:parser) { Lutaml::Lml }
 
   describe "Core grammar (.lutaml syntax)" do
     it "parses a minimal diagram" do
@@ -273,22 +273,29 @@ RSpec.describe "LML Grammar" do
 
   describe "View grammar (import/show/hide)" do
     it "parses view with import directive" do
-      file = Tempfile.new(%w[test .lutaml])
-      file.write('view MyView { import "models/foo.lutaml" }')
+      dir = Dir.mktmpdir
+      file = Tempfile.new(%w[test .lutaml], dir)
+      File.write(File.join(dir, "foo.lutaml"), "class Foo {}")
+      file.write('view MyView { import "foo.lutaml" }')
       file.rewind
       doc = parser.parse(file)
       expect(doc.name).to eq("MyView")
-      expect(doc.view_imports.map(&:path)).to eq(["models/foo.lutaml"])
+      expect(doc.view_imports.map(&:path)).to eq(["foo.lutaml"])
       file.close!
+      FileUtils.rm_rf(dir)
     end
 
     it "parses view with multiple imports" do
-      file = Tempfile.new(%w[test .lutaml])
-      file.write("view MyView {\n  import \"models/a.lutaml\"\n  import \"models/b.lutaml\"\n}")
+      dir = Dir.mktmpdir
+      file = Tempfile.new(%w[test .lutaml], dir)
+      File.write(File.join(dir, "a.lutaml"), "class A {}")
+      File.write(File.join(dir, "b.lutaml"), "class B {}")
+      file.write("view MyView {\n  import \"a.lutaml\"\n  import \"b.lutaml\"\n}")
       file.rewind
       doc = parser.parse(file)
-      expect(doc.view_imports.map(&:path)).to eq(["models/a.lutaml", "models/b.lutaml"])
+      expect(doc.view_imports.map(&:path)).to eq(["a.lutaml", "b.lutaml"])
       file.close!
+      FileUtils.rm_rf(dir)
     end
 
     it "parses view with show directive" do
@@ -310,14 +317,83 @@ RSpec.describe "LML Grammar" do
     end
 
     it "parses view with import, show, hide, and inline class" do
-      file = Tempfile.new(%w[test .lutaml])
-      file.write("view MyView {\n  import \"models/*.lutaml\"\n  show Foo, Bar, Inline\n  hide Baz\n  class Inline {}\n}")
+      dir = Dir.mktmpdir
+      file = Tempfile.new(%w[test .lutaml], dir)
+      File.write(File.join(dir, "a.lutaml"), "class Foo {}\nclass Bar {}")
+      file.write("view MyView {\n  import \"*.lutaml\"\n  show Foo, Bar, Inline\n  hide Baz\n  class Inline {}\n}")
       file.rewind
       doc = parser.parse(file)
-      expect(doc.view_imports.map(&:path)).to eq(["models/*.lutaml"])
+      expect(doc.view_imports.map(&:path)).to eq(["*.lutaml"])
       expect(doc.show_filter.entity_names).to eq(%w[Foo Bar Inline])
       expect(doc.hide_filter.entity_names).to eq(%w[Baz])
-      expect(doc.classes.map(&:name)).to eq(%w[Inline])
+      expect(doc.classes.map(&:name)).to contain_exactly("Inline", "Foo", "Bar")
+      file.close!
+      FileUtils.rm_rf(dir)
+    end
+
+    it "separates show and hide directives on the same line" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("view MyView { show Foo, Bar hide Baz }")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.show_filter.entity_names).to eq(%w[Foo Bar])
+      expect(doc.hide_filter.entity_names).to eq(%w[Baz])
+      file.close!
+    end
+
+    it "does not parse 'important' as an import directive" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write('view MyView { important "x" }')
+      file.rewind
+      expect { parser.parse(file) }.to raise_error(Lutaml::Lml::ParsingError)
+      file.close!
+    end
+
+    it "accepts qualified entity names in show lists" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("view MyView { show Foo::Bar, a.b.C }")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.show_filter.entity_names).to eq(["Foo::Bar", "a.b.C"])
+      file.close!
+    end
+
+    it "composes view metadata with filter directives" do
+      dir = Dir.mktmpdir
+      file = Tempfile.new(%w[test .lutaml], dir)
+      File.write(File.join(dir, "m.lutaml"), "class Foo {}\nclass Bar {}")
+      file.write('view V { title "t" caption "c" fontname "Arial" import "m.lutaml" hide Bar }')
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.title).to eq("t")
+      expect(doc.caption).to eq("c")
+      expect(doc.fontname).to eq("Arial")
+      expect(doc.classes.map(&:name)).to eq(["Foo"])
+      file.close!
+      FileUtils.rm_rf(dir)
+    end
+  end
+
+  describe "Bare model files" do
+    it "parses top-level definitions with no enclosing block" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("class Foo { name: String }\nenum Color { RED GREEN }\nprimitive Time")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc).to be_a(Lutaml::Lml::Document)
+      expect(doc.classes.first.name).to eq("Foo")
+      expect(doc.enums.first.name).to eq("Color")
+      expect(doc.primitives.first.name).to eq("Time")
+      file.close!
+    end
+
+    it "parses a top-level association in a bare file" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("class Foo {}\nclass Bar {}\nassociation FooBar {\n  owner Foo\n  member Bar\n}")
+      file.rewind
+      doc = parser.parse(file)
+      expect(doc.associations.length).to eq(1)
+      expect(doc.associations.first.owner_end).to eq("Foo")
       file.close!
     end
   end
@@ -343,6 +419,63 @@ RSpec.describe "LML Grammar" do
       instances = Lutaml::Lml::Grammar::Instances::INSTANCE_KEYWORDS
       all = core + instances
       expect(all.uniq.length).to eq(all.length), "Duplicate keywords found"
+    end
+  end
+
+  describe "title and definition charset" do
+    def parse_lml(src)
+      file = Tempfile.new(%w[test .lml])
+      file.write(src)
+      file.rewind
+      doc = Lutaml::Lml.parse(file)
+      file.close!
+      doc
+    end
+
+    it "parses a double-quoted title containing parentheses and commas" do
+      doc = parse_lml(%(diagram T { title "MPFA Bibliographic Item (Offering Document)" class Foo {} }))
+      expect(doc.title).to eq("MPFA Bibliographic Item (Offering Document)")
+    end
+
+    it "parses a single-quoted title containing parentheses" do
+      doc = parse_lml(%(diagram T { title 'MPFA Bibliographic Item (Offering Document)' class Foo {} }))
+      expect(doc.title).to eq("MPFA Bibliographic Item (Offering Document)")
+    end
+
+    it "parses a double-quoted title containing Unicode" do
+      doc = parse_lml(%(diagram T { title "国家标准类别" class Foo {} }))
+      expect(doc.title).to eq("国家标准类别")
+    end
+
+    it "parses definition text containing nested braces" do
+      doc = parse_lml(<<~LML)
+        diagram T {
+          class Foo {
+            definition {
+              Format: "ZB{code}", where {code} is the profession code.
+            }
+          }
+        }
+      LML
+      expect(doc.classes.first.definition).to include("ZB{code}")
+    end
+
+    it "parses definition text containing Unicode" do
+      doc = parse_lml(<<~LML)
+        diagram T {
+          enum Scope {
+            definition {
+              Chinese national standard. 国家标准.
+            }
+            guojia {
+              definition {
+                国家标准
+              }
+            }
+          }
+        }
+      LML
+      expect(doc.enums.first.definition).to include("国家标准")
     end
   end
 end

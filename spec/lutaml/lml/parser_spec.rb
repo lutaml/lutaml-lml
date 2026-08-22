@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe Lutaml::Lml::Parser do
   describe "LML and LUTAML file parsing and mapping" do
     def parse_lml(fname)
-      File.open(fname) { |f| Lutaml::Lml::Parser.parse(f) }
+      File.open(fname) { |f| Lutaml::Lml.parse(f) }
     end
 
     describe "parsing test.lutaml for diagram/classes/definitions/attributes" do

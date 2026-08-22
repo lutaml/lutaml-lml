@@ -10,7 +10,7 @@ RSpec.describe Lutaml::Lml::ViewResolver do
       klass1 = Lutaml::Lml::UmlClass.new(name: "Foo")
       klass2 = Lutaml::Lml::UmlClass.new(name: "Bar")
       doc = Lutaml::Lml::Document.new
-      entities = [klass1, klass2]
+      entities = { "Foo" => klass1, "Bar" => klass2 }
       associations = []
 
       visible, filtered_assoc = resolver.resolve(doc, entities, associations)
@@ -24,7 +24,7 @@ RSpec.describe Lutaml::Lml::ViewResolver do
       doc = Lutaml::Lml::Document.new(
         show_filter: Lutaml::Lml::ViewFilter.new(entity_names: ["Foo", "Bar"])
       )
-      entities = [foo, bar, baz]
+      entities = { "Foo" => foo, "Bar" => bar, "Baz" => baz }
 
       visible, = resolver.resolve(doc, entities, [])
       expect(visible.map(&:name)).to eq(["Foo", "Bar"])
@@ -37,7 +37,7 @@ RSpec.describe Lutaml::Lml::ViewResolver do
       doc = Lutaml::Lml::Document.new(
         hide_filter: Lutaml::Lml::ViewFilter.new(entity_names: ["Baz"])
       )
-      entities = [foo, bar, baz]
+      entities = { "Foo" => foo, "Bar" => bar, "Baz" => baz }
 
       visible, = resolver.resolve(doc, entities, [])
       expect(visible.map(&:name)).to eq(["Foo", "Bar"])
@@ -51,7 +51,7 @@ RSpec.describe Lutaml::Lml::ViewResolver do
         show_filter: Lutaml::Lml::ViewFilter.new(entity_names: ["Foo", "Bar", "Baz"]),
         hide_filter: Lutaml::Lml::ViewFilter.new(entity_names: ["Baz"])
       )
-      entities = [foo, bar, baz]
+      entities = { "Foo" => foo, "Bar" => bar, "Baz" => baz }
 
       visible, = resolver.resolve(doc, entities, [])
       expect(visible.map(&:name)).to eq(["Foo", "Bar"])
@@ -66,7 +66,7 @@ RSpec.describe Lutaml::Lml::ViewResolver do
       doc = Lutaml::Lml::Document.new(
         hide_filter: Lutaml::Lml::ViewFilter.new(entity_names: ["Baz"])
       )
-      entities = [foo, bar, baz]
+      entities = { "Foo" => foo, "Bar" => bar, "Baz" => baz }
 
       _, filtered_assoc = resolver.resolve(doc, entities, [assoc1, assoc2])
       expect(filtered_assoc.length).to eq(1)

@@ -5,7 +5,7 @@ module Lutaml
     class DataType < Lutaml::Model::Serializable
       # From TopElement
       attribute :name, :string
-      attribute :definition, :string
+      attribute :definition, Lutaml::Lml::Types::TextType
       attribute :keyword, :string, default: "dataType"
       attribute :stereotype, :string, collection: true, default: -> { [] }
       attribute :visibility, :string, default: "public"
@@ -25,6 +25,10 @@ module Lutaml
 
       def self.entity_type
         :data_types
+      end
+
+      def self.classifiable?
+        true
       end
     end
   end

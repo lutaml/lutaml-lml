@@ -16,16 +16,16 @@ module Lutaml
       attribute :is_static, :boolean, default: false
       attribute :is_read_only, :boolean, default: false
       attribute :stereotype, :string, collection: true, default: -> { [] }
-      attribute :definition, :string
+      attribute :definition, Lutaml::Lml::Types::TextType
       attribute :association, :string
       attribute :default, :string
 
       # LML-specific attributes
-      attribute :properties, "Lutaml::Lml::TopElementAttribute", collection: true, default: []
-      attribute :value, "Lutaml::Lml::TopElementAttribute", collection: true
-      attribute :attributes, "Lutaml::Lml::TopElementAttribute", collection: true, default: []
+      attribute :properties, "Lutaml::Lml::TopElementAttribute", collection: true, default: -> { [] }
+      attribute :value, "Lutaml::Lml::TopElementAttribute", collection: true, default: -> { [] }
+      attribute :attributes, "Lutaml::Lml::TopElementAttribute", collection: true, default: -> { [] }
       attribute :extended, :boolean
-      attribute :instances, "Lutaml::Lml::Instance", collection: true, default: []
+      attribute :instances, "Lutaml::Lml::Instance", collection: true, default: -> { [] }
     end
   end
 end

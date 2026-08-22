@@ -45,6 +45,10 @@ RSpec.describe Lutaml::Lml::ModelCompiler do
       file.close!
     end
 
+    it "offers no lutaml-model :hash mapping for any DSL type name" do
+      expect(described_class::TYPE_MAP.values).not_to include(:hash)
+    end
+
     it "handles collection cardinality" do
       file = Tempfile.new(%w[test .lml])
       file.write("models Coll {\n  class Container {\n    attribute items { type String cardinality 0..n }\n    attribute single { type String cardinality 1 }\n  }\n}")

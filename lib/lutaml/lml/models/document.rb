@@ -7,10 +7,10 @@ module Lutaml
       attribute :name, :string
       attribute :title, :string
       attribute :caption, :string
-      attribute :groups, "Lutaml::Lml::Group", collection: true
+      attribute :groups, "Lutaml::Lml::Group", collection: true, default: -> { [] }
       attribute :fidelity, "Lutaml::Lml::Fidelity"
       attribute :fontname, :string
-      attribute :comments, :string, collection: true
+      attribute :comments, :string, collection: true, default: -> { [] }
 
       attribute :classes, "Lutaml::Lml::UmlClass", collection: true, default: -> { [] }
       attribute :data_types, "Lutaml::Lml::DataType", collection: true, default: -> { [] }
@@ -20,11 +20,12 @@ module Lutaml
       attribute :associations, "Lutaml::Lml::Association", collection: true, default: -> { [] }
       attribute :diagrams, "Lutaml::Lml::Diagram", collection: true, default: -> { [] }
 
-      # LML-specific
+      # LML-specific. instance/instances/fidelity/show_filter/hide_filter
+      # are deliberately default-less: nil means "absent".
       attribute :instance, "Lutaml::Lml::Instance"
-      attribute :requires, :string, collection: true
+      attribute :requires, :string, collection: true, default: -> { [] }
       attribute :instances, "Lutaml::Lml::InstanceCollection"
-      attribute :view_imports, "Lutaml::Lml::ViewImport", collection: true
+      attribute :view_imports, "Lutaml::Lml::ViewImport", collection: true, default: -> { [] }
       attribute :show_filter, "Lutaml::Lml::ViewFilter"
       attribute :hide_filter, "Lutaml::Lml::ViewFilter"
 
@@ -32,13 +33,13 @@ module Lutaml
       # formatters that need to walk every classifiable type without
       # caring which collection holds it.
       def all_classes
-        classes + enums + data_types + primitives
+        EntityTypes.all.flat_map { |type| public_send(type.entity_type) }
       end
 
       # Class-like entities that can own associations. Excludes enums
       # (which have no attributes/associations of their own).
       def classifiable_classes
-        classes + data_types + primitives
+        EntityTypes.classifiable.flat_map { |type| public_send(type.entity_type) }
       end
     end
   end

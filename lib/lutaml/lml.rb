@@ -14,21 +14,38 @@ module Lutaml
   module Lml
     class Error < Lutaml::Error; end
     class ParsingError < Error; end
+    class ImportError < Error; end
 
     def self.compile(input, namespace: nil)
       ModelCompiler.new(namespace: namespace).compile(input)
+    end
+
+    # Full entry point: parse, then resolve view imports and enrich
+    # association labels.
+    def self.parse(input)
+      source = Source.wrap(input)
+      document = Pipeline.call(source)
+      ViewResolution.call(document, source.base_dir)
+    end
+
+    # Parse only — no import resolution, no label enrichment.
+    def self.parse_document(input)
+      Pipeline.call(input)
     end
 
     # Top-level autoloads
     autoload :Parser, "lutaml/lml/parser"
     autoload :Pipeline, "lutaml/lml/pipeline"
     autoload :Preprocessor, "lutaml/lml/preprocessor"
+    autoload :Source, "lutaml/lml/source"
     autoload :Transform, "lutaml/lml/transform"
     autoload :DataProcessor, "lutaml/lml/data_processor"
     autoload :DocumentBuilder, "lutaml/lml/document_builder"
     autoload :ModelCompiler, "lutaml/lml/model_compiler"
     autoload :ImportResolver, "lutaml/lml/import_resolver"
     autoload :ViewResolver, "lutaml/lml/view_resolver"
+    autoload :ViewResolution, "lutaml/lml/view_resolution"
+    autoload :EntityTypes, "lutaml/lml/entity_types"
     autoload :AssociationLabelResolver, "lutaml/lml/association_label_resolver"
     autoload :Executor, "lutaml/lml/executor"
     autoload :YamlParser, "lutaml/lml/yaml_parser"
@@ -64,5 +81,6 @@ module Lutaml
     # Namespaces with their own autoloads
     autoload :Grammar, "lutaml/lml/grammar"
     autoload :Format, "lutaml/lml/format"
+    autoload :Types, "lutaml/lml/types"
   end
 end
