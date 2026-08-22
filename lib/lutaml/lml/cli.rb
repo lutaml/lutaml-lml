@@ -94,8 +94,11 @@ module Lutaml
 
           lutaml lml validate model.lutaml project.lutaml
       DESC
+      method_option :input_format, type: :string, aliases: '-i',
+                                   desc: 'Input format (lutaml, yaml, exp)'
       def validate(*paths)
         assert_input_paths(paths)
+        @input_format = options[:input_format] || DEFAULT_INPUT_FORMAT
         errors = paths.map { |p| validate_single_file(p) }.compact
         report_validation(errors)
       end
