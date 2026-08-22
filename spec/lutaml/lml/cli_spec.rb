@@ -2,15 +2,16 @@
 
 require "spec_helper"
 require "tmpdir"
+require "tempfile"
 require "lutaml/lml/cli"
 
 # The gem writes YAML with Document#to_yaml and reads it back through the
 # `-i yaml` input path. A document the gem produced itself has to survive that
 # trip, so this drives the real Thor command rather than the parser underneath.
 #
-# `generate` is the command under test because it is the one that sets
-# @input_format. `validate` never calls setup_options, so it cannot read any
-# format at all - a separate pre-existing defect, not touched here.
+# `generate` is the command under test for the round-trip because it exercises
+# the full parse-render path; `validate` covers the same input-format handling
+# without rendering.
 RSpec.describe Lutaml::Cli::LmlCommands do
   def write_yaml(fixture, dir)
     doc = Lutaml::Lml::Pipeline.call(File.new(fixtures_path(fixture)))
@@ -89,6 +90,45 @@ RSpec.describe Lutaml::Cli::LmlCommands do
         expect(find_attribute(doc.instance, "prerequisites").value)
           .to eq(["S102_Dev1009"])
       end
+    end
+  end
+
+  describe "validate" do
+    def run_validate(*args)
+      described_class.start(["validate", *args])
+    end
+
+    it "accepts a valid file with the default input format" do
+      file = Tempfile.new(%w[model .lml])
+      file.write('models Test { class Foo {} }')
+      file.rewind
+
+      expect { run_validate(file.path) }.not_to raise_error
+    end
+
+    it "reads a YAML file when given -i yaml" do
+      Dir.mktmpdir do |dir|
+        path = write_yaml("lml/data_s102_check.lml", dir)
+
+        expect { run_validate("-i", "yaml", path) }.not_to raise_error
+      end
+    end
+
+    it "rejects a YAML file when the input format is left as lutaml" do
+      Dir.mktmpdir do |dir|
+        path = write_yaml("lml/data_s102_check.lml", dir)
+
+        expect { run_validate(path) }.to raise_error(SystemExit)
+      end
+    end
+
+    it "reports a parse failure and exits nonzero" do
+      file = Tempfile.new(%w[model .lml])
+      file.write("models Test { class Foo {")
+      file.rewind
+
+      expect { run_validate(file.path) }
+        .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
     end
   end
 end
