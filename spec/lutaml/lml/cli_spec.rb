@@ -100,10 +100,14 @@ RSpec.describe Lutaml::Cli::LmlCommands do
 
     it "accepts a valid file with the default input format" do
       file = Tempfile.new(%w[model .lml])
-      file.write('models Test { class Foo {} }')
-      file.rewind
+      begin
+        file.write('models Test { class Foo {} }')
+        file.close
 
-      expect { run_validate(file.path) }.not_to raise_error
+        expect { run_validate(file.path) }.not_to raise_error
+      ensure
+        file.unlink
+      end
     end
 
     it "reads a YAML file when given -i yaml" do
@@ -124,11 +128,15 @@ RSpec.describe Lutaml::Cli::LmlCommands do
 
     it "reports a parse failure and exits nonzero" do
       file = Tempfile.new(%w[model .lml])
-      file.write("models Test { class Foo {")
-      file.rewind
+      begin
+        file.write("models Test { class Foo {")
+        file.close
 
-      expect { run_validate(file.path) }
-        .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+        expect { run_validate(file.path) }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+      ensure
+        file.unlink
+      end
     end
   end
 end
