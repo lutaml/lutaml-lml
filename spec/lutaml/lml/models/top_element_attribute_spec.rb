@@ -128,12 +128,11 @@ RSpec.describe Lutaml::Lml::TopElementAttribute do
         .to eq([{ reference: "A.b" }])
     end
 
-    # Known limitation, and pre-existing rather than introduced here:
-    # lutaml-model's key-value transform returns early on a blank value, so an
-    # empty sequence does not survive. Pinned as a limitation, not asserted as
-    # a round trip.
-    it "does not preserve an empty list" do
-      expect(round_trip("tags", %q(tags = []), :yaml)).to be_nil
+    # lutaml-model#746 fixed the present? gate: custom from methods now
+    # receive empty values, so an empty sequence survives as a present
+    # (non-nil) value.
+    it "preserves an empty list" do
+      expect(round_trip("tags", %q(tags = []), :yaml)).to eq([])
     end
 
     it "keeps a false literal, which is not the same as an absent value" do
