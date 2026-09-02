@@ -26,18 +26,18 @@ module Lutaml
           rule(:visibility?) { visibility.maybe }
 
           rule(:method_abstract) { (kw_abstract.as(:abstract) >> spaces).maybe }
-          rule(:attribute_keyword) do
+          rule(:attribute_stereotype) do
             str("<<") >>
-              match['a-zA-Z0-9_\-\/'].repeat(1).as(:keyword) >>
+              match['a-zA-Z0-9_\-\/'].repeat(1).as(:stereotype) >>
               str(">>")
           end
-          rule(:attribute_keyword?) { attribute_keyword.maybe }
+          rule(:attribute_stereotype?) { attribute_stereotype.maybe }
           rule(:attribute_type) do
             (str(":").maybe >>
               spaces? >>
-              attribute_keyword? >>
+              attribute_stereotype? >>
               spaces? >>
-              quotes? >>
+              quotes.as(:type_literal).maybe >>
               match['a-zA-Z0-9_\- :\/\+'].repeat(1).as(:type) >>
               quotes? >>
               spaces?
