@@ -7,7 +7,6 @@ module Lutaml
       # on every assignment (builder, yaml, direct).
       attribute :name, :string
       attribute :definition, Lutaml::Lml::Types::TextType
-      attribute :keyword, :string
       attribute :stereotype, :string, collection: true, default: -> { [] }
       attribute :visibility, :string, default: "public"
       attribute :comments, :string, collection: true
@@ -30,7 +29,6 @@ module Lutaml
 
       yaml do
         map "name", to: :name
-        map "keyword", to: :keyword
         map "is_abstract", to: :is_abstract
         map "definition", to: :definition
         map "modifier", to: :modifier
