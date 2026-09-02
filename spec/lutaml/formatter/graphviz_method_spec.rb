@@ -27,9 +27,9 @@ RSpec.describe Lutaml::Formatter::Graphviz do
       expect(formatter.format_attribute(attr)).to eq("#internal")
     end
 
-    it "renders attribute with keyword" do
+    it "renders attribute with stereotype" do
       attr = Lutaml::Lml::TopElementAttribute.new(
-        name: "id", visibility: "public", type: "String", keyword: "PK"
+        name: "id", visibility: "public", type: "String", stereotype: ["PK"]
       )
       expect(formatter.format_attribute(attr)).to eq("+id : «PK»String")
     end
@@ -162,8 +162,8 @@ RSpec.describe Lutaml::Formatter::Graphviz do
   end
 
   describe "#format_class" do
-    it "renders class with keyword" do
-      klass = Lutaml::Lml::UmlClass.new(name: "Service", keyword: "interface")
+    it "renders class with stereotype" do
+      klass = Lutaml::Lml::UmlClass.new(name: "Service", stereotype: ["interface"])
       result = formatter.format_class(klass, nil)
       expect(result).to include("«interface»")
       expect(result).to include("<B>Service</B>")
@@ -191,14 +191,14 @@ RSpec.describe Lutaml::Formatter::Graphviz do
       expect(result).to include("&#60;Class&#62;")
     end
 
-    it "escapes HTML characters in keyword" do
-      klass = Lutaml::Lml::UmlClass.new(name: "Service", keyword: "interface>")
+    it "escapes HTML characters in stereotype" do
+      klass = Lutaml::Lml::UmlClass.new(name: "Service", stereotype: ["interface>"])
       result = formatter.format_class(klass, nil)
       expect(result).to include("&#62;")
     end
 
     it "renders name table rows with proper newlines" do
-      klass = Lutaml::Lml::UmlClass.new(name: "Svc", keyword: "intf")
+      klass = Lutaml::Lml::UmlClass.new(name: "Svc", stereotype: ["intf"])
       result = formatter.format_class(klass, nil)
       rows = result.scan(/<TR><TD ALIGN="CENTER">/)
       expect(rows.length).to be >= 2

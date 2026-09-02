@@ -4,7 +4,7 @@ module Lutaml
   module Lml
     class DataProcessor
       module AttributeProcessing
-        EXCLUDED_PASS_THROUGH_KEYS = %i[key value comments add attributes properties].freeze
+        EXCLUDED_PASS_THROUGH_KEYS = %i[key value comments add attributes properties type_literal].freeze
 
         def process_attributes(obj)
           case obj
@@ -31,6 +31,7 @@ module Lutaml
           result = extract_name_and_value(obj)
           convert_instance_type(result)
           result[:extended] = !obj[:add].nil? if obj.key?(:add)
+          result[:literal] = true if obj.key?(:type_literal)
           apply_nested_attributes(result, obj)
           apply_remaining_keys(result, obj)
           result

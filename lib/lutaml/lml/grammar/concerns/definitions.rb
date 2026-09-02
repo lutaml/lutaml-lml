@@ -50,7 +50,7 @@ module Lutaml
               class_name.as(:name) >>
               parent_class.maybe >>
               spaces? >>
-              attribute_keyword? >>
+              attribute_stereotype? >>
               class_body?
           end
 
@@ -93,7 +93,7 @@ module Lutaml
               quotes? >>
               class_name.as(:name) >>
               quotes? >>
-              attribute_keyword? >>
+              attribute_stereotype? >>
               enum_body?
           end
 
@@ -108,7 +108,7 @@ module Lutaml
               quotes? >>
               class_name.as(:name) >>
               quotes? >>
-              attribute_keyword? >>
+              attribute_stereotype? >>
               data_type_body?
           end
 

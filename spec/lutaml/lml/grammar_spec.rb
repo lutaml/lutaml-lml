@@ -31,13 +31,36 @@ RSpec.describe "LML Grammar" do
       file.close!
     end
 
-    it "parses class with keyword" do
+    it "parses class stereotype" do
       file = Tempfile.new(%w[test .lutaml])
       file.write('diagram Test { class NamespacedClass <<MyNamespace>> {} }')
       file.rewind
       doc = parser.parse(file)
       expect(doc.classes.first.name).to eq("NamespacedClass")
-      expect(doc.classes.first.keyword).to eq("MyNamespace")
+      expect(doc.classes.first.stereotype).to eq(["MyNamespace"])
+      file.close!
+    end
+
+    it "marks a quoted attribute type as a literal" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write('diagram Test { class Q { +type: "footnote" } }')
+      file.rewind
+      doc = parser.parse(file)
+      attr = doc.classes.first.attributes.first
+      expect(attr.name).to eq("type")
+      expect(attr.type).to eq("footnote")
+      expect(attr.literal).to be(true)
+      file.close!
+    end
+
+    it "leaves an unquoted attribute type as a type reference" do
+      file = Tempfile.new(%w[test .lutaml])
+      file.write("diagram Test { class Q { +type: footnote } }")
+      file.rewind
+      doc = parser.parse(file)
+      attr = doc.classes.first.attributes.first
+      expect(attr.type).to eq("footnote")
+      expect(attr.literal).to be(false)
       file.close!
     end
 

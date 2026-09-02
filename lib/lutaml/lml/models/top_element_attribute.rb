@@ -11,7 +11,7 @@ module Lutaml
       attribute :contain, :string
       attribute :static, :string
       attribute :cardinality, "Lutaml::Lml::Cardinality"
-      attribute :keyword, :string
+      attribute :literal, :boolean, default: false
       attribute :is_derived, :boolean, default: false
       attribute :is_static, :boolean, default: false
       attribute :is_read_only, :boolean, default: false
@@ -45,7 +45,7 @@ module Lutaml
         map "contain", to: :contain
         map "static", to: :static
         map "cardinality", to: :cardinality
-        map "keyword", to: :keyword
+        map "literal", to: :literal
         map "is_derived", to: :is_derived
         map "is_static", to: :is_static
         map "is_read_only", to: :is_read_only

@@ -166,9 +166,15 @@ keyword remains required after either modifier.
 
 A class (or enum/data-type) name may carry a `+<<stereotype>>+` annotation before
 its body (e.g. `+class Foo <<MyNamespace>> { ... }+`); this is a diagram-language
-feature accepted by the grammar. The `+<<...>>+` token is captured into the class's
-`keyword` field (not a dedicated `stereotype` field) and does not affect the
-compiled model.
+feature accepted by the grammar. The `+<<...>>+` token is captured into the
+entity's `stereotype` collection (e.g. `["MyNamespace"]`) and does not affect the
+compiled model. The same annotation before an attribute's type
+(e.g. `+name: <<BasicDocument>> String+`) populates the attribute's `stereotype`.
+
+An attribute type written in quotes (e.g. `+type: "footnote"+`) is a *literal*
+value, not a reference to a type: the parsed attribute carries `literal: true`.
+Without quotes (`+type: footnote+`) the value reads as a type reference and
+`literal` is `false`.
 
 [NOTE]
 ====
@@ -365,6 +371,12 @@ quoted and may carry `definition {}` blocks; `primitive <Name>` declares a
 primitive type. See `lutaml/docs/_pages/uml-syntax.adoc`. They are documented here
 only to note that they do *not* belong in an LML `models` block.
 ====
+
+On the parsed document, both are surfaced through dedicated accessors:
+`document.classes`, `document.enums`, `document.data_types`, and
+`document.primitives` each return their entity collection. A `data_type` or
+`primitive` definition never appears in `classes` — inspect `data_types` /
+`primitives` for them.
 
 === `package` (diagram language only)
 

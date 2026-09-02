@@ -35,7 +35,7 @@ RSpec.describe "DSL (.lutaml) parsing via Lutaml::Lml::Parser" do
       classes = doc.classes
       expect(doc).to be_instance_of(Lutaml::Lml::Document)
       expect(classes.length).to eq(4)
-      expect(by_name(classes, "NamespacedClass").keyword).to eq("MyNamespace")
+      expect(by_name(classes, "NamespacedClass").stereotype).to eq(["MyNamespace"])
     end
   end
 
@@ -70,22 +70,22 @@ RSpec.describe "DSL (.lutaml) parsing via Lutaml::Lml::Parser" do
       attributes = by_name(doc.classes, "AttributeProfile").attributes
       expect(by_name(attributes, "imlicistAttributeProfile").visibility)
         .to be_nil
-      expect(by_name(attributes, "imlicistAttributeProfile").keyword)
-        .to be_nil
+      expect(by_name(attributes, "imlicistAttributeProfile").stereotype)
+        .to be_empty
       expect(by_name(attributes, "attributeProfile").visibility)
         .to eq("public")
-      expect(by_name(attributes, "attributeProfile").keyword)
-        .to eq("BasicDocument")
+      expect(by_name(attributes, "attributeProfile").stereotype)
+        .to eq(["BasicDocument"])
       expect(by_name(attributes, "attributeProfile1").visibility)
         .to eq("public")
-      expect(by_name(attributes, "attributeProfile1").keyword)
-        .to eq("BasicDocument")
+      expect(by_name(attributes, "attributeProfile1").stereotype)
+        .to eq(["BasicDocument"])
       expect(by_name(attributes, "privateAttributeProfile").visibility)
         .to eq("private")
       expect(by_name(attributes, "friendlyAttributeProfile").visibility)
         .to eq("friendly")
-      expect(by_name(attributes, "friendlyAttributeProfile").keyword)
-        .to eq("Type")
+      expect(by_name(attributes, "friendlyAttributeProfile").stereotype)
+        .to eq(["Type"])
       expect(by_name(attributes, "protectedAttributeProfile").visibility)
         .to eq("protected")
     end

@@ -14,8 +14,8 @@ module Lutaml
           symbol = ACCESS_SYMBOLS[node.visibility]
           result = "#{symbol}#{node.name}"
           if node.type
-            keyword = node.keyword ? "«#{node.keyword}»" : ''
-            result += " : #{keyword}#{node.type}"
+            stereotype = node.stereotype.empty? ? '' : node.stereotype.map { |s| "«#{s}»" }.join
+            result += " : #{stereotype}#{node.type}"
           end
           result += format_cardinality_bounds(node.cardinality) if node.cardinality
           result = escape_html_chars(result)
@@ -48,9 +48,23 @@ module Lutaml
           end.join(', ')
         end
 
+        # Kind labels rendered above the name: guillemet stereotypes first,
+        # then the entity-kind label (enums/data types/primitives carry no
+        # user stereotypes of their own in the grammar).
+        KIND_LABELS = {
+          enums: "enumeration",
+          data_types: "dataType",
+          primitives: "primitive"
+        }.freeze
+
         def format_class(node, hide_members = nil)
           name = ["<B>#{escape_html_chars(node.name)}</B>"]
-          name.unshift("«#{escape_html_chars(node.keyword)}»") if node.keyword
+          node.stereotype.each do |stereotype|
+            name.unshift("«#{escape_html_chars(stereotype)}»")
+          end
+          if (kind = KIND_LABELS[node.class.entity_type])
+            name.unshift("«#{kind}»")
+          end
           name_html = build_name_table(name)
 
           member_formatter = node.is_a?(Lml::Enum) ? method(:format_enum_member) : nil
