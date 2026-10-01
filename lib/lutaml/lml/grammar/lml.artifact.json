@@ -1,0 +1,7796 @@
+{
+  "version": "1.0.0",
+  "grammar": "Lml",
+  "shape": "parsanol-tree/v2",
+  "binding_version": 1,
+  "entries": {
+    "diagram": {
+      "root": "diagram",
+      "grammar": {
+        "atoms": [
+          {
+            "Entity": {
+              "atom": 49
+            }
+          },
+          {
+            "Entity": {
+              "atom": 44
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Str": {
+              "pattern": " "
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x09]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x0d]"
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 5,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x0a]"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                6,
+                7
+              ]
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x0d]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": ";"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                3,
+                4,
+                8,
+                9,
+                10
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 11,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 2,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "require"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Str": {
+              "pattern": " "
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 16,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 40
+            }
+          },
+          {
+            "Entity": {
+              "atom": 29
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 21,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x00-\\u{10ffff}]"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                22,
+                23
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 25,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "string",
+              "atom": 26
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                20,
+                27,
+                28
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 39
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 32,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                33,
+                34
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 35,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "string",
+              "atom": 36
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                31,
+                37,
+                38
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                19,
+                30
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "require",
+              "atom": 18
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 42,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                13,
+                14,
+                15,
+                41,
+                43
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 45,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1,
+                46
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 47,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "requires",
+              "atom": 48
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 0,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 638
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 52,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "models"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 55,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Entity": {
+              "atom": 40
+            }
+          },
+          {
+            "Entity": {
+              "atom": 64
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x41-\\x5a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "_"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                60,
+                61,
+                62,
+                63
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 59,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                58,
+                65
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 57
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 68,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 632
+            }
+          },
+          {
+            "Entity": {
+              "atom": 591
+            }
+          },
+          {
+            "Entity": {
+              "atom": 83
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 74,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "abstract"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "interface"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                76,
+                77
+              ]
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                75,
+                78
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "modifier",
+              "atom": 79
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                80,
+                81
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 82,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 84,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "class"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 105
+            }
+          },
+          {
+            "Entity": {
+              "atom": 99
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x41-\\x5a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": " "
+            }
+          },
+          {
+            "Str": {
+              "pattern": "_"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "-"
+            }
+          },
+          {
+            "Str": {
+              "pattern": ":"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "."
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                90,
+                91,
+                92,
+                93,
+                94,
+                95,
+                96,
+                97
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 98,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "("
+            }
+          },
+          {
+            "Entity": {
+              "atom": 99
+            }
+          },
+          {
+            "Str": {
+              "pattern": ")"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                100,
+                101,
+                102
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 103,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                89,
+                104
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 88
+            }
+          },
+          {
+            "Entity": {
+              "atom": 115
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 108,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "<"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 111,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 99
+            }
+          },
+          {
+            "Named": {
+              "name": "parent_class",
+              "atom": 113
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                109,
+                110,
+                112,
+                114
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 107,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 117,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 131
+            }
+          },
+          {
+            "Str": {
+              "pattern": "<<"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x41-\\x5a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "_"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "-"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "/"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                121,
+                122,
+                123,
+                124,
+                125,
+                126
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 127,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "stereotype",
+              "atom": 128
+            }
+          },
+          {
+            "Str": {
+              "pattern": ">>"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                120,
+                129,
+                130
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 119,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 589
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 134,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 137,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 586
+            }
+          },
+          {
+            "Entity": {
+              "atom": 583
+            }
+          },
+          {
+            "Entity": {
+              "atom": 167
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 142,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "definition"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 145,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 164
+            }
+          },
+          {
+            "Str": {
+              "pattern": "\\"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                149,
+                150
+              ]
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 161
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                152,
+                153,
+                154
+              ]
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 156,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                157,
+                158
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                151,
+                155,
+                159
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 160,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                152,
+                153,
+                154
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                151,
+                162,
+                159
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 163,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "definition",
+              "atom": 148
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                143,
+                144,
+                146,
+                147,
+                165,
+                166
+              ]
+            }
+          },
+          {
+            "Str": {
+              "pattern": "attribute"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                168,
+                169
+              ]
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 170,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 276
+            }
+          },
+          {
+            "Entity": {
+              "atom": 180
+            }
+          },
+          {
+            "Entity": {
+              "atom": 179
+            }
+          },
+          {
+            "Str": {
+              "pattern": "+"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "-"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "#"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "~"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                175,
+                176,
+                177,
+                178
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "visibility_modifier",
+              "atom": 174
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 173,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Named": {
+              "name": "visibility",
+              "atom": 181
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 183,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 215
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                187,
+                188
+              ]
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x41-\\x5a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "_"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "-"
+            }
+          },
+          {
+            "Str": {
+              "pattern": " "
+            }
+          },
+          {
+            "Str": {
+              "pattern": "/"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "+"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                190,
+                191,
+                192,
+                193,
+                194,
+                195,
+                196,
+                197
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 198,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 199
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                186,
+                200,
+                201
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 214
+            }
+          },
+          {
+            "Entity": {
+              "atom": 212
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x41-\\x5a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "_"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "-"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "/"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "+"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                205,
+                206,
+                207,
+                208,
+                209,
+                210,
+                211
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 204,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 213
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                202,
+                203
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 216,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 247
+            }
+          },
+          {
+            "Str": {
+              "pattern": ":"
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 219,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 221,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 131
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 223,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 225,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Named": {
+              "name": "type_literal",
+              "atom": 227
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 228,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 240
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x41-\\x5a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "_"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "-"
+            }
+          },
+          {
+            "Str": {
+              "pattern": " "
+            }
+          },
+          {
+            "Str": {
+              "pattern": ":"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "/"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "+"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                231,
+                232,
+                233,
+                234,
+                235,
+                236,
+                237,
+                238,
+                239
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 230,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "type",
+              "atom": 241
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 243,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 245,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                220,
+                222,
+                224,
+                226,
+                229,
+                242,
+                244,
+                246
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 218,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 267
+            }
+          },
+          {
+            "Str": {
+              "pattern": "["
+            }
+          },
+          {
+            "Entity": {
+              "atom": 264
+            }
+          },
+          {
+            "Entity": {
+              "atom": 256
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "*"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                253,
+                254,
+                255
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "min",
+              "atom": 252
+            }
+          },
+          {
+            "Str": {
+              "pattern": ".."
+            }
+          },
+          {
+            "Entity": {
+              "atom": 256
+            }
+          },
+          {
+            "Named": {
+              "name": "max",
+              "atom": 259
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 260,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                258,
+                261
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 262,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                257,
+                263
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "cardinality",
+              "atom": 251
+            }
+          },
+          {
+            "Str": {
+              "pattern": "]"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                250,
+                265,
+                266
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 249,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 273
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 139,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "members",
+              "atom": 270
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                135,
+                136,
+                138,
+                271,
+                272
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 269,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                182,
+                184,
+                185,
+                217,
+                248,
+                268,
+                274
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "attributes",
+              "atom": 275
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                171,
+                172
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 567
+            }
+          },
+          {
+            "Str": {
+              "pattern": "attribute"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 214
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 282,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 565
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 286,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 561
+            }
+          },
+          {
+            "Entity": {
+              "atom": 312
+            }
+          },
+          {
+            "Str": {
+              "pattern": "type"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 291,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 307
+            }
+          },
+          {
+            "Str": {
+              "pattern": " "
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 294,
+              "positive": false
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x09]"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 296,
+              "positive": false
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x0a]"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 298,
+              "positive": false
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x0b]"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 300,
+              "positive": false
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x0c]"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 302,
+              "positive": false
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x0d]"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 304,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                295,
+                297,
+                299,
+                301,
+                303,
+                305,
+                306
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 293,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "type",
+              "atom": 308
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 310,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                290,
+                292,
+                309,
+                311
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 321
+            }
+          },
+          {
+            "Str": {
+              "pattern": "cardinality"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 315,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 264
+            }
+          },
+          {
+            "Named": {
+              "name": "cardinality",
+              "atom": 317
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 319,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                314,
+                316,
+                318,
+                320
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 558
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 323,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 307
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 325,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 326
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Str": {
+              "pattern": "="
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 329,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 331,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 554
+            }
+          },
+          {
+            "Entity": {
+              "atom": 553
+            }
+          },
+          {
+            "Entity": {
+              "atom": 552
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 336,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "instance"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 346
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Str": {
+              "pattern": "::"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                342,
+                343
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 344,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                341,
+                345
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "instance_type",
+              "atom": 340
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                339,
+                347
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 348,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 350,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 353,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 355,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 543
+            }
+          },
+          {
+            "Entity": {
+              "atom": 542
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "instance_type",
+              "atom": 359
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 361,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 40
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 363
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 365,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 367,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "extends"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 370,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 40
+            }
+          },
+          {
+            "Named": {
+              "name": "parent",
+              "atom": 372
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 374,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                368,
+                369,
+                371,
+                373,
+                375
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 376,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 379,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 535
+            }
+          },
+          {
+            "Entity": {
+              "atom": 532
+            }
+          },
+          {
+            "Entity": {
+              "atom": 529
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 384,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "template"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 387,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 390,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 525
+            }
+          },
+          {
+            "Entity": {
+              "atom": 521
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 394,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 515
+            }
+          },
+          {
+            "Entity": {
+              "atom": 412
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 398,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "**"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "#"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                400,
+                401
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 406
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x0d]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x0a]"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                404,
+                405
+              ]
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 403,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                407,
+                408
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 409,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "comments",
+              "atom": 410
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                399,
+                402,
+                411
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "key",
+              "atom": 413
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 415,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "+"
+            }
+          },
+          {
+            "Named": {
+              "name": "add",
+              "atom": 417
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 418,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "="
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 420,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 422,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 512
+            }
+          },
+          {
+            "Entity": {
+              "atom": 484
+            }
+          },
+          {
+            "Str": {
+              "pattern": "["
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 427,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 471
+            }
+          },
+          {
+            "Entity": {
+              "atom": 431
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                335,
+                358
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 470
+            }
+          },
+          {
+            "Entity": {
+              "atom": 437
+            }
+          },
+          {
+            "Str": {
+              "pattern": "true"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "false"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                434,
+                435
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "boolean",
+              "atom": 436
+            }
+          },
+          {
+            "Entity": {
+              "atom": 448
+            }
+          },
+          {
+            "Str": {
+              "pattern": "reference:("
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Str": {
+              "pattern": "."
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                441,
+                442
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 443,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                440,
+                444
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "reference",
+              "atom": 445
+            }
+          },
+          {
+            "Str": {
+              "pattern": ")"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                439,
+                446,
+                447
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 456
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "start",
+              "atom": 450
+            }
+          },
+          {
+            "Str": {
+              "pattern": ".."
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "end",
+              "atom": 453
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                451,
+                452,
+                454
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "range",
+              "atom": 455
+            }
+          },
+          {
+            "Entity": {
+              "atom": 468
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 458,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "."
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 461,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                459,
+                460,
+                462
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "float",
+              "atom": 463
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 465,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "number",
+              "atom": 466
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                464,
+                467
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 40
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                433,
+                438,
+                449,
+                457,
+                469
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                430,
+                432
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 472,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": ","
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 474,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 476,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                429,
+                473,
+                475,
+                477
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 478,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "list",
+              "atom": 479
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 481,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "]"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                426,
+                428,
+                480,
+                482,
+                483
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 505
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 487,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 499
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "key",
+              "atom": 490
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Str": {
+              "pattern": "="
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 493,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 495,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 470
+            }
+          },
+          {
+            "Named": {
+              "name": "value",
+              "atom": 497
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                491,
+                492,
+                494,
+                496,
+                498
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                489,
+                500
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 501,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "key_value_map",
+              "atom": 502
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                486,
+                488,
+                503,
+                504
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 470
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x0a]"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 507,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                508,
+                509
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 510,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                334,
+                425,
+                485,
+                506,
+                511
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "value",
+              "atom": 424
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                414,
+                416,
+                419,
+                421,
+                423,
+                513
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                397,
+                514
+              ]
+            }
+          },
+          {
+            "Str": {
+              "pattern": ","
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 516,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                517,
+                518
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 519,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                395,
+                396,
+                520
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                393,
+                522
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 523,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "attributes",
+              "atom": 524
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 526,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                385,
+                386,
+                388,
+                389,
+                391,
+                392,
+                527,
+                528
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "template",
+              "atom": 383
+            }
+          },
+          {
+            "Entity": {
+              "atom": 525
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                530,
+                531
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 533,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                382,
+                534
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 381,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                360,
+                362,
+                364,
+                366,
+                377,
+                378,
+                380,
+                536,
+                537
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "instance",
+              "atom": 538
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 540,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                539,
+                541
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                335,
+                358
+              ]
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                356,
+                357
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 525
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                544,
+                545
+              ]
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                337,
+                338,
+                349,
+                351,
+                352,
+                354,
+                546,
+                547
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "instance",
+              "atom": 548
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 550,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                549,
+                551
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                335,
+                358
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                334,
+                425,
+                485,
+                506,
+                511
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "value",
+              "atom": 333
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 556,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                324,
+                327,
+                328,
+                330,
+                332,
+                555,
+                557
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "properties",
+              "atom": 322
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                289,
+                313,
+                559
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 560,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 562,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                285,
+                287,
+                288,
+                563,
+                564
+              ]
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                279,
+                280,
+                281,
+                283,
+                284
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "attributes",
+              "atom": 566
+            }
+          },
+          {
+            "Entity": {
+              "atom": 412
+            }
+          },
+          {
+            "Entity": {
+              "atom": 582
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 570,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "*|"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "|*"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 573,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                574,
+                575
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 576,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "comments",
+              "atom": 577
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 579,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "|*"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                571,
+                572,
+                578,
+                580,
+                581
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                141,
+                277,
+                278,
+                568,
+                569
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 584,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                140,
+                585
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 139,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "members",
+              "atom": 587
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                135,
+                136,
+                138,
+                588,
+                272
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 133,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                73,
+                85,
+                86,
+                87,
+                106,
+                116,
+                118,
+                132,
+                590
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "classes",
+              "atom": 72
+            }
+          },
+          {
+            "Entity": {
+              "atom": 627
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 594,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "enum"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 598,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 105
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 600
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 602,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 131
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 604,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 625
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 607,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 610,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 621
+            }
+          },
+          {
+            "Entity": {
+              "atom": 618
+            }
+          },
+          {
+            "Entity": {
+              "atom": 167
+            }
+          },
+          {
+            "Entity": {
+              "atom": 276
+            }
+          },
+          {
+            "Entity": {
+              "atom": 412
+            }
+          },
+          {
+            "Entity": {
+              "atom": 582
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                614,
+                615,
+                616,
+                617
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 619,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                613,
+                620
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 612,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "members",
+              "atom": 622
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                608,
+                609,
+                611,
+                623,
+                624
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 606,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                595,
+                596,
+                597,
+                599,
+                601,
+                603,
+                605,
+                626
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "enums",
+              "atom": 593
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                592,
+                628
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 630,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                629,
+                631
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 71,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "members",
+              "atom": 633
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 636,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                53,
+                54,
+                56,
+                67,
+                69,
+                70,
+                634,
+                635,
+                637
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 927
+            }
+          },
+          {
+            "Entity": {
+              "atom": 924
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 641,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "diagram"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 644,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 105
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 646
+            }
+          },
+          {
+            "Entity": {
+              "atom": 921
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 649,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 652,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 917
+            }
+          },
+          {
+            "Entity": {
+              "atom": 914
+            }
+          },
+          {
+            "Entity": {
+              "atom": 699
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 657,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "title"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 698
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 663,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                664,
+                665
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 666,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "title",
+              "atom": 667
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                662,
+                668,
+                669
+              ]
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 672,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                673,
+                674
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 675,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "title",
+              "atom": 676
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                671,
+                677,
+                678
+              ]
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x41-\\x5a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "_"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "-"
+            }
+          },
+          {
+            "Str": {
+              "pattern": " "
+            }
+          },
+          {
+            "Str": {
+              "pattern": ","
+            }
+          },
+          {
+            "Str": {
+              "pattern": "."
+            }
+          },
+          {
+            "Str": {
+              "pattern": ":"
+            }
+          },
+          {
+            "Str": {
+              "pattern": ";"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "("
+            }
+          },
+          {
+            "Str": {
+              "pattern": ")"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "+"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "'"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "/"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                680,
+                681,
+                682,
+                683,
+                684,
+                685,
+                686,
+                687,
+                688,
+                689,
+                690,
+                691,
+                692,
+                693,
+                694
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 695,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "title",
+              "atom": 696
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                670,
+                679,
+                697
+              ]
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                658,
+                659,
+                660,
+                661
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 743
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 701,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "caption"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 742
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 707,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                708,
+                709
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 710,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "caption",
+              "atom": 711
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                706,
+                712,
+                713
+              ]
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 716,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                717,
+                718
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 719,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "caption",
+              "atom": 720
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                715,
+                721,
+                722
+              ]
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x41-\\x5a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "_"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "-"
+            }
+          },
+          {
+            "Str": {
+              "pattern": " "
+            }
+          },
+          {
+            "Str": {
+              "pattern": ","
+            }
+          },
+          {
+            "Str": {
+              "pattern": "."
+            }
+          },
+          {
+            "Str": {
+              "pattern": ":"
+            }
+          },
+          {
+            "Str": {
+              "pattern": ";"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "("
+            }
+          },
+          {
+            "Str": {
+              "pattern": ")"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "+"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "'"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "/"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                724,
+                725,
+                726,
+                727,
+                728,
+                729,
+                730,
+                731,
+                732,
+                733,
+                734,
+                735,
+                736,
+                737,
+                738
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 739,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "caption",
+              "atom": 740
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                714,
+                723,
+                741
+              ]
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                702,
+                703,
+                704,
+                705
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 764
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 745,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "fontname"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 763
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 750,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x41-\\x5a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "_"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "-"
+            }
+          },
+          {
+            "Str": {
+              "pattern": " "
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                752,
+                753,
+                754,
+                755,
+                756,
+                757
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 758,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "fontname",
+              "atom": 759
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 761,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                751,
+                760,
+                762
+              ]
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                746,
+                747,
+                748,
+                749
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 591
+            }
+          },
+          {
+            "Named": {
+              "name": "classes",
+              "atom": 765
+            }
+          },
+          {
+            "Entity": {
+              "atom": 627
+            }
+          },
+          {
+            "Named": {
+              "name": "enums",
+              "atom": 767
+            }
+          },
+          {
+            "Entity": {
+              "atom": 780
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 770,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "primitive"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 774,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 105
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 776
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 778,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                771,
+                772,
+                773,
+                775,
+                777,
+                779
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "primitives",
+              "atom": 769
+            }
+          },
+          {
+            "Entity": {
+              "atom": 807
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 783,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "data_type"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 787,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 105
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 789
+            }
+          },
+          {
+            "Entity": {
+              "atom": 189
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 791,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 131
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 793,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 805
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 796,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 799,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 621
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 801,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "members",
+              "atom": 802
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                797,
+                798,
+                800,
+                803,
+                804
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 795,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                784,
+                785,
+                786,
+                788,
+                790,
+                792,
+                794,
+                806
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "data_types",
+              "atom": 782
+            }
+          },
+          {
+            "Entity": {
+              "atom": 910
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 810,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "association"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 814
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 815,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 817,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 909
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 820,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 823,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 905
+            }
+          },
+          {
+            "Entity": {
+              "atom": 833
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 827,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "owner_type"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "owner_end_type",
+              "atom": 831
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                828,
+                829,
+                830,
+                832
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 841
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 835,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "member_type"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "member_end_type",
+              "atom": 839
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                836,
+                837,
+                838,
+                840
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 870
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 843,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "owner"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "owner_end",
+              "atom": 847
+            }
+          },
+          {
+            "Entity": {
+              "atom": 859
+            }
+          },
+          {
+            "Str": {
+              "pattern": "#"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 180
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 851,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 853,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "owner_end_attribute_name",
+              "atom": 855
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 857,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                850,
+                852,
+                854,
+                856,
+                858
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 849,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 868
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 862,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "["
+            }
+          },
+          {
+            "Entity": {
+              "atom": 264
+            }
+          },
+          {
+            "Named": {
+              "name": "owner_end_cardinality",
+              "atom": 865
+            }
+          },
+          {
+            "Str": {
+              "pattern": "]"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                863,
+                864,
+                866,
+                867
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 861,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                844,
+                845,
+                846,
+                848,
+                860,
+                869
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 899
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 872,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "member"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "member_end",
+              "atom": 876
+            }
+          },
+          {
+            "Entity": {
+              "atom": 888
+            }
+          },
+          {
+            "Str": {
+              "pattern": "#"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 180
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 880,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 882,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "member_end_attribute_name",
+              "atom": 884
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 886,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                879,
+                881,
+                883,
+                885,
+                887
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 878,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 897
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 891,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "["
+            }
+          },
+          {
+            "Entity": {
+              "atom": 264
+            }
+          },
+          {
+            "Named": {
+              "name": "member_end_cardinality",
+              "atom": 894
+            }
+          },
+          {
+            "Str": {
+              "pattern": "]"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                892,
+                893,
+                895,
+                896
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 890,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                873,
+                874,
+                875,
+                877,
+                889,
+                898
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 412
+            }
+          },
+          {
+            "Entity": {
+              "atom": 582
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                826,
+                834,
+                842,
+                871,
+                900,
+                901
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 903,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                902,
+                904
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 825,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "members",
+              "atom": 906
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                821,
+                822,
+                824,
+                907,
+                908
+              ]
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                811,
+                812,
+                813,
+                816,
+                818,
+                819
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "associations",
+              "atom": 809
+            }
+          },
+          {
+            "Entity": {
+              "atom": 412
+            }
+          },
+          {
+            "Entity": {
+              "atom": 582
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                656,
+                700,
+                744,
+                766,
+                768,
+                781,
+                808,
+                911,
+                912,
+                913
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 915,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                655,
+                916
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 654,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "members",
+              "atom": 918
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                650,
+                651,
+                653,
+                919,
+                920
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 922,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                642,
+                643,
+                645,
+                647,
+                648,
+                923
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 925,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                640,
+                926
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1031
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1028
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 930,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "view"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 933,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 105
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 935
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1025
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 938,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 941,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1021
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1018
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1016
+            }
+          },
+          {
+            "Entity": {
+              "atom": 974
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 947,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "import"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 960
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 953,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                954,
+                955
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 956,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "path",
+              "atom": 957
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\"]"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                952,
+                958,
+                959
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 970
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Lookahead": {
+              "atom": 963,
+              "positive": false
+            }
+          },
+          {
+            "Entity": {
+              "atom": 24
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                964,
+                965
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 966,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "path",
+              "atom": 967
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[']"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                962,
+                968,
+                969
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                951,
+                961
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 972,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                948,
+                949,
+                950,
+                971,
+                973
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "view_imports",
+              "atom": 946
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1005
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 977,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "show"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1001
+            }
+          },
+          {
+            "Entity": {
+              "atom": 992
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x41-\\x5a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x61-\\x7a]"
+            }
+          },
+          {
+            "Re": {
+              "pattern": "[\\x30-\\x39]"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "_"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "."
+            }
+          },
+          {
+            "Str": {
+              "pattern": ":"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "-"
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                983,
+                984,
+                985,
+                986,
+                987,
+                988,
+                989
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 990,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "entity_name",
+              "atom": 991
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 993,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": ","
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 996,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 992
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                994,
+                995,
+                997,
+                998
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 999,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                982,
+                1000
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "show_list",
+              "atom": 981
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1003,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                978,
+                979,
+                980,
+                1002,
+                1004
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1015
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1007,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "hide"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1001
+            }
+          },
+          {
+            "Named": {
+              "name": "hide_list",
+              "atom": 1011
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1013,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1008,
+                1009,
+                1010,
+                1012,
+                1014
+              ]
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                975,
+                976,
+                1006
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 914
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                945,
+                1017
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1019,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                944,
+                1020
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 943,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "members",
+              "atom": 1022
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                939,
+                940,
+                942,
+                1023,
+                1024
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1026,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                931,
+                932,
+                934,
+                936,
+                937,
+                1027
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1029,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                929,
+                1030
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1179
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1033,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "instances"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1036,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1039,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1174
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1169
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1077
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1044,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "import"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1047,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1050,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1071
+            }
+          },
+          {
+            "Entity": {
+              "atom": 307
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1053,
+              "min": 1,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "format_type",
+              "atom": 1054
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1056,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 40
+            }
+          },
+          {
+            "Named": {
+              "name": "file",
+              "atom": 1058
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1060,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1063,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 525
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1066,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1069,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1055,
+                1057,
+                1059,
+                1061,
+                1062,
+                1064,
+                1065,
+                1067,
+                1068,
+                1070
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1052,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "imports",
+              "atom": 1072
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1075,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1045,
+                1046,
+                1048,
+                1049,
+                1051,
+                1073,
+                1074,
+                1076
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1131
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1079,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "collection"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 40
+            }
+          },
+          {
+            "Named": {
+              "name": "name",
+              "atom": 1083
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1085,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1088,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1098
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1091,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "includes"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1094,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 484
+            }
+          },
+          {
+            "Named": {
+              "name": "includes",
+              "atom": 1096
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1092,
+                1093,
+                1095,
+                1097
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1090,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1100,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1124
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1103,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "validation"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1106,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1109,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1120
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1112,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "condition"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 40
+            }
+          },
+          {
+            "Named": {
+              "name": "condition",
+              "atom": 1116
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1118,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1113,
+                1114,
+                1115,
+                1117,
+                1119
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1111,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "validations",
+              "atom": 1121
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1104,
+                1105,
+                1107,
+                1108,
+                1110,
+                1122,
+                1123
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1102,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1126,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1129,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1080,
+                1081,
+                1082,
+                1084,
+                1086,
+                1087,
+                1089,
+                1099,
+                1101,
+                1125,
+                1127,
+                1128,
+                1130
+              ]
+            }
+          },
+          {
+            "Named": {
+              "name": "collections",
+              "atom": 1078
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1167
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1134,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "export"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1137,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1140,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1158
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1143,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "format"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 17
+            }
+          },
+          {
+            "Entity": {
+              "atom": 66
+            }
+          },
+          {
+            "Named": {
+              "name": "format_type",
+              "atom": 1147
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1149,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "{"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1152,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 525
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1156,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1144,
+                1145,
+                1146,
+                1148,
+                1150,
+                1151,
+                1153,
+                1154,
+                1155,
+                1157
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1159,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1142,
+                1160
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1161,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "exports",
+              "atom": 1162
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1165,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1135,
+                1136,
+                1138,
+                1139,
+                1141,
+                1163,
+                1164,
+                1166
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 553
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                1043,
+                1132,
+                1133,
+                1168
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1170,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1042,
+                1171
+              ]
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1172,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "instances",
+              "atom": 1173
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1041,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Str": {
+              "pattern": "}"
+            }
+          },
+          {
+            "Entity": {
+              "atom": 12
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1177,
+              "min": 0,
+              "max": 1,
+              "tag": "Maybe"
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                1034,
+                1035,
+                1037,
+                1038,
+                1040,
+                1175,
+                1176,
+                1178
+              ]
+            }
+          },
+          {
+            "Entity": {
+              "atom": 553
+            }
+          },
+          {
+            "Entity": {
+              "atom": 1184
+            }
+          },
+          {
+            "Entity": {
+              "atom": 917
+            }
+          },
+          {
+            "Repetition": {
+              "atom": 1182,
+              "min": 0,
+              "max": null,
+              "tag": "Repetition"
+            }
+          },
+          {
+            "Named": {
+              "name": "members",
+              "atom": 1183
+            }
+          },
+          {
+            "Alternative": {
+              "atoms": [
+                51,
+                639,
+                928,
+                1032,
+                1180,
+                1181
+              ]
+            }
+          },
+          {
+            "Sequence": {
+              "atoms": [
+                50,
+                1185
+              ]
+            }
+          }
+        ],
+        "root": 1186
+      },
+      "bindings": []
+    }
+  },
+  "preprocess": {},
+  "tables": {},
+  "lint": {
+    "order_warnings": [
+      "rule number: branches 1 and 2 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule value: branches 1 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule value: branches 2 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule value: branches 3 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule value: branches 3 and 5 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule class_inner_definitions: branches 1 and 2 are order-dependent (first set not statically known)",
+      "rule class_inner_definitions: branches 1 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule class_inner_definitions: branches 1 and 5 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule class_inner_definitions: branches 2 and 3 are order-dependent (first set not statically known)",
+      "rule class_inner_definitions: branches 2 and 4 are order-dependent (first set not statically known)",
+      "rule class_inner_definitions: branches 2 and 5 are order-dependent (first set not statically known)",
+      "rule class_inner_definitions: branches 4 and 5 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule enum_inner_definitions: branches 1 and 2 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule enum_inner_definitions: branches 1 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule enum_inner_definitions: branches 1 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule enum_inner_definitions: branches 2 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule enum_inner_definitions: branches 2 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule enum_inner_definitions: branches 3 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 1 and 2 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 1 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 1 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 1 and 5 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 1 and 6 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 1 and 7 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 1 and 8 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 1 and 9 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 1 and 10 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 2 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 2 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 2 and 5 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 2 and 6 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 2 and 7 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 2 and 8 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 2 and 9 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 2 and 10 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 3 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 3 and 5 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 3 and 6 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 3 and 7 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 3 and 8 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 3 and 9 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 3 and 10 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 4 and 5 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 4 and 6 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 4 and 7 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 4 and 8 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 4 and 9 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 4 and 10 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 5 and 6 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 5 and 7 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 5 and 8 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 5 and 9 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 5 and 10 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 6 and 7 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 6 and 8 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 6 and 9 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 6 and 10 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 7 and 8 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 7 and 9 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 7 and 10 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 8 and 9 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 8 and 10 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule diagram_inner_definitions: branches 9 and 10 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule view_only_definitions: branches 1 and 2 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule view_only_definitions: branches 1 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule view_only_definitions: branches 2 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule view_inner_definitions: branches 1 and 2 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule title_text: branches 2 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule caption_text: branches 2 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule instance: branches 1 and 2 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule lml_instance_members: branches 1 and 2 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule attribute_value: branches 1 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule attribute_value: branches 1 and 5 are order-dependent (first set not statically known)",
+      "rule attribute_value: branches 2 and 5 are order-dependent (first set not statically known)",
+      "rule attribute_value: branches 3 and 5 are order-dependent (first set not statically known)",
+      "rule attribute_value: branches 4 and 5 are order-dependent (first set not statically known)",
+      "rule list_item: branches 1 and 2 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule instances_member: branches 1 and 2 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule instances_member: branches 1 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule instances_member: branches 1 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule instances_member: branches 2 and 3 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule instances_member: branches 2 and 4 are order-dependent (shared first bytes; ordered choice is decisive)",
+      "rule instances_member: branches 3 and 4 are order-dependent (shared first bytes; ordered choice is decisive)"
+    ]
+  },
+  "default_entry": "diagram",
+  "render": {},
+  "derive": {},
+  "tests": [],
+  "docs": {},
+  "source": "# LutaML Model Language (LML) — PARG grammar\n#\n# Ported from the original Parslet grammar (removed 2026-10; git history\n# has the reference implementation if the port needs re-checking).\n# PEG semantics: ordered choice, greedy repetition. Rule order within\n# alternatives preserves the original Parslet backtracking order.\n#\n# Capture discipline: repetitions are parenthesized before `as` so a\n# capture binds the whole match (Parslet's `.repeat.as(:x)` shape);\n# `[ x as k ]` yields k: nil when absent (Parslet omits the key —\n# consumers treat nil and absent as equivalent).\ngrammar Lml version \"1.0.0\" {\n  # ---- Character primitives ----\n  alpha = %x41-5A / %x61-7A\n  word = %x41-5A / %x61-7A / %x30-39 / \"_\"\n  cardchar = %x30-39 / %x61-7A / \"*\"\n  # Parslet's `any`: any Unicode character (not just bytes)\n  any_char = %x00-10FFFF\n  # [^\\s\\n\\r] — regex \\s covers space, tab, CR, LF, VT, FF\n  nonspace = !\" \" !%x09 !%x0A !%x0B !%x0C !%x0D any_char\n  quote = %x22 / %x27\n  newline = %x0D / %x0A\n\n  ws = 1*\" \"\n  whitespace = 1*( \" \" / %x09 / [ %x0D ] %x0A / %x0D / \";\" )\n\n  # match['\"\\'']\n  quotes = %x22 / %x27\n\n  # quoted('\"', :string) | quoted(\"'\", :string)\n  dq_string = %x22 ( *( !%x22 any_char ) ) as string %x22\n  sq_string = %x27 ( *( !%x27 any_char ) ) as string %x27\n  quoted_string = dq_string / sq_string\n  # any_quoted(:path) for view import\n  dq_path = %x22 ( *( !%x22 any_char ) ) as path %x22\n  sq_path = %x27 ( *( !%x27 any_char ) ) as path %x27\n\n  boolean = ( \"true\" / \"false\" ) as boolean\n  number = ( 1*%x30-39 \".\" 1*%x30-39 ) as float / ( 1*%x30-39 ) as number\n  variable = quoted_string / 1*word\n  reference = \"reference:(\" ( variable *( \".\" variable ) ) as reference \")\"\n  range = ( variable as start \"..\" variable as end ) as range\n  namespaced_identifier = variable *( \"::\" variable )\n  comment_definition = [ ws ] ( \"**\" / \"#\" ) ( *( !newline any_char ) ) as comments\n  comment_multiline_definition = [ ws ] \"*|\" ( *( !\"|*\" any_char ) ) as comments [ whitespace ] \"|*\"\n\n  class_name_chars = 1*( %x41-5A / %x61-7A / %x30-39 / \" \" / \"_\" / \"-\" / \":\" / \".\" )\n  class_name = class_name_chars [ \"(\" class_name_chars \")\" ]\n  cardinality_body_definition = cardchar as min [ \"..\" [ cardchar as max ] ]\n  cardinality = \"[\" cardinality_body_definition as cardinality \"]\"\n\n  value = boolean / reference / range / number / quoted_string\n  key_value_pair = variable as key ws [ \"=\" ] [ ws ] value as value\n  key_value_map = \"{\" [ whitespace ] ( *( key_value_pair whitespace ) ) as key_value_map \"}\"\n  kw_visibility_modifier = \"+\" / \"-\" / \"#\" / \"~\"\n\n  # ---- Attributes ----\n  attribute = comment_definition / ( variable as key [ ws ] [ \"+\" as add ] [ \"=\" ] [ ws ] attribute_value as value )\n  attributes = ( *( attribute_line / whitespace ) ) as attributes\n  attribute_line = [ ws ] attribute [ [ \",\" ] whitespace ]\n  visibility = kw_visibility_modifier as visibility_modifier\n  attribute_stereotype = \"<<\" ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \"/\" ) ) as stereotype \">>\"\n  typechar = %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \":\" / \"/\" / \"+\"\n  namechar = %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \"/\" / \"+\"\n  attribute_type = [ \":\" ] [ ws ] [ attribute_stereotype ] [ ws ] [ quotes as type_literal ] ( 1*typechar ) as type [ quotes ] [ ws ]\n  attribute_name = ( 1*namechar ) as name\n  attribute_definition_name = ( quotes ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \"/\" / \"+\" ) ) as name quotes ) / attribute_name\n  attribute_definition = ( [ visibility ] as visibility [ ws ] attribute_definition_name [ ws ] [ attribute_type ] [ cardinality ] [ class_body ] ) as attributes\n\n  keyword_type_argument = \"type\" [ ws ] ( 1*nonspace ) as type [ whitespace ]\n  keyword_cardinality_argument = \"cardinality\" [ ws ] cardinality_body_definition as cardinality [ whitespace ]\n  keyword_any_argument = [ ws ] ( 1*nonspace ) as name ws [ \"=\" ] [ ws ] attribute_value as value [ whitespace ]\n  keyword_attribute_options = *( keyword_type_argument / keyword_cardinality_argument / ( keyword_any_argument ) as properties )\n  keyword_attribute_body = \"{\" [ whitespace ] keyword_attribute_options [ whitespace ] \"}\"\n  keyword_attribute_definition = ( \"attribute\" ws attribute_name [ ws ] keyword_attribute_body ) as attributes\n\n  # ---- Associations ----\n  owner_cardinality = [ ws ] \"[\" cardinality_body_definition as owner_end_cardinality \"]\"\n  owner_attribute_name = \"#\" [ visibility ] [ ws ] variable as owner_end_attribute_name [ ws ]\n  owner_definition = [ whitespace ] \"owner\" ws variable as owner_end [ owner_attribute_name ] [ owner_cardinality ]\n  owner_type = [ whitespace ] \"owner_type\" ws variable as owner_end_type\n  member_cardinality = [ ws ] \"[\" cardinality_body_definition as member_end_cardinality \"]\"\n  member_attribute_name = \"#\" [ visibility ] [ ws ] variable as member_end_attribute_name [ ws ]\n  member_definition = [ whitespace ] \"member\" ws variable as member_end [ member_attribute_name ] [ member_cardinality ]\n  member_type = [ whitespace ] \"member_type\" ws variable as member_end_type\n  association_inner_definition = ( owner_type / member_type / owner_definition / member_definition / comment_definition / comment_multiline_definition ) [ whitespace ]\n  association_body = [ ws ] \"{\" [ whitespace ] ( *( association_inner_definition ) ) as members \"}\"\n  association_definition = [ whitespace ] \"association\" ws [ variable as name ] [ ws ] association_body\n\n  # ---- Definitions ----\n  class_modifier = [ ( [ whitespace ] ( \"abstract\" / \"interface\" ) ) as modifier ws ]\n  class_inner_definitions = definition_body / ( !( \"attribute\" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition\n  class_inner_definition = class_inner_definitions [ whitespace ]\n  class_body = [ ws ] \"{\" [ whitespace ] ( *( class_inner_definition ) ) as members \"}\"\n  parent_class = [ ws ] \"<\" [ ws ] ( class_name_chars ) as parent_class\n  class_definition = class_modifier [ whitespace ] \"class\" ws class_name as name [ parent_class ] [ ws ] [ attribute_stereotype ] [ class_body ]\n\n  # Balanced-brace definition text: nested \"{...}\" and \"\\\"-escapes allowed\n  definition_content = *( ( \"\\\\\" any_char ) / ( \"{\" definition_content \"}\" ) / ( !\"}\" any_char ) )\n  definition_body = [ ws ] \"definition\" [ whitespace ] \"{\" ( definition_content ) as definition \"}\"\n\n  enum_inner_definitions = definition_body / attribute_definition / comment_definition / comment_multiline_definition\n  enum_inner_definition = enum_inner_definitions [ whitespace ]\n  enum_body = [ ws ] \"{\" [ whitespace ] ( *( enum_inner_definition ) ) as members \"}\"\n  enum_definition = [ whitespace ] \"enum\" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]\n  data_type_body = [ ws ] \"{\" [ whitespace ] ( *( enum_inner_definition ) ) as members \"}\"\n  data_type_definition = [ whitespace ] \"data_type\" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ data_type_body ]\n  primitive_definition = [ whitespace ] \"primitive\" ws [ quotes ] class_name as name [ quotes ]\n\n  diagram_inner_definitions = title_definition / caption_definition / fontname_definition / ( class_definition ) as classes / ( enum_definition ) as enums / ( primitive_definition ) as primitives / ( data_type_definition ) as data_types / ( association_definition ) as associations / comment_definition / comment_multiline_definition\n  diagram_inner_definition = diagram_inner_definitions [ whitespace ]\n  diagram_body = [ ws ] \"{\" [ whitespace ] ( *( diagram_inner_definition ) ) as members \"}\"\n  diagram_definition = [ whitespace ] \"diagram\" [ ws ] class_name as name diagram_body [ whitespace ]\n  diagram_definitions = diagram_definition [ whitespace ]\n  model_definitions = ( *( diagram_inner_definition ) ) as members\n\n  view_only_definitions = ( view_import ) as view_imports / show_directive / hide_directive\n  view_inner_definitions = view_only_definitions / diagram_inner_definitions\n  view_inner_definition = view_inner_definitions [ whitespace ]\n  view_body = [ ws ] \"{\" [ whitespace ] ( *( view_inner_definition ) ) as members \"}\"\n  view_definition = [ whitespace ] \"view\" [ ws ] class_name as name view_body [ whitespace ]\n  view_definitions = view_definition [ whitespace ]\n\n  title_text = ( %x22 ( 1*( !%x22 any_char ) ) as title %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as title %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \",\" / \".\" / \":\" / \";\" / \"(\" / \")\" / \"+\" / \"'\" / \"/\" ) ) as title\n  title_definition = [ whitespace ] \"title\" ws title_text\n  caption_text = ( %x22 ( 1*( !%x22 any_char ) ) as caption %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as caption %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \",\" / \".\" / \":\" / \";\" / \"(\" / \")\" / \"+\" / \"'\" / \"/\" ) ) as caption\n  caption_definition = [ whitespace ] \"caption\" ws caption_text\n  fontname_text = [ quotes ] ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" ) ) as fontname [ quotes ]\n  fontname_definition = [ whitespace ] \"fontname\" ws fontname_text\n\n  # ---- Views ----\n  # `import` here carries a required trailing space (word boundary)\n  view_import = [ whitespace ] \"import\" ws ( dq_path / sq_path ) [ whitespace ]\n  entity_name_atom = ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \".\" / \":\" / \"-\" ) ) as entity_name\n  entity_name_list = entity_name_atom *( [ ws ] \",\" [ ws ] entity_name_atom )\n  show_directive = [ whitespace ] \"show\" ws ( entity_name_list ) as show_list [ whitespace ]\n  hide_directive = [ whitespace ] \"hide\" ws ( entity_name_list ) as hide_list [ whitespace ]\n\n  # ---- Requires ----\n  require_stmt = [ whitespace ] \"require\" ws quoted_string as require [ whitespace ]\n  require_block = ( *( require_stmt [ whitespace ] ) ) as requires\n\n  # ---- Instances ----\n  instance = keyword_instance / class_instance\n  keyword_instance = ( [ whitespace ] \"instance\" [ ws ( namespaced_identifier ) as instance_type ] [ ws ] \"{\" [ whitespace ] ( ( [ ws ] instance ) / attributes ) \"}\" ) as instance [ whitespace ]\n  class_instance = ( variable as instance_type [ whitespace ] quoted_string as name [ whitespace ] [ [ whitespace ] \"extends\" [ whitespace ] quoted_string as parent [ whitespace ] ] \"{\" [ whitespace ] [ lml_instance_body ] \"}\" ) as instance [ whitespace ]\n  lml_instance_body = lml_instance_members [ whitespace ]\n  instance_template = [ whitespace ] \"template\" [ whitespace ] \"{\" [ whitespace ] attributes [ whitespace ] \"}\"\n  lml_instance_members = ( instance_template ) as template / attributes\n  models = [ whitespace ] \"models\" [ whitespace ] variable as name [ whitespace ] \"{\" ( *( model_body ) ) as members \"}\" [ whitespace ]\n  model_body = ( ( class_definition ) as classes / ( enum_definition ) as enums ) [ whitespace ]\n\n  # ---- Data structures ----\n  attribute_value = instance / list / key_value_map / value / 1*( !%x0A any_char )\n  list_item = instance / value\n  list = \"[\" [ whitespace ] ( *( list_item [ ws ] [ \",\" ] [ whitespace ] ) ) as list [ whitespace ] \"]\"\n  collection = [ whitespace ] \"collection\" ws quoted_string as name [ ws ] \"{\" [ whitespace ] [ includes ] [ whitespace ] [ validation ] [ whitespace ] \"}\" [ whitespace ]\n  includes = [ whitespace ] \"includes\" [ ws ] ( list ) as includes\n  validation = [ whitespace ] \"validation\" [ ws ] \"{\" [ whitespace ] ( *( condition ) ) as validations \"}\"\n  condition = [ whitespace ] \"condition\" ws quoted_string as condition [ whitespace ]\n  import = [ whitespace ] \"import\" [ ws ] \"{\" [ whitespace ] ( *( import_definition ) ) as imports \"}\" [ whitespace ]\n  import_definition = ( 1*nonspace ) as format_type [ ws ] quoted_string as file [ whitespace ] \"{\" [ whitespace ] attributes [ whitespace ] \"}\" [ whitespace ]\n  instances = [ whitespace ] \"instances\" [ whitespace ] \"{\" [ whitespace ] [ instances_body ] \"}\" [ whitespace ]\n  instances_body = ( *( instances_member [ whitespace ] ) ) as instances\n  instances_member = import / ( collection ) as collections / export / instance\n  export = [ whitespace ] \"export\" [ whitespace ] \"{\" [ whitespace ] ( *( export_format [ whitespace ] ) ) as exports \"}\" [ whitespace ]\n  export_format = [ whitespace ] \"format\" ws variable as format_type [ whitespace ] \"{\" [ whitespace ] attributes \"}\" [ whitespace ]\n\n  # ---- Root (grammar/instances.rb: Full) ----\n  diagram = [ require_block ] ( models / diagram_definitions / view_definitions / instances / instance / model_definitions )\n}\n\nentry diagram: diagram\n",
+  "checksum": "sha256:6e0b372c8d928b85741c9600dd79ea5345ddfeaa754e18a00b5aff626c92269c"
+}

@@ -446,6 +446,22 @@ RSpec.describe "LML Grammar" do
     end
   end
 
+  describe "shipped grammar artifact" do
+    it "is committed and in sync with lml.parg" do
+      expect(File).to exist(Lutaml::Lml::Grammar::ARTIFACT_PATH),
+             "run `rake parg` to (re)generate the shipped artifact"
+
+      envelope = JSON.parse(File.read(Lutaml::Lml::Grammar::ARTIFACT_PATH))
+      expect(envelope["source"]).to eq(File.read(Lutaml::Lml::Grammar::GRAMMAR_PATH)),
+             "grammar/lml.artifact.json is stale; run `rake parg`"
+    end
+
+    it "is the artifact the grammar actually loads" do
+      expect(Lutaml::Lml::Grammar.artifact.path)
+        .to eq(Lutaml::Lml::Grammar::ARTIFACT_PATH)
+    end
+  end
+
   describe "MECE keyword separation" do
     let(:parg_source) { File.read(Lutaml::Lml::Grammar::GRAMMAR_PATH) }
 

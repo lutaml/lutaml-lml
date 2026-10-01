@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
     "changelog_uri" => "https://github.com/lutaml/lutaml-lml/releases"
   }
 
-  spec.files = Dir.glob("lib/**/*.rb") + Dir.glob("lib/**/*.parg") + Dir.glob("exe/*")
+  spec.files = Dir.glob("lib/**/*.rb") + Dir.glob("lib/**/*.parg") + Dir.glob("lib/**/*.json") + Dir.glob("exe/*")
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
