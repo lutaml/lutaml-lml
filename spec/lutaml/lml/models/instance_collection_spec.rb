@@ -55,7 +55,7 @@ RSpec.describe Lutaml::Lml::InstanceCollection do
     end
 
     it "holds collection" do
-      expect(ic.collections.name).to eq("all_products")
+      expect(ic.collections.first.name).to eq("all_products")
     end
   end
 end
