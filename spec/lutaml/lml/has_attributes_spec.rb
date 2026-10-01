@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-require "parslet"
+require "parsanol"
 
 RSpec.describe Lutaml::Lml::HasAttributes do
   # Use a real Struct-based host so we test the mixin against an object
@@ -25,8 +25,8 @@ RSpec.describe Lutaml::Lml::HasAttributes do
       expect(host.name).to eq("Bob")
     end
 
-    it "unwraps Parslet::Slice values into plain strings" do
-      slice = Parslet::Slice.new(0, "Carol", "source.lml")
+    it "unwraps Parsanol::Slice values into plain strings" do
+      slice = Parsanol::Slice.new(0, "Carol", "source.lml")
       host.update_attributes(name: slice)
       expect(host.name).to eq("Carol")
       expect(host.name).to be_a(String)

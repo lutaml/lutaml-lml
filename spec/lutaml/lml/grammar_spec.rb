@@ -447,25 +447,43 @@ RSpec.describe "LML Grammar" do
   end
 
   describe "MECE keyword separation" do
-    it "Core grammar defines CORE_KEYWORDS" do
-      expect(Lutaml::Lml::Grammar::Core::CORE_KEYWORDS).to include("class", "enum", "attribute", "association")
+    let(:parg_source) { File.read(Lutaml::Lml::Grammar::GRAMMAR_PATH) }
+
+    # Live keyword sets of the PARG grammar, classified by layer. The
+    # .parg source is the single source of truth; these lists pin the
+    # expected classification so a keyword cannot silently migrate
+    # between the model layer and the instance layer.
+    CORE_KEYWORDS = %w[
+      abstract attribute caption class data_type diagram enum fontname
+      interface owner owner_type member member_type primitive title view
+    ].freeze
+
+    INSTANCE_KEYWORDS = %w[
+      collection condition export extends format import includes instance
+      instances models require template validation
+    ].freeze
+
+    it "grammar defines all core keywords" do
+      CORE_KEYWORDS.each do |keyword|
+        expect(parg_source).to include(%("#{keyword}")),
+                               "missing core keyword #{keyword.inspect}"
+      end
     end
 
-    it "Instances grammar defines INSTANCE_KEYWORDS" do
-      expect(Lutaml::Lml::Grammar::Instances::INSTANCE_KEYWORDS).to include("instance", "models", "collection")
+    it "grammar defines all instance keywords" do
+      INSTANCE_KEYWORDS.each do |keyword|
+        expect(parg_source).to include(%("#{keyword}")),
+                               "missing instance keyword #{keyword.inspect}"
+      end
     end
 
     it "keyword lists do not overlap (MECE)" do
-      core = Lutaml::Lml::Grammar::Core::CORE_KEYWORDS
-      instances = Lutaml::Lml::Grammar::Instances::INSTANCE_KEYWORDS
-      overlap = core & instances
+      overlap = CORE_KEYWORDS & INSTANCE_KEYWORDS
       expect(overlap).to be_empty, "Expected no overlap but found: #{overlap.inspect}"
     end
 
     it "combined keywords cover all expected keywords" do
-      core = Lutaml::Lml::Grammar::Core::CORE_KEYWORDS
-      instances = Lutaml::Lml::Grammar::Instances::INSTANCE_KEYWORDS
-      all = core + instances
+      all = CORE_KEYWORDS + INSTANCE_KEYWORDS
       expect(all.uniq.length).to eq(all.length), "Duplicate keywords found"
     end
   end

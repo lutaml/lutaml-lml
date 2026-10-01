@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require "parslet"
-require "parslet/convenience"
+require 'parsanol'
 
 module Lutaml
   module Lml
@@ -28,11 +27,25 @@ module Lutaml
       private
 
       def parse_raw(data)
-        reporter = Parslet::ErrorReporter::Deepest.new
-        Transform.new.apply(Parser.new.parse(data, reporter: reporter))
-      rescue Parslet::ParseFailed => e
-        raise(ParsingError,
-              "#{e.message}\ncause: #{e.parse_failure_cause.ascii_tree}")
+        Transform.new.apply(Parser.new.parse(data))
+      rescue Parsanol::ParseFailed => e
+        raise(ParsingError, failure_message(e))
+      end
+
+      # Parsanol releases up to 1.3.57 annotate native failures with a
+      # byte offset marker but report cause.position as 0; fixed parsanol
+      # already carries the correct location in the message. Only
+      # rebuild the location when the marker is present.
+      def failure_message(error)
+        detail = error.message.lines.first.to_s.strip
+        cause = error.parse_failure_cause
+        offset = error.message[/@@parsanol_pos:(\d+)/, 1]&.to_i
+        location =
+          if offset && cause&.source
+            line, column = cause.source.line_and_column(offset)
+            " at line #{line} char #{column}."
+          end
+        "#{detail}#{location}\ncause: #{cause&.ascii_tree}"
       end
 
       def build_document(hash)

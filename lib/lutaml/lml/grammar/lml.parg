@@ -1,0 +1,173 @@
+# LutaML Model Language (LML) — PARG grammar
+#
+# Ported from the original Parslet grammar (removed 2026-10; git history
+# has the reference implementation if the port needs re-checking).
+# PEG semantics: ordered choice, greedy repetition. Rule order within
+# alternatives preserves the original Parslet backtracking order.
+#
+# Capture discipline: repetitions are parenthesized before `as` so a
+# capture binds the whole match (Parslet's `.repeat.as(:x)` shape);
+# `[ x as k ]` yields k: nil when absent (Parslet omits the key —
+# consumers treat nil and absent as equivalent).
+grammar Lml version "1.0.0" {
+  # ---- Character primitives ----
+  alpha = %x41-5A / %x61-7A
+  word = %x41-5A / %x61-7A / %x30-39 / "_"
+  cardchar = %x30-39 / %x61-7A / "*"
+  # Parslet's `any`: any Unicode character (not just bytes)
+  any_char = %x00-10FFFF
+  # [^\s\n\r] — regex \s covers space, tab, CR, LF, VT, FF
+  nonspace = !" " !%x09 !%x0A !%x0B !%x0C !%x0D any_char
+  quote = %x22 / %x27
+  newline = %x0D / %x0A
+
+  ws = 1*" "
+  whitespace = 1*( " " / %x09 / [ %x0D ] %x0A / %x0D / ";" )
+
+  # match['"\'']
+  quotes = %x22 / %x27
+
+  # quoted('"', :string) | quoted("'", :string)
+  dq_string = %x22 ( *( !%x22 any_char ) ) as string %x22
+  sq_string = %x27 ( *( !%x27 any_char ) ) as string %x27
+  quoted_string = dq_string / sq_string
+  # any_quoted(:path) for view import
+  dq_path = %x22 ( *( !%x22 any_char ) ) as path %x22
+  sq_path = %x27 ( *( !%x27 any_char ) ) as path %x27
+
+  boolean = ( "true" / "false" ) as boolean
+  number = ( 1*%x30-39 "." 1*%x30-39 ) as float / ( 1*%x30-39 ) as number
+  variable = quoted_string / 1*word
+  reference = "reference:(" ( variable *( "." variable ) ) as reference ")"
+  range = ( variable as start ".." variable as end ) as range
+  namespaced_identifier = variable *( "::" variable )
+  comment_definition = [ ws ] ( "**" / "#" ) ( *( !newline any_char ) ) as comments
+  comment_multiline_definition = [ ws ] "*|" ( *( !"|*" any_char ) ) as comments [ whitespace ] "|*"
+
+  class_name_chars = 1*( %x41-5A / %x61-7A / %x30-39 / " " / "_" / "-" / ":" / "." )
+  class_name = class_name_chars [ "(" class_name_chars ")" ]
+  cardinality_body_definition = cardchar as min [ ".." [ cardchar as max ] ]
+  cardinality = "[" cardinality_body_definition as cardinality "]"
+
+  value = boolean / reference / range / number / quoted_string
+  key_value_pair = variable as key ws [ "=" ] [ ws ] value as value
+  key_value_map = "{" [ whitespace ] ( *( key_value_pair whitespace ) ) as key_value_map "}"
+  kw_visibility_modifier = "+" / "-" / "#" / "~"
+
+  # ---- Attributes ----
+  attribute = comment_definition / ( variable as key [ ws ] [ "+" as add ] [ "=" ] [ ws ] attribute_value as value )
+  attributes = ( *( attribute_line / whitespace ) ) as attributes
+  attribute_line = [ ws ] attribute [ [ "," ] whitespace ]
+  visibility = kw_visibility_modifier as visibility_modifier
+  attribute_stereotype = "<<" ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / "/" ) ) as stereotype ">>"
+  typechar = %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / ":" / "/" / "+"
+  namechar = %x41-5A / %x61-7A / %x30-39 / "_" / "-" / "/" / "+"
+  attribute_type = [ ":" ] [ ws ] [ attribute_stereotype ] [ ws ] [ quotes as type_literal ] ( 1*typechar ) as type [ quotes ] [ ws ]
+  attribute_name = ( 1*namechar ) as name
+  attribute_definition_name = ( quotes ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "/" / "+" ) ) as name quotes ) / attribute_name
+  attribute_definition = ( [ visibility ] as visibility [ ws ] attribute_definition_name [ ws ] [ attribute_type ] [ cardinality ] [ class_body ] ) as attributes
+
+  keyword_type_argument = "type" [ ws ] ( 1*nonspace ) as type [ whitespace ]
+  keyword_cardinality_argument = "cardinality" [ ws ] cardinality_body_definition as cardinality [ whitespace ]
+  keyword_any_argument = [ ws ] ( 1*nonspace ) as name ws [ "=" ] [ ws ] attribute_value as value [ whitespace ]
+  keyword_attribute_options = *( keyword_type_argument / keyword_cardinality_argument / ( keyword_any_argument ) as properties )
+  keyword_attribute_body = "{" [ whitespace ] keyword_attribute_options [ whitespace ] "}"
+  keyword_attribute_definition = ( "attribute" ws attribute_name [ ws ] keyword_attribute_body ) as attributes
+
+  # ---- Associations ----
+  owner_cardinality = [ ws ] "[" cardinality_body_definition as owner_end_cardinality "]"
+  owner_attribute_name = "#" [ visibility ] [ ws ] variable as owner_end_attribute_name [ ws ]
+  owner_definition = [ whitespace ] "owner" ws variable as owner_end [ owner_attribute_name ] [ owner_cardinality ]
+  owner_type = [ whitespace ] "owner_type" ws variable as owner_end_type
+  member_cardinality = [ ws ] "[" cardinality_body_definition as member_end_cardinality "]"
+  member_attribute_name = "#" [ visibility ] [ ws ] variable as member_end_attribute_name [ ws ]
+  member_definition = [ whitespace ] "member" ws variable as member_end [ member_attribute_name ] [ member_cardinality ]
+  member_type = [ whitespace ] "member_type" ws variable as member_end_type
+  association_inner_definition = ( owner_type / member_type / owner_definition / member_definition / comment_definition / comment_multiline_definition ) [ whitespace ]
+  association_body = [ ws ] "{" [ whitespace ] ( *( association_inner_definition ) ) as members "}"
+  association_definition = [ whitespace ] "association" ws [ variable as name ] [ ws ] association_body
+
+  # ---- Definitions ----
+  class_modifier = [ ( [ whitespace ] ( "abstract" / "interface" ) ) as modifier ws ]
+  class_inner_definitions = definition_body / ( !( "attribute" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
+  class_inner_definition = class_inner_definitions [ whitespace ]
+  class_body = [ ws ] "{" [ whitespace ] ( *( class_inner_definition ) ) as members "}"
+  parent_class = [ ws ] "<" [ ws ] ( class_name_chars ) as parent_class
+  class_definition = class_modifier [ whitespace ] "class" ws class_name as name [ parent_class ] [ ws ] [ attribute_stereotype ] [ class_body ]
+
+  # Balanced-brace definition text: nested "{...}" and "\"-escapes allowed
+  definition_content = *( ( "\\" any_char ) / ( "{" definition_content "}" ) / ( !"}" any_char ) )
+  definition_body = [ ws ] "definition" [ whitespace ] "{" ( definition_content ) as definition "}"
+
+  enum_inner_definitions = definition_body / attribute_definition / comment_definition / comment_multiline_definition
+  enum_inner_definition = enum_inner_definitions [ whitespace ]
+  enum_body = [ ws ] "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
+  enum_definition = [ whitespace ] "enum" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]
+  data_type_body = [ ws ] "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
+  data_type_definition = [ whitespace ] "data_type" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ data_type_body ]
+  primitive_definition = [ whitespace ] "primitive" ws [ quotes ] class_name as name [ quotes ]
+
+  diagram_inner_definitions = title_definition / caption_definition / fontname_definition / ( class_definition ) as classes / ( enum_definition ) as enums / ( primitive_definition ) as primitives / ( data_type_definition ) as data_types / ( association_definition ) as associations / comment_definition / comment_multiline_definition
+  diagram_inner_definition = diagram_inner_definitions [ whitespace ]
+  diagram_body = [ ws ] "{" [ whitespace ] ( *( diagram_inner_definition ) ) as members "}"
+  diagram_definition = [ whitespace ] "diagram" [ ws ] class_name as name diagram_body [ whitespace ]
+  diagram_definitions = diagram_definition [ whitespace ]
+  model_definitions = ( *( diagram_inner_definition ) ) as members
+
+  view_only_definitions = ( view_import ) as view_imports / show_directive / hide_directive
+  view_inner_definitions = view_only_definitions / diagram_inner_definitions
+  view_inner_definition = view_inner_definitions [ whitespace ]
+  view_body = [ ws ] "{" [ whitespace ] ( *( view_inner_definition ) ) as members "}"
+  view_definition = [ whitespace ] "view" [ ws ] class_name as name view_body [ whitespace ]
+  view_definitions = view_definition [ whitespace ]
+
+  title_text = ( %x22 ( 1*( !%x22 any_char ) ) as title %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as title %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "," / "." / ":" / ";" / "(" / ")" / "+" / "'" / "/" ) ) as title
+  title_definition = [ whitespace ] "title" ws title_text
+  caption_text = ( %x22 ( 1*( !%x22 any_char ) ) as caption %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as caption %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "," / "." / ":" / ";" / "(" / ")" / "+" / "'" / "/" ) ) as caption
+  caption_definition = [ whitespace ] "caption" ws caption_text
+  fontname_text = [ quotes ] ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " ) ) as fontname [ quotes ]
+  fontname_definition = [ whitespace ] "fontname" ws fontname_text
+
+  # ---- Views ----
+  # `import` here carries a required trailing space (word boundary)
+  view_import = [ whitespace ] "import" ws ( dq_path / sq_path ) [ whitespace ]
+  entity_name_atom = ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "." / ":" / "-" ) ) as entity_name
+  entity_name_list = entity_name_atom *( [ ws ] "," [ ws ] entity_name_atom )
+  show_directive = [ whitespace ] "show" ws ( entity_name_list ) as show_list [ whitespace ]
+  hide_directive = [ whitespace ] "hide" ws ( entity_name_list ) as hide_list [ whitespace ]
+
+  # ---- Requires ----
+  require_stmt = [ whitespace ] "require" ws quoted_string as require [ whitespace ]
+  require_block = ( *( require_stmt [ whitespace ] ) ) as requires
+
+  # ---- Instances ----
+  instance = keyword_instance / class_instance
+  keyword_instance = ( [ whitespace ] "instance" [ ws ( namespaced_identifier ) as instance_type ] [ ws ] "{" [ whitespace ] ( ( [ ws ] instance ) / attributes ) "}" ) as instance [ whitespace ]
+  class_instance = ( variable as instance_type [ whitespace ] quoted_string as name [ whitespace ] [ [ whitespace ] "extends" [ whitespace ] quoted_string as parent [ whitespace ] ] "{" [ whitespace ] [ lml_instance_body ] "}" ) as instance [ whitespace ]
+  lml_instance_body = lml_instance_members [ whitespace ]
+  instance_template = [ whitespace ] "template" [ whitespace ] "{" [ whitespace ] attributes [ whitespace ] "}"
+  lml_instance_members = ( instance_template ) as template / attributes
+  models = [ whitespace ] "models" [ whitespace ] variable as name [ whitespace ] "{" ( *( model_body ) ) as members "}" [ whitespace ]
+  model_body = ( ( class_definition ) as classes / ( enum_definition ) as enums ) [ whitespace ]
+
+  # ---- Data structures ----
+  attribute_value = instance / list / key_value_map / value / 1*( !%x0A any_char )
+  list_item = instance / value
+  list = "[" [ whitespace ] ( *( list_item [ ws ] [ "," ] [ whitespace ] ) ) as list [ whitespace ] "]"
+  collection = [ whitespace ] "collection" ws quoted_string as name [ ws ] "{" [ whitespace ] [ includes ] [ whitespace ] [ validation ] [ whitespace ] "}" [ whitespace ]
+  includes = [ whitespace ] "includes" [ ws ] ( list ) as includes
+  validation = [ whitespace ] "validation" [ ws ] "{" [ whitespace ] ( *( condition ) ) as validations "}"
+  condition = [ whitespace ] "condition" ws quoted_string as condition [ whitespace ]
+  import = [ whitespace ] "import" [ ws ] "{" [ whitespace ] ( *( import_definition ) ) as imports "}" [ whitespace ]
+  import_definition = ( 1*nonspace ) as format_type [ ws ] quoted_string as file [ whitespace ] "{" [ whitespace ] attributes [ whitespace ] "}" [ whitespace ]
+  instances = [ whitespace ] "instances" [ whitespace ] "{" [ whitespace ] [ instances_body ] "}" [ whitespace ]
+  instances_body = ( *( instances_member [ whitespace ] ) ) as instances
+  instances_member = import / ( collection ) as collections / export / instance
+  export = [ whitespace ] "export" [ whitespace ] "{" [ whitespace ] ( *( export_format [ whitespace ] ) ) as exports "}" [ whitespace ]
+  export_format = [ whitespace ] "format" ws variable as format_type [ whitespace ] "{" [ whitespace ] attributes "}" [ whitespace ]
+
+  # ---- Root (grammar/instances.rb: Full) ----
+  diagram = [ require_block ] ( models / diagram_definitions / view_definitions / instances / instance / model_definitions )
+}
+
+entry diagram: diagram
