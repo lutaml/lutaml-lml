@@ -268,7 +268,7 @@ RSpec.describe "DSL (.lutaml) parsing via Lutaml::Lml::Parser" do
     it "raises ParsingError with line information" do
       expect { parse_dsl("broken_diagram.lutaml") }
         .to(raise_error(Lutaml::Lml::ParsingError,
-                        /but got ":" at line 25 char 32/))
+                        /at line 25 char 32/))
     end
   end
 end

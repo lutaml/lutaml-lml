@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **lutaml-lml** is a Ruby gem that parses the LutaML Model Language (LML) — a text DSL for describing UML models — into domain model objects. It supports two layers: model definitions (classes, enums, attributes, associations) and data instances (collections, imports, exports). Output is rendered as diagrams via GraphViz.
 
-Key dependencies: `parslet` (PEG parsing), `lutaml-model` (serialization), `ruby-graphviz`.
+Key dependencies: `parsanol` (PARG grammar — PEG parsing, native-first Rust engine with Ruby fallback), `lutaml-model` (serialization), `ruby-graphviz`.
 
 ## Development Commands
 
@@ -25,8 +25,7 @@ bundle exec rubocop             # lint
 
 All internal code uses Ruby `autoload` (not `require_relative`). Autoload entries are defined in the immediate parent namespace's file:
 - `lib/lutaml/lml.rb` — autoloads all top-level constants and models
-- `lib/lutaml/lml/grammar.rb` — autoloads `Grammar::*`
-- `lib/lutaml/lml/grammar/concerns.rb` — autoloads `Concerns::*`
+- `lib/lutaml/lml/grammar.rb` — loads the PARG grammar (`Grammar.artifact`)
 - `lib/lutaml/lml/formatter.rb` — autoloads `Formatter::*` (in `Lutaml` namespace)
 - `lib/lutaml/lml/layout.rb` — autoloads `Layout::*` (in `Lutaml` namespace)
 - `lib/lutaml/lml/data_processor.rb` — autoloads sub-modules
@@ -41,12 +40,9 @@ Input → Preprocessor → Parser → Transform → DataProcessor → DocumentBu
 
 1. **Pipeline** (`pipeline.rb`): Orchestrates the full parse flow. Entry point for all parsing.
 2. **Preprocessor** (`preprocessor.rb`): Strips comments, inlines `include` directives
-3. **Parser** (`parser.rb`): Pure Parslet parser (grammar + transform only). `Parser.parse` delegates to Pipeline for backward compatibility.
-4. **Grammar** (`grammar/`): Parslet PEG rules split into composable concerns:
-   - `Core` — class/enum/data_type/diagram definitions, associations, attributes, views
-   - `Instances` — collection/instance/import/export rules
-   - `Full` — combines both via inclusion; overrides `diagram` root rule
-5. **Transform** (`transform.rb`): Minimal Parslet transform (visibility mapping, string cleanup)
+3. **Parser** (`parser.rb`): Facade over the PARG artifact; `parse` returns the raw parse tree.
+4. **Grammar** (`grammar/lml.parg`): The LML grammar written in PARG (parsanol grammar language), compiled in memory to a checksummed artifact (memoized in `Grammar.artifact`, entry `diagram`). PEG semantics — ordered choice; alternative order is deliberate and lint-checked.
+5. **Transform** (`transform.rb`): Minimal Parsanol transform (visibility mapping, string cleanup)
 6. **DataProcessor** (`data_processor/`): Post-transform data massage, split into sub-modules by concern (value, attribute, instance, collection, view processing). Usable as mixin or via `.process` class method.
 7. **DocumentBuilder** (`document_builder.rb`): Builds domain model objects from processed hashes via a registry pattern. Takes `LmlConverter::MODEL_REGISTRY` and provides `build(key, hash)`.
 
@@ -113,8 +109,7 @@ Thor-based CLI at `Cli::LmlCommands` with `generate`, `validate`, and `compile` 
 ## Key Conventions
 
 - All internal code uses `autoload` — never `require_relative` or `require` with internal paths
-- Grammar modules use Parslet's `rule()` DSL; keywords are defined as `kw_*` rules built from `CORE_KEYWORDS` / `INSTANCE_KEYWORDS` arrays
-- The `Grammar::Full` module includes both `Core` and `Instances`, overriding the `diagram` root rule to accept both model and instance definitions
+- The grammar is `grammar/lml.parg` (PARG); edit it there — never rebuild parse trees in Ruby. Capture discipline: parenthesize repetitions before `as` (`( *x ) as k`) or captures bind per-iteration; `[ x as k ]` yields `k: nil` when absent (consumers treat nil ≡ absent); `%x00-10FFFF` is the char-wise `any` (`%x00-FF` is byte-wise and fails on multibyte)
 - All models inherit from `Lutaml::Model::Serializable` directly, with flattened attribute definitions
 - Entity classification uses `self.entity_type` on model classes (polymorphic dispatch, not `is_a?`)
 - Code quality: no `send`, `instance_variable_set/get`, `respond_to?`, or `require_relative`
