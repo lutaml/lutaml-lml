@@ -1,7 +1,9 @@
 models IhoS102Check {
-  class ValidationChecks < Array {
-    member_type ValidationCheck
-    member_unique dev_id
+  class ValidationChecks {
+    attribute checks {
+      type ValidationCheck
+      cardinality 0..n
+    }
   }
 
   class ValidationCheck {
