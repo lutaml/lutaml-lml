@@ -26,6 +26,7 @@ module Lutaml
         @compiled = {}
         @forward_refs = {}
         @enum_names = Set.new
+        @enum_classes = {}
       end
 
       def compile(input)
@@ -78,7 +79,7 @@ module Lutaml
         attrs = Array(instance.attributes)
         type_attr = attrs.find { |a| a.name == "type" }
         type_name = type_attr ? type_attr.value.to_s : instance.type
-        klass = @compiled[type_name]
+        klass = @compiled[demodulize(type_name)]
         unless klass
           errors << "#{path}: unknown type '#{type_name}'"
           return
@@ -158,15 +159,20 @@ module Lutaml
           key = name.to_sym
           next unless schema_keys.include?(key)
 
-          hash[key] = resolve_instance_value(value, nested)
+          hash[key] = resolve_instance_value(value, nested, klass.attributes[key])
         end
       end
 
-      def resolve_instance_value(value, nested)
+      def resolve_instance_value(value, nested, attr_def = nil)
         if nested.any?
           nested.map { |i| hydrate_instance(i) }
         elsif value.is_a?(Array)
           value
+        elsif enum_class = attr_def && enum_class_for(attr_def.type)
+          value_name = enum_value_name(value.to_s)
+          description = enum_class.values
+            .find { |v| v.name == value_name }&.description
+          enum_class.new(value: value_name, description: description)
         elsif !value.nil?
           value
         end
@@ -200,23 +206,28 @@ module Lutaml
 
       alias_method :compile_data_type, :compile_class
 
+      EnumValue = Struct.new(:name, :description)
+
       def compile_enum(enum_def)
         name = enum_def.name.to_s
         values = extract_enum_values(enum_def)
 
         compiled_klass = Class.new(Lutaml::Model::Serializable) do
-          attribute :value, :string, default: values.first.to_s
+          attribute :value, :string, default: values.first.name
+          attribute :description, :string
 
           define_method(:to_s) { value }
         end
 
-        values.each do |val|
-          compiled_klass.define_singleton_method(val) do
-            new(value: val.to_s)
+        values.each do |value|
+          compiled_klass.define_singleton_method(value.name) do
+            new(value: value.name, description: value.description)
           end
         end
+        compiled_klass.define_singleton_method(:values) { values }
 
         @enum_names << name
+        @enum_classes[name] = compiled_klass
         register(name, compiled_klass)
       end
 
@@ -288,7 +299,11 @@ module Lutaml
       def build_options(attr)
         options = {}
         card = attr.cardinality
-        return options unless card
+        unless card
+          # LML attributes without an explicit cardinality are optional (0..1)
+          options[:default] = nil
+          return options
+        end
 
         min = parse_cardinality_value(card.min)
         max = parse_cardinality_value(card.max)
@@ -313,8 +328,19 @@ module Lutaml
 
       def extract_enum_values(enum_def)
         enum_def.attributes.map do |attr|
-          attr.name.to_s
+          description = Array(attr.attributes).find do |nested|
+            nested.name == "description"
+          end
+          EnumValue.new(attr.name.to_s, description&.type)
         end
+      end
+
+      def enum_class_for(type)
+        type.is_a?(Class) && @enum_classes.value?(type) and return type
+      end
+
+      def enum_value_name(raw)
+        raw.split("::").last
       end
 
       def register(name, klass)
