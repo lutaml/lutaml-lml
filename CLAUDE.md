@@ -41,7 +41,7 @@ Input → Preprocessor → Parser → Transform → DataProcessor → DocumentBu
 1. **Pipeline** (`pipeline.rb`): Orchestrates the full parse flow. Entry point for all parsing.
 2. **Preprocessor** (`preprocessor.rb`): Strips comments, inlines `include` directives
 3. **Parser** (`parser.rb`): Facade over the PARG artifact; `parse` returns the raw parse tree.
-4. **Grammar** (`grammar/lml.parg`): The LML grammar written in PARG (parsanol grammar language), compiled in memory to a checksummed artifact (memoized in `Grammar.artifact`, entry `diagram`). PEG semantics — ordered choice; alternative order is deliberate and lint-checked.
+4. **Grammar** (`grammar/lml.parg`): The LML grammar written in PARG (parsanol grammar language), entry `diagram`. `grammar/lml.artifact.json` is its compiled form — regenerate with `rake parg` after any grammar edit; `Grammar.artifact` loads the committed artifact (fast path) and falls back to compiling the text on drift or absence (a sync spec enforces the pair in CI). PEG semantics — ordered choice; alternative order is deliberate and lint-checked.
 5. **Transform** (`transform.rb`): Minimal Parsanol transform (visibility mapping, string cleanup)
 6. **DataProcessor** (`data_processor/`): Post-transform data massage, split into sub-modules by concern (value, attribute, instance, collection, view processing). Usable as mixin or via `.process` class method.
 7. **DocumentBuilder** (`document_builder.rb`): Builds domain model objects from processed hashes via a registry pattern. Takes `LmlConverter::MODEL_REGISTRY` and provides `build(key, hash)`.
