@@ -460,6 +460,19 @@ RSpec.describe "LML Grammar" do
       expect(Lutaml::Lml::Grammar.artifact.path)
         .to eq(Lutaml::Lml::Grammar::ARTIFACT_PATH)
     end
+
+    it 'loads under a non-UTF-8 process locale' do
+      original = Encoding.default_external
+      Lutaml::Lml::Grammar.instance_variable_set(:@artifact, nil)
+      Encoding.default_external = Encoding::US_ASCII
+      begin
+        artifact = Lutaml::Lml::Grammar.artifact
+        expect(artifact.path).to eq(Lutaml::Lml::Grammar::ARTIFACT_PATH)
+      ensure
+        Encoding.default_external = original
+        Lutaml::Lml::Grammar.instance_variable_set(:@artifact, nil)
+      end
+    end
   end
 
   describe "MECE keyword separation" do

@@ -24,17 +24,20 @@ module Lutaml
         @artifact ||= load_artifact || compile_artifact
       end
 
+      # The grammar text and artifact carry UTF-8 (em-dashes in
+      # comments); pin the encoding so non-UTF-8 locales (LANG=C CI
+      # images) cannot raise InvalidByteSequenceError on read.
       def self.load_artifact
         return unless File.exist?(ARTIFACT_PATH)
 
-        envelope = JSON.parse(File.read(ARTIFACT_PATH))
-        return unless envelope['source'] == File.read(GRAMMAR_PATH)
+        envelope = JSON.parse(File.read(ARTIFACT_PATH, encoding: 'UTF-8'))
+        return unless envelope['source'] == File.read(GRAMMAR_PATH, encoding: 'UTF-8')
 
         Parsanol::PARG::Artifact.new(envelope, ARTIFACT_PATH, File.dirname(ARTIFACT_PATH))
       end
 
       def self.compile_artifact
-        document = Parsanol::PARG::Parser.new(File.read(GRAMMAR_PATH)).parse
+        document = Parsanol::PARG::Parser.new(File.read(GRAMMAR_PATH, encoding: 'UTF-8')).parse
         Parsanol::PARG::Artifact.new(
           Parsanol::PARG::Compiler.compile(document).envelope, nil, nil
         )
