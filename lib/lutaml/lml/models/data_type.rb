@@ -5,6 +5,7 @@ module Lutaml
     class DataType < Lutaml::Model::Serializable
       # From TopElement
       attribute :name, :string
+      attribute :wire_mappings, "Lutaml::Lml::Mapping", collection: true, default: -> { [] }
       attribute :definition, Lutaml::Lml::Types::TextType
       attribute :keyword, :string, default: "dataType"
       attribute :stereotype, :string, collection: true, default: -> { [] }

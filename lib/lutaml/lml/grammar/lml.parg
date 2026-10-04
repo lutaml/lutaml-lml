@@ -89,7 +89,13 @@ grammar Lml version "1.0.0" {
 
   # ---- Definitions ----
   class_modifier = [ ( [ whitespace ] ( "abstract" / "interface" ) ) as modifier ws ]
-  class_inner_definitions = definition_body / ( !( "attribute" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
+  # ---- Mapping blocks (lutaml-model wire names) ----
+  map_name = ( quoted_string / 1*( word / "-" / "." ) )
+  map_line = [ ws ] "map" ws ( map_name ) as wire "," ws "to:" ws ( map_name ) as to [ whitespace ]
+  mapping_body = [ ws ] "{" [ whitespace ] ( *( map_line ) ) as maps "}"
+  mapping_section = [ whitespace ] "mapping" ws ( variable ) as format mapping_body
+
+  class_inner_definitions = definition_body / mapping_section / ( !( "attribute" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
   class_inner_definition = class_inner_definitions [ whitespace ]
   class_body = [ ws ] "{" [ whitespace ] ( *( class_inner_definition ) ) as members "}"
   parent_class = [ ws ] "<" [ ws ] ( class_name_chars ) as parent_class
