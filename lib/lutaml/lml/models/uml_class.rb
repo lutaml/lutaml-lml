@@ -23,6 +23,7 @@ module Lutaml
       attribute :operations, "Lutaml::Lml::Operation", collection: true
       attribute :data_types, "Lutaml::Lml::DataType", collection: true
       attribute :associations, "Lutaml::Lml::Association", collection: true
+      attribute :wire_mappings, "Lutaml::Lml::Mapping", collection: true, default: -> { [] }
 
       # LML-specific
       attribute :parent_class, :string

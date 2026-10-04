@@ -20,7 +20,8 @@ module Lutaml
         constraint: ::Lutaml::Lml::Constraint,
         value: ::Lutaml::Lml::Value,
         view_import: ::Lutaml::Lml::ViewImport,
-        view_filter: ::Lutaml::Lml::ViewFilter
+        view_filter: ::Lutaml::Lml::ViewFilter,
+        mapping: ::Lutaml::Lml::Mapping
       }.freeze
 
       attr_reader :registry
@@ -31,7 +32,7 @@ module Lutaml
 
       FACTORY_KEYS = %i[
         document package class enum data_type diagram view_import view_filter
-        attribute association operation constraint value cardinality
+        attribute association operation constraint value cardinality mapping
       ].freeze
 
       MEMBER_KEY_MAP = {
@@ -45,7 +46,8 @@ module Lutaml
         associations: :association,
         operations: :operation,
         constraints: :constraint,
-        values: :value
+        values: :value,
+        mappings: :mapping
       }.freeze
 
       FACTORY_KEYS.each do |key|
@@ -95,6 +97,7 @@ module Lutaml
       end
 
       def add_members(model, hash)
+        expand_mapping_section(model, hash)
         MEMBER_KEY_MAP.each do |plural_key, singular_key|
           data = hash.delete(plural_key)
           next if data.nil?
@@ -104,6 +107,32 @@ module Lutaml
         end
 
         remap_filter_keys(hash, model)
+      end
+
+      # A mapping section arrives as a bare member hash
+      # { format:, maps: [{ wire:, to: }] }; expand to one Mapping entry
+      # per map line, each carrying the format, and strip the section keys
+      def expand_mapping_section(model, hash)
+        section = mapping_section_from(hash)
+        return unless section
+
+        section[:maps].to_a.each do |line|
+          model.wire_mappings << build(:mapping,
+                                       format: section[:format],
+                                       wire: unquote(line[:wire]),
+                                       to: unquote(line[:to]))
+        end
+      end
+
+      def mapping_section_from(hash)
+        return { format: unquote(hash[:format]), maps: hash.delete(:maps) } if hash.key?(:maps)
+
+        hash.delete(:mappings)
+      end
+
+      # quoted_string captures nest their value under :string
+      def unquote(value)
+        value.is_a?(Hash) && value.key?(:string) ? value[:string] : value
       end
 
       def ensure_collection(model, key)

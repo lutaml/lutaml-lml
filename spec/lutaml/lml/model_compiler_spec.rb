@@ -243,4 +243,19 @@ RSpec.describe Lutaml::Lml::ModelCompiler do
       expect(vc.attributes[:dev_id].collection?).to be false
     end
   end
+
+  describe "declared mapping blocks" do
+    it "emits lutaml-model wire-name mappings" do
+      file = Tempfile.new(%w[test .lml])
+      file.write("models M {\n  class Widget {\n    attribute name { type String cardinality 1 }\n    mapping yaml { map \"full-name\", to: \"name\" }\n  }\n}")
+      file.rewind
+
+      result = compiler.compile(file)
+      widget = result["Widget"]
+      expect(widget.attributes).to have_key(:name)
+      wired = widget.from_yaml("---\nfull-name: Gizmo\n")
+      expect(wired.name).to eq("Gizmo")
+      file.close!
+    end
+end
 end

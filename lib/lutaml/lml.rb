@@ -71,6 +71,7 @@ module Lutaml
     autoload :InstanceCollection, "lutaml/lml/models/instance_collection"
     autoload :InstancesExport, "lutaml/lml/models/instances_export"
     autoload :InstancesImport, "lutaml/lml/models/instances_import"
+    autoload :Mapping, "lutaml/lml/models/mapping"
     autoload :Operation, "lutaml/lml/models/operation"
     autoload :OperationParameter, "lutaml/lml/models/operation_parameter"
     autoload :Package, "lutaml/lml/models/package"

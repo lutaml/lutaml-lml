@@ -201,7 +201,23 @@ module Lutaml
       def compile_class(klass_def)
         name = klass_def.name.to_s
         compiled_klass = build_compiled_class(klass_def)
+        apply_declared_mappings(compiled_klass, klass_def)
         register(name, compiled_klass)
+      end
+
+      # Emit the lutaml-model mapping blocks declared in the LML source:
+      #   mapping yaml { map "full-name", to: "name" }
+      # becomes klass.yml do |m| m.map "full-name", to: :name end
+      def apply_declared_mappings(compiled_klass, def_obj)
+        return unless def_obj.is_a?(UmlClass) || def_obj.is_a?(DataType)
+
+        def_obj.wire_mappings.to_a.group_by(&:format).each do |format, entries|
+          next unless format && Lutaml::Model::FormatRegistry.registered?(format.to_sym)
+
+          compiled_klass.public_send(format) do |mapping|
+            entries.each { |entry| mapping.map(entry.wire, to: entry.to.to_sym) }
+          end
+        end
       end
 
       alias_method :compile_data_type, :compile_class
