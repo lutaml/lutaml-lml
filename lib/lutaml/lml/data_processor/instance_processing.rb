@@ -13,6 +13,7 @@ module Lutaml
 
         INSTANCE_FIELD_HANDLERS = {
           instance_type: :handle_instance_type,
+          isa: :handle_instance_isa,
           instance: :handle_instance_nested,
           attributes: :handle_instance_attributes,
           template: :handle_instance_template
@@ -43,6 +44,10 @@ module Lutaml
 
         def handle_instance_type(value, result)
           result[:type] = process_value(value).last
+        end
+
+        def handle_instance_isa(value, result)
+          result[:isa] = process_value(value).last
         end
 
         def handle_instance_nested(value, result)

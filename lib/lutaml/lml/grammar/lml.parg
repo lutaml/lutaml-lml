@@ -95,7 +95,12 @@ grammar Lml version "1.0.0" {
   mapping_body = [ ws ] "{" [ whitespace ] ( *( map_line ) ) as maps "}"
   mapping_section = [ whitespace ] "mapping" ws ( variable ) as format mapping_body
 
-  class_inner_definitions = definition_body / mapping_section / ( !( "attribute" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
+  derive_definition = ( [ whitespace ] "derive" ws attribute_name [ ws ] ":" [ ws ] [ quotes ] ( 1*typechar ) as type [ quotes ] ) as derived_field [ whitespace ]
+  string_format_item = ( [ ws ] ( "artifact" / "root" ) as key ws ( quoted_string / 1*nonspace ) as value [ whitespace ] )
+  string_format_body = "{" [ whitespace ] ( *( string_format_item ) ) as items [ whitespace ] "}"
+  string_format_definition = ( [ whitespace ] "string_format" ws ( variable ) as format [ ws ] string_format_body ) as string_format
+
+  class_inner_definitions = definition_body / mapping_section / derive_definition / string_format_definition / ( !( "attribute" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
   class_inner_definition = class_inner_definitions [ whitespace ]
   class_body = [ ws ] "{" [ whitespace ] ( *( class_inner_definition ) ) as members "}"
   parent_class = [ ws ] "<" [ ws ] ( class_name_chars ) as parent_class
@@ -105,7 +110,11 @@ grammar Lml version "1.0.0" {
   definition_content = *( ( "\\" any_char ) / ( "{" definition_content "}" ) / ( !"}" any_char ) )
   definition_body = [ ws ] "definition" [ whitespace ] "{" ( definition_content ) as definition "}"
 
-  enum_inner_definitions = definition_body / attribute_definition / comment_definition / comment_multiline_definition
+  member_field_line = [ ws ] attribute_name [ ws ] ( 1*nonspace ) as member_field_type [ whitespace ]
+  member_fields_definition = ( [ whitespace ] "member_fields" [ whitespace ] "{" [ whitespace ] ( *( member_field_line ) ) as member_fields [ whitespace ] "}" ) as member_fields_decl
+  enum_member_with_payload = ( [ whitespace ] attribute_name [ ws ] ( class_body / keyword_attribute_body ) ) as attributes
+
+  enum_inner_definitions = definition_body / member_fields_definition / enum_member_with_payload / attribute_definition / comment_definition / comment_multiline_definition
   enum_inner_definition = enum_inner_definitions [ whitespace ]
   enum_body = [ ws ] "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
   enum_definition = [ whitespace ] "enum" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]
@@ -148,12 +157,13 @@ grammar Lml version "1.0.0" {
 
   # ---- Instances ----
   instance = keyword_instance / class_instance
-  keyword_instance = ( [ whitespace ] "instance" [ ws ( namespaced_identifier ) as instance_type ] [ ws ] "{" [ whitespace ] ( ( [ ws ] instance ) / attributes ) "}" ) as instance [ whitespace ]
+  isa_definition = [ whitespace ] "isa" ws ( namespaced_identifier ) as isa [ whitespace ]
+  keyword_instance = ( [ whitespace ] "instance" [ ws ( namespaced_identifier ) as instance_type ] [ ws ] "{" [ whitespace ] [ isa_definition ] ( ( [ ws ] instance ) / attributes ) "}" ) as instance [ whitespace ]
   class_instance = ( variable as instance_type [ whitespace ] quoted_string as name [ whitespace ] [ [ whitespace ] "extends" [ whitespace ] quoted_string as parent [ whitespace ] ] "{" [ whitespace ] [ lml_instance_body ] "}" ) as instance [ whitespace ]
   lml_instance_body = lml_instance_members [ whitespace ]
   instance_template = [ whitespace ] "template" [ whitespace ] "{" [ whitespace ] attributes [ whitespace ] "}"
   lml_instance_members = ( instance_template ) as template / attributes
-  models = [ whitespace ] "models" [ whitespace ] variable as name [ whitespace ] "{" ( *( model_body ) ) as members "}" [ whitespace ]
+  models = [ whitespace ] "models" [ whitespace ] variable as name [ whitespace ] "{" ( *( ( ( string_format_definition ) as default_string_formats ) / model_body ) ) as members "}" [ whitespace ]
   model_body = ( ( class_definition ) as classes / ( enum_definition ) as enums ) [ whitespace ]
 
   # ---- Data structures ----
