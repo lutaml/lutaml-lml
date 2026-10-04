@@ -6,23 +6,24 @@ module Lutaml
       class ValidationError < Error; end
 
       TYPE_MAP = {
-        "String" => :string,
-        "Integer" => :integer,
-        "Boolean" => :boolean,
-        "Float" => :float,
-        "Date" => :date,
-        "date_time" => :date_time,
-        "DateTime" => :date_time,
-        "Time" => :time,
-        "Uri" => :string,
+        'String' => :string,
+        'Integer' => :integer,
+        'Boolean' => :boolean,
+        'Float' => :float,
+        'Date' => :date,
+        'date_time' => :date_time,
+        'DateTime' => :date_time,
+        'Time' => :time,
+        'Uri' => :string
       }.freeze
 
       # Tokens that denote unbounded cardinality in LML attribute
       # declarations. Anything else must parse as an Integer.
       UNBOUNDED_TOKENS = %w[* n N unbounded].freeze
 
-      def initialize(namespace: nil)
+      def initialize(namespace: nil, artifact_paths: {})
         @namespace = namespace
+        @artifact_paths = artifact_paths
         @compiled = {}
         @forward_refs = {}
         @enum_names = Set.new
@@ -70,14 +71,14 @@ module Lutaml
 
       private
 
-      def validate_instance(instance, errors, path = "root")
+      def validate_instance(instance, errors, path = 'root')
         if instance.instance && Array(instance.attributes).empty?
           validate_instance(instance.instance, errors, "#{path}.instance")
           return
         end
 
         attrs = Array(instance.attributes)
-        type_attr = attrs.find { |a| a.name == "type" }
+        type_attr = attrs.find { |a| a.name == 'type' }
         type_name = type_attr ? type_attr.value.to_s : instance.type
         klass = @compiled[demodulize(type_name)]
         unless klass
@@ -106,19 +107,20 @@ module Lutaml
 
         attrs.each do |attr|
           next unless schema_attrs.include?(attr.name)
+
           attr_def = klass.attributes[attr.name.to_sym]
           next unless attr_def
 
-          if attr_def.collection? && attr.instances.any?
-            attr.instances.each_with_index do |nested, i|
-              validate_instance(nested, errors, "#{path}.#{attr.name}[#{i}]")
-            end
+          next unless attr_def.collection? && attr.instances.any?
+
+          attr.instances.each_with_index do |nested, i|
+            validate_instance(nested, errors, "#{path}.#{attr.name}[#{i}]")
           end
         end
 
-        if instance.instance
-          validate_instance(instance.instance, errors, "#{path}.instance")
-        end
+        return unless instance.instance
+
+        validate_instance(instance.instance, errors, "#{path}.instance")
       end
 
       def hydrate_instance(instance)
@@ -134,13 +136,15 @@ module Lutaml
       end
 
       def resolve_instance_type(instance)
-        type_attr = Array(instance.attributes).find { |a| a.name == "type" }
-        raw = type_attr ? type_attr.value.to_s : instance.type.to_s
-        demodulize(raw)
+        # L6: the explicit isa keyword is the type override; a `type`
+        # attribute is ordinary data (pubid's identifier-kind field)
+        return demodulize(instance.isa.to_s) if instance.isa
+
+        demodulize(instance.type.to_s)
       end
 
       def demodulize(name)
-        name.split("::").last.to_s
+        name.split('::').last.to_s
       end
 
       def hydrate_as_untyped(instance, type_name)
@@ -168,10 +172,10 @@ module Lutaml
           nested.map { |i| hydrate_instance(i) }
         elsif value.is_a?(Array)
           value
-        elsif enum_class = attr_def && enum_class_for(attr_def.type)
+        elsif (enum_class = attr_def && enum_class_for(attr_def.type))
           value_name = enum_value_name(value.to_s)
           description = enum_class.values
-            .find { |v| v.name == value_name }&.description
+                                  .find { |v| v.name == value_name }&.description
           enum_class.new(value: value_name, description: description)
         elsif !value.nil?
           value
@@ -184,6 +188,7 @@ module Lutaml
         doc.data_types.each { |dt| compile_data_type(dt) }
         resolve_forward_references
         apply_xml_mappings
+        register_string_formats(doc)
       end
 
       def resolve_forward_references
@@ -202,6 +207,7 @@ module Lutaml
         name = klass_def.name.to_s
         compiled_klass = build_compiled_class(klass_def)
         apply_declared_mappings(compiled_klass, klass_def)
+        declare_derived_fields(compiled_klass, klass_def)
         register(name, compiled_klass)
       end
 
@@ -220,24 +226,28 @@ module Lutaml
         end
       end
 
-      alias_method :compile_data_type, :compile_class
+      alias compile_data_type compile_class
 
-      EnumValue = Struct.new(:name, :description)
+      EnumValue = Struct.new(:name, :description, :payload)
 
       def compile_enum(enum_def)
         name = enum_def.name.to_s
         values = extract_enum_values(enum_def)
 
+        payload_fields = Array(enum_def.member_fields).map(&:name).map(&:to_s)
         compiled_klass = Class.new(Lutaml::Model::Serializable) do
           attribute :value, :string, default: values.first.name
           attribute :description, :string
+          payload_fields.each do |field|
+            attribute field.to_sym, :string
+          end
 
           define_method(:to_s) { value }
         end
 
         values.each do |value|
           compiled_klass.define_singleton_method(value.name) do
-            new(value: value.name, description: value.description)
+            new({ value: value.name, description: value.description }.merge(value.payload || {}))
           end
         end
         compiled_klass.define_singleton_method(:values) { values }
@@ -253,13 +263,26 @@ module Lutaml
       def build_compiled_class(def_obj)
         all_attrs = build_attributes(def_obj)
         immediate, deferred = all_attrs.partition do |(_, raw_type, type, _)|
-          type != :string || TYPE_MAP.key?(raw_type) || raw_type.start_with?("reference:(")
+          type != :string || TYPE_MAP.key?(raw_type) || raw_type.start_with?('reference:(')
         end
 
         compiled_klass = Class.new(Lutaml::Model::Serializable) do
           immediate.each do |attr_name, _raw, type, options|
             attribute attr_name, type, options
           end
+        end
+        render_nil_map = Array(def_obj.attributes).to_h do |a|
+          [a.name.to_sym, declared_render_nil(a)]
+        end.compact
+        unless render_nil_map.empty?
+          compiled_klass.class_eval do
+            @lml_render_nil = render_nil_map
+
+            class << self
+              attr_reader :lml_render_nil
+            end
+          end
+          apply_render_nil_mappings(compiled_klass, render_nil_map)
         end
 
         name = def_obj.name.to_s
@@ -303,7 +326,7 @@ module Lutaml
       def resolve_type(type_name)
         if TYPE_MAP.key?(type_name)
           TYPE_MAP[type_name]
-        elsif type_name.start_with?("reference:(")
+        elsif type_name.start_with?('reference:(')
           :string
         elsif @compiled.key?(type_name)
           @compiled[type_name]
@@ -313,11 +336,12 @@ module Lutaml
       end
 
       def build_options(attr)
+        declared = declared_attribute_options(attr)
         options = {}
         card = attr.cardinality
         unless card
           # LML attributes without an explicit cardinality are optional (0..1)
-          options[:default] = nil
+          options[:default] = declared[:default]
           return options
         end
 
@@ -328,10 +352,35 @@ module Lutaml
           options[:collection] = true
         elsif max.nil? && min && min > 1
           options[:collection] = true
-        elsif min == 0
+        elsif min.zero?
           options[:default] = nil
         end
+        # a declared default literal wins over the absent-marker
+        options[:default] = declared[:default] if declared.key?(:default)
         options
+      end
+
+      # L7b: default <literal> and render_nil true|false ride the
+      # keyword-attribute properties (bare name-value lines). Defaults
+      # fire only on ABSENT input; render_nil mirrors lutaml-model.
+      def declared_attribute_options(attr)
+        options = {}
+        Array(attr.properties).each do |prop|
+          next unless prop.name.to_s == 'default'
+
+          value = prop.value
+          value = value[:string] if value.is_a?(Hash) && value.key?(:string)
+          options[:default] = value&.to_s
+        end
+        options
+      end
+
+      # render_nil is a lutaml-model MAPPING option, not an attribute
+      # option: collect the declaration for the mapping passes
+      def declared_render_nil(attr)
+        Array(attr.properties).find do |prop|
+          prop.name.to_s == 'render_nil'
+        end&.then { |prop| prop.value.to_s == 'true' }
       end
 
       def parse_cardinality_value(val)
@@ -343,12 +392,33 @@ module Lutaml
       end
 
       def extract_enum_values(enum_def)
+        member_fields = Array(enum_def.member_fields).map do |f|
+          [f.name.to_s, f.type.to_s]
+        end
         enum_def.attributes.map do |attr|
           description = Array(attr.attributes).find do |nested|
-            nested.name == "description"
+            nested.name == 'description'
           end
-          EnumValue.new(attr.name.to_s, description&.type)
+          payload = extract_member_payload(attr)
+          validate_member_payload(enum_def, attr, payload, member_fields)
+          EnumValue.new(attr.name.to_s, description&.type, payload)
         end
+      end
+
+      # L7a: per-member payload lines ride the keyword-attribute
+      # properties (`abbreviation = "WD"`)
+      def extract_member_payload(attr)
+        Array(attr.properties).to_h { |p| [p.name.to_s, p.value&.to_s] }
+      end
+
+      def validate_member_payload(enum_def, attr, payload, member_fields)
+        known = member_fields.map(&:first)
+        unknown = payload.keys - known
+        return unless unknown.any?
+
+        raise ArgumentError,
+              "enum #{enum_def.name}: member #{attr.name} has undeclared " \
+              "payload fields #{unknown.inspect} (declared: #{known.inspect})"
       end
 
       def enum_class_for(type)
@@ -356,7 +426,83 @@ module Lutaml
       end
 
       def enum_value_name(raw)
-        raw.split("::").last
+        raw.split('::').last
+      end
+
+      # L7b: derived fields declare existence + type; computation is
+      # bound by the binder from artifact derive specs. The attribute
+      # participates in mappings like any other (relaton consumes URNs
+      # from model JSON).
+      def declare_derived_fields(compiled_klass, def_obj)
+        return unless def_obj.is_a?(UmlClass) || def_obj.is_a?(DataType)
+
+        derived = Array(def_obj.derived_fields)
+        return if derived.empty?
+
+        compiled_klass.class_eval do
+          @lml_derived_fields = derived.map(&:name).map(&:to_sym)
+          def self.derived_fields
+            @lml_derived_fields
+          end
+        end
+        derived.each do |field|
+          compiled_klass.attribute field.name.to_sym, resolve_type(field.type.to_s)
+        end
+      end
+
+      # L5: register grammar-backed string formats. Class-level
+      # declarations win; a models-block default applies to classes
+      # without their own. Artifact resolution: the compiler's
+      # artifacts map (name => path), else the string as a path.
+      def register_string_formats(doc)
+        defaults = doc.packages.flat_map(&:default_string_formats)
+        doc.classes.each do |class_def|
+          Array(class_def.string_formats).each do |fmt|
+            register_string_format(class_def.name.to_s, fmt)
+          end
+          next if Array(class_def.string_formats).any? do |f|
+            f.format == defaults.first&.format
+          end
+
+          defaults.each do |fmt|
+            next if Array(class_def.string_formats).map(&:format).include?(fmt.format)
+
+            register_string_format(class_def.name.to_s, fmt)
+          end
+        end
+      end
+
+      def register_string_format(class_name, fmt)
+        artifact_path = artifact_path_for(fmt.artifact.to_s)
+        return unless artifact_path
+
+        compiled = @compiled[class_name]
+        return unless compiled
+
+        Parsanol::PARG::Lutaml.register(compiled,
+                                        format_name: fmt.format.to_sym,
+                                        artifact: artifact_path,
+                                        entry: fmt.root.to_s)
+      end
+
+      def artifact_path_for(reference)
+        mapped = @artifact_paths && @artifact_paths[reference]
+        return mapped if mapped && File.exist?(mapped.to_s)
+        return reference if File.exist?(reference)
+
+        nil
+      end
+
+      # Emit KV mappings carrying render_nil for the declared
+      # attributes (yaml/json round-trips honor them)
+      def apply_render_nil_mappings(compiled_klass, render_nil_map)
+        %i[yaml json].each do |fmt|
+          compiled_klass.public_send(fmt) do |mapping|
+            render_nil_map.each do |name, flag|
+              mapping.map name.to_s, to: name, render_nil: flag
+            end
+          end
+        end
       end
 
       def register(name, klass)

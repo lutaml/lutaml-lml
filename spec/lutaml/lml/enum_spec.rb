@@ -52,7 +52,7 @@ RSpec.describe Lutaml::Lml::ModelCompiler do
     data = Tempfile.new(["d", ".lml"])
     data.write(<<~LML)
       instance X {
-        type Item
+        isa Item
         color = Color::red
       }
     LML

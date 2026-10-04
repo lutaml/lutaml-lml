@@ -24,6 +24,8 @@ module Lutaml
       attribute :data_types, "Lutaml::Lml::DataType", collection: true
       attribute :associations, "Lutaml::Lml::Association", collection: true
       attribute :wire_mappings, "Lutaml::Lml::Mapping", collection: true, default: -> { [] }
+      attribute :string_formats, "Lutaml::Lml::StringFormat", collection: true, default: -> { [] }
+      attribute :derived_fields, "Lutaml::Lml::DerivedField", collection: true, default: -> { [] }
 
       # LML-specific
       attribute :parent_class, :string

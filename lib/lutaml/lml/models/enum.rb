@@ -17,6 +17,7 @@ module Lutaml
       attribute :attributes, "Lutaml::Lml::TopElementAttribute", collection: true,
                                                                    default: -> { [] }
       attribute :modifier, :string
+      attribute :member_fields, "Lutaml::Lml::MemberField", collection: true, default: -> { [] }
       attribute :operations, "Lutaml::Lml::Operation", collection: true, default: -> { [] }
       attribute :values, "Lutaml::Lml::Value", collection: true, default: -> { [] }
 

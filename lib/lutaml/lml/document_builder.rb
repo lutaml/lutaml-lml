@@ -21,7 +21,10 @@ module Lutaml
         value: ::Lutaml::Lml::Value,
         view_import: ::Lutaml::Lml::ViewImport,
         view_filter: ::Lutaml::Lml::ViewFilter,
-        mapping: ::Lutaml::Lml::Mapping
+        mapping: ::Lutaml::Lml::Mapping,
+        string_format: ::Lutaml::Lml::StringFormat,
+        derived_field: ::Lutaml::Lml::DerivedField,
+        member_field: ::Lutaml::Lml::MemberField
       }.freeze
 
       attr_reader :registry
@@ -33,6 +36,7 @@ module Lutaml
       FACTORY_KEYS = %i[
         document package class enum data_type diagram view_import view_filter
         attribute association operation constraint value cardinality mapping
+        string_format derived_field
       ].freeze
 
       MEMBER_KEY_MAP = {
@@ -47,7 +51,8 @@ module Lutaml
         operations: :operation,
         constraints: :constraint,
         values: :value,
-        mappings: :mapping
+        mappings: :mapping,
+        member_fields: :member_field
       }.freeze
 
       FACTORY_KEYS.each do |key|
@@ -98,6 +103,8 @@ module Lutaml
 
       def add_members(model, hash)
         expand_mapping_section(model, hash)
+        expand_class_declarations(model, hash)
+        expand_enum_member_fields(model, hash)
         MEMBER_KEY_MAP.each do |plural_key, singular_key|
           data = hash.delete(plural_key)
           next if data.nil?
@@ -135,6 +142,43 @@ module Lutaml
         value.is_a?(Hash) && value.key?(:string) ? value[:string] : value
       end
 
+      # L5/L7 declaration members: string_format sections (class- or
+      # models-level), derive lines, and enum member_fields blocks
+      def expand_class_declarations(model, hash)
+        if (section = hash.delete(:string_format))
+          model.string_formats << build_string_format(section)
+        end
+        if (section = hash.delete(:default_string_formats))
+          model.default_string_formats << build_string_format(section)
+        end
+        return unless (derived = hash.delete(:derived_field))
+
+        model.derived_fields << build(:derived_field,
+                                      name: derived[:name],
+                                      type: unquote(derived[:type]))
+      end
+
+      def expand_enum_member_fields(model, hash)
+        decl = hash.delete(:member_fields_decl)
+        return unless decl && model.is_a?(Enum)
+
+        decl[:member_fields].to_a.each do |field|
+          model.member_fields << build(:member_field,
+                                       name: field[:name],
+                                       type: unquote(field[:member_field_type]))
+        end
+      end
+
+      def build_string_format(section)
+        items = section[:items].to_a.each_with_object({}) do |item, acc|
+          acc[item[:key].to_sym] = unquote(item[:value])
+        end
+        build(:string_format,
+              format: unquote(section[:format]),
+              artifact: items[:artifact],
+              root: items[:root])
+      end
+
       def ensure_collection(model, key)
         model.public_send(key) || begin
           model.public_send("#{key}=", [])
@@ -145,12 +189,10 @@ module Lutaml
       def remap_filter_keys(hash, model)
         return unless model.is_a?(Document)
 
-        if hash.key?(:show_list)
-          hash[:show_filter] = build_view_filter(hash.delete(:show_list))
-        end
-        if hash.key?(:hide_list)
-          hash[:hide_filter] = build_view_filter(hash.delete(:hide_list))
-        end
+        hash[:show_filter] = build_view_filter(hash.delete(:show_list)) if hash.key?(:show_list)
+        return unless hash.key?(:hide_list)
+
+        hash[:hide_filter] = build_view_filter(hash.delete(:hide_list))
       end
 
       def build_view_filter(entity_names)

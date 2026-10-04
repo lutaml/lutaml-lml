@@ -17,6 +17,7 @@ module Lutaml
       attribute :data_types, "Lutaml::Lml::DataType", collection: true, default: -> { [] }
       attribute :packages, "Lutaml::Lml::Package", collection: true, default: -> { [] }
       attribute :diagrams, "Lutaml::Lml::Diagram", collection: true, default: -> { [] }
+      attribute :default_string_formats, "Lutaml::Lml::StringFormat", collection: true, default: -> { [] }
     end
   end
 end
