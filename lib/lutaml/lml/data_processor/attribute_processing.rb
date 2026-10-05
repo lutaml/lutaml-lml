@@ -15,16 +15,50 @@ module Lutaml
 
         def process_attributes_array(obj)
           return [] if obj.empty?
-          return obj.map { |item| process_attributes(item) } unless single_key_hashes?(obj)
+          return obj.map { |item| process_attributes(item) } unless named_attribute_entries?(obj)
+          return merge_named_entries(obj) unless single_key_hashes?(obj)
 
+          obj.each_with_object({}) { |item, hash| append_uniform_entry(hash, item) }
+        end
+
+        def append_uniform_entry(hash, item)
+          hash[:properties] ||= []
+          if item.key?(:properties)
+            hash[:properties] << process_attributes(item[:properties])
+          else
+            hash.merge!(process_attributes(item))
+          end
+        end
+
+        # Attribute-definition groups split across capture depths (e.g. the
+        # comma form: {name, type} beside a nested {value_set}) combine into
+        # one attribute entry. Key/value pair lists (import/export maps)
+        # carry :key and are never merged.
+        def named_attribute_entries?(obj)
+          obj.any? { |e| e.is_a?(Hash) && e.key?(:name) } &&
+            obj.all? { |e| e.is_a?(Hash) && !e.key?(:key) }
+        end
+
+        COLLECTION_KEYS = %i[properties attributes instances].freeze
+
+        def merge_named_entries(obj)
           obj.each_with_object({}) do |item, hash|
-            hash[:properties] ||= []
-            if item.key?(:properties)
-              hash[:properties] << process_attributes(item[:properties])
-            else
-              hash.merge!(process_attributes(item))
+            process_attributes(item).each do |key, value|
+              hash[key] = merge_attribute_value(hash[key], key, value)
             end
           end
+        end
+
+        def merge_attribute_value(existing, key, value)
+          return merge_collection_value(existing, value) if COLLECTION_KEYS.include?(key)
+          return existing + value if existing.is_a?(Array) && value.is_a?(Array)
+
+          value
+        end
+
+        def merge_collection_value(existing, value)
+          current = existing.is_a?(Array) ? existing : [existing]
+          current + (value.is_a?(Array) ? value : [value])
         end
 
         def process_attributes_hash(obj)
@@ -34,10 +68,9 @@ module Lutaml
           result[:literal] = true if obj.key?(:type_literal)
           apply_nested_attributes(result, obj)
           apply_remaining_keys(result, obj)
+          translate_values_argument(result)
           result
         end
-
-        private
 
         def single_key_hashes?(arr)
           arr.all? { |e| e.is_a?(Hash) && e.keys.size == 1 }

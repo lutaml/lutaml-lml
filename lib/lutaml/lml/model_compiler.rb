@@ -250,7 +250,8 @@ module Lutaml
         end
 
         values.each do |value|
-          compiled_klass.define_singleton_method(value.name) do
+          accessor = value.name.to_s.gsub(/[^a-zA-Z0-9_]/, '_')
+          compiled_klass.define_singleton_method(accessor) do
             new({ value: value.name, description: value.description }.merge(value.payload || {}))
           end
         end
@@ -320,11 +321,28 @@ module Lutaml
       def build_attributes(klass_def)
         Array(klass_def.attributes).map do |attr|
           attr_name = attr.name.to_sym
-          raw_type = attr.type.to_s
+          raw_type = resolve_values_type(klass_def, attr)
           type = resolve_type(raw_type)
           options = build_options(attr)
           [attr_name, raw_type, type, options]
         end
+      end
+
+      # RS 3001 §Attribute: `values { v1, v2 }` expands into an anonymous
+      # enum baked from the inline set; the attribute is typed with it.
+      def resolve_values_type(klass_def, attr)
+        return attr.type.to_s unless attr.value_set&.any?
+
+        enum_name = anonymous_enum_name(klass_def.name, attr.name)
+        members = attr.value_set.map { |v| ::Lutaml::Lml::TopElementAttribute.new(name: v.to_s) }
+        compile_enum(::Lutaml::Lml::Enum.new(name: enum_name, attributes: members))
+        enum_name
+      end
+
+      def anonymous_enum_name(class_name, attr_name)
+        base = class_name.to_s.split('::').last
+        attr_part = attr_name.to_s.split('_').map(&:capitalize).join
+        "#{base}#{attr_part}Values"
       end
 
       def resolve_type(type_name)
@@ -447,13 +465,22 @@ module Lutaml
           [f.name.to_s, f.type.to_s]
         end
         enum_def.attributes.map do |attr|
-          description = Array(attr.attributes).find do |nested|
-            nested.name == 'description'
-          end
+          description = member_description(attr)
           payload = extract_member_payload(attr)
           validate_member_payload(enum_def, attr, payload, member_fields)
-          EnumValue.new(attr.name.to_s, description&.type, payload)
+          EnumValue.new(attr.name.to_s, description, payload)
         end
+      end
+
+      # The member description rides a nested attribute named `description`
+      # (bare-member form) or `definition` (RS 3001 `value` blocks); both
+      # spellings are accepted.
+      def member_description(attr)
+        nested = Array(attr.attributes).find do |n|
+          %w[description definition].include?(n.name.to_s)
+        end
+        text = nested&.type || nested&.definition || nested&.value
+        text.is_a?(Hash) && text.key?(:string) ? text[:string] : text
       end
 
       # L7a: per-member payload lines ride the keyword-attribute

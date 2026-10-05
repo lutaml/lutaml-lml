@@ -38,7 +38,7 @@ grammar Lml version "1.0.0" {
   boolean = ( "true" / "false" ) as boolean
   number = ( 1*%x30-39 "." 1*%x30-39 ) as float / ( 1*%x30-39 ) as number
   variable = quoted_string / 1*word
-  reference = "reference:(" ( variable *( "." variable ) ) as reference ")"
+  reference = ( "reference:(" / "ref:(" ) ( variable *( "." variable ) ) as reference ")"
   range = ( variable as start ".." variable as end ) as range
   namespaced_identifier = variable *( "::" variable )
   comment_definition = [ ws ] ( "**" / "#" ) ( *( !newline any_char ) ) as comments
@@ -49,8 +49,8 @@ grammar Lml version "1.0.0" {
   cardinality_body_definition = cardchar as min [ ".." [ cardchar as max ] ]
   cardinality = "[" cardinality_body_definition as cardinality "]"
 
-  value = boolean / reference / range / number / quoted_string
-  key_value_pair = variable as key ws [ "=" ] [ ws ] value as value
+  data_value = boolean / reference / range / number / quoted_string
+  key_value_pair = variable as key ws [ "=" ] [ ws ] data_value as value
   key_value_map = "{" [ whitespace ] ( *( key_value_pair whitespace ) ) as key_value_map "}"
   kw_visibility_modifier = "+" / "-" / "#" / "~"
 
@@ -70,7 +70,9 @@ grammar Lml version "1.0.0" {
   keyword_type_argument = "type" [ ws ] ( 1*nonspace ) as type [ whitespace ]
   keyword_cardinality_argument = "cardinality" [ ws ] cardinality_body_definition as cardinality [ whitespace ]
   keyword_any_argument = [ ws ] ( 1*nonspace ) as name ws [ "=" ] [ ws ] attribute_value as value [ whitespace ]
-  keyword_attribute_options = *( keyword_type_argument / keyword_cardinality_argument / ( keyword_any_argument ) as properties )
+  keyword_values_argument = "values" ws ( ( value_set_body ) as value_set / ( variable ) as value_set_ref ) [ whitespace ]
+  value_set_body = "{" [ whitespace ] ( *( ( ( data_value / variable ) as item ) [ "," ] [ whitespace ] ) ) as items "}"
+  keyword_attribute_options = *( keyword_type_argument / keyword_cardinality_argument / keyword_values_argument / ( keyword_any_argument ) as properties )
   keyword_attribute_body = "{" [ whitespace ] keyword_attribute_options [ whitespace ] "}"
   keyword_attribute_definition = ( "attribute" ws attribute_name [ ws ] keyword_attribute_body ) as attributes
 
@@ -100,7 +102,7 @@ grammar Lml version "1.0.0" {
   string_format_body = "{" [ whitespace ] ( *( string_format_item ) ) as items [ whitespace ] "}"
   string_format_definition = ( [ whitespace ] "string_format" ws ( variable ) as format [ ws ] string_format_body ) as string_format
 
-  class_inner_definitions = definition_body / mapping_section / derive_definition / string_format_definition / ( !( "attribute" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
+  class_inner_definitions = definition_body / definition_line / mapping_section / derive_definition / string_format_definition / attribute_comma_definition / ( !( "attribute" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
   class_inner_definition = class_inner_definitions [ whitespace ]
   class_body = [ ws ] "{" [ whitespace ] ( *( class_inner_definition ) ) as members "}"
   parent_class = [ ws ] "<" [ ws ] ( class_name_chars ) as parent_class
@@ -109,15 +111,26 @@ grammar Lml version "1.0.0" {
   # Balanced-brace definition text: nested "{...}" and "\"-escapes allowed
   definition_content = *( ( "\\" any_char ) / ( "{" definition_content "}" ) / ( !"}" any_char ) )
   definition_body = [ ws ] "definition" [ whitespace ] "{" ( definition_content ) as definition "}"
+  definition_line = ( [ ws ] "definition" ws ( dq_string / sq_string ) ) as definition [ whitespace ]
 
   member_field_line = [ ws ] attribute_name [ ws ] ( 1*nonspace ) as member_field_type [ whitespace ]
   member_fields_definition = ( [ whitespace ] "member_fields" [ whitespace ] "{" [ whitespace ] ( *( member_field_line ) ) as member_fields [ whitespace ] "}" ) as member_fields_decl
+  attribute_comma_definition = ( [ whitespace ] "attribute" ws attribute_name "," [ ws ] ( 1*typechar ) as type [ ws ] [ "{" [ whitespace ] keyword_attribute_options [ whitespace ] "}" ] [ whitespace ] ) as attributes
   enum_member_with_payload = ( [ whitespace ] attribute_name [ ws ] ( class_body / keyword_attribute_body ) ) as attributes
+
+  # ---- Canonical value construct (RS 3001 par. Value / par. Enums) ----
+  # `value <name> { block }` is the canonical enum member; the bare
+  # identifier member is its documented shortcut. from_table expands to
+  # value members at compile time.
+  value_name = quoted_string / map_name
+  value_inner_definition = ( definition_body / definition_line / instance / attribute_line / comment_definition / comment_multiline_definition ) [ whitespace ]
+  value_body = "{" [ whitespace ] ( *( value_inner_definition ) ) as members "}"
+  value_definition = ( [ whitespace ] "value" ws ( value_name ) as value_name [ ws ] [ value_body ] [ whitespace ] ) as value_decl
 
   from_table_body = "{" [ whitespace ] *( "artifact" [ ws ] ( map_name ) as artifact_table [ whitespace ] ) "}"
   from_table_definition = ( [ whitespace ] "from_table" [ ws ] ( map_name ) as from_table_name [ ws ] [ from_table_body ] [ whitespace ] ) as from_table_decl
 
-  enum_inner_definitions = definition_body / member_fields_definition / from_table_definition / enum_member_with_payload / attribute_definition / comment_definition / comment_multiline_definition
+  enum_inner_definitions = definition_body / definition_line / member_fields_definition / from_table_definition / value_definition / enum_member_with_payload / attribute_comma_definition / attribute_definition / comment_definition / comment_multiline_definition
   enum_inner_definition = enum_inner_definitions [ whitespace ]
   enum_body = [ ws ] "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
   enum_definition = [ whitespace ] "enum" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]
@@ -170,8 +183,8 @@ grammar Lml version "1.0.0" {
   model_body = ( ( class_definition ) as classes / ( enum_definition ) as enums ) [ whitespace ]
 
   # ---- Data structures ----
-  attribute_value = instance / list / key_value_map / value / 1*( !%x0A any_char )
-  list_item = instance / value
+  attribute_value = instance / list / key_value_map / data_value / 1*( !%x0A any_char )
+  list_item = instance / data_value
   list = "[" [ whitespace ] ( *( list_item [ ws ] [ "," ] [ whitespace ] ) ) as list [ whitespace ] "]"
   collection = [ whitespace ] "collection" ws quoted_string as name [ ws ] "{" [ whitespace ] [ includes ] [ whitespace ] [ validation ] [ whitespace ] "}" [ whitespace ]
   includes = [ whitespace ] "includes" [ ws ] ( list ) as includes

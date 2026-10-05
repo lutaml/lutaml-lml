@@ -5,12 +5,14 @@ module Lutaml
     class DataProcessor
       autoload :ValueProcessing, "lutaml/lml/data_processor/value_processing"
       autoload :AttributeProcessing, "lutaml/lml/data_processor/attribute_processing"
+      autoload :ValueDeclarationProcessing, "lutaml/lml/data_processor/value_declaration_processing"
       autoload :InstanceProcessing, "lutaml/lml/data_processor/instance_processing"
       autoload :CollectionProcessing, "lutaml/lml/data_processor/collection_processing"
       autoload :ViewProcessing, "lutaml/lml/data_processor/view_processing"
 
       include ValueProcessing
       include AttributeProcessing
+      include ValueDeclarationProcessing
       include InstanceProcessing
       include CollectionProcessing
       include ViewProcessing
@@ -20,6 +22,7 @@ module Lutaml
         instances: :process_instances,
         instance: :process_instance,
         attributes: :process_attributes,
+        value_decl: :process_value_declaration,
         show_list: :process_show_list,
         hide_list: :process_hide_list
       }.freeze

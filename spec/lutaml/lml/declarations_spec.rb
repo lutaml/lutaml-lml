@@ -147,6 +147,118 @@ RSpec.describe 'LML declarations (isa, defaults, derive, payloads, string_format
     end
   end
 
+  describe 'RS 3001 canonical value construct' do
+    it 'compiles value members with descriptions and payloads' do
+      compiler = compile_lml(<<~LML)
+        models M {
+          enum Finish {
+            member_fields { label String }
+            value "Celadon" {
+              definition "Pale green glaze"
+              label = "cel"
+            }
+            value matte { definition "Non-reflective" }
+            gloss
+          }
+        }
+      LML
+      finish = compiler.compiled_classes['Finish']
+      expect(finish.values.map(&:name)).to eq(['Celadon', 'matte', 'gloss'])
+      expect(finish.values.first.description).to eq('Pale green glaze')
+      expect(finish.values.first.payload).to eq('label' => 'cel')
+      expect(finish.matte.value).to eq('matte')
+      expect(finish.gloss.value).to eq('gloss')
+    end
+
+    it 'treats quoted member names as canonical values with safe accessors' do
+      compiler = compile_lml(<<~LML)
+        models M {
+          enum Glaze {
+            value "Raku Glaze" { }
+            plain
+          }
+        }
+      LML
+      glaze = compiler.compiled_classes['Glaze']
+      expect(glaze.values.map(&:name)).to eq(['Raku Glaze', 'plain'])
+      expect(glaze.Raku_Glaze.value).to eq('Raku Glaze')
+    end
+  end
+
+  describe 'RS 3001 comma attribute form' do
+    it 'compiles `attribute name, Type { ... }` like the keyword form' do
+      compiler = compile_lml(<<~LML)
+        models M {
+          class Ceramic {
+            attribute location, String { cardinality 0..n }
+            attribute firing, String
+          }
+        }
+      LML
+      klass = compiler.compiled_classes['Ceramic']
+      expect(klass.attributes.keys).to include(:location, :firing)
+      inst = klass.new(location: 'kiln', firing: 'low')
+      expect(inst.location).to eq(['kiln'])
+      expect(inst.firing).to eq('low')
+    end
+  end
+
+  describe 'RS 3001 attribute values argument' do
+    it 'expands an inline value set into an anonymous enum' do
+      compiler = compile_lml(<<~LML)
+        models M {
+          class Tile {
+            attribute status, String { values { draft, published } }
+          }
+        }
+      LML
+      status_type = compiler.compiled_classes['Tile'].attributes[:status].type
+      expect(status_type).to be_a(Class)
+      expect(status_type.values.map(&:name)).to eq(%w[draft published])
+    end
+
+    it 'types the attribute with a referenced enum' do
+      compiler = compile_lml(<<~LML)
+        models M {
+          enum Finish { celadon matte }
+          class Tile {
+            attribute finish, String { values Finish }
+          }
+        }
+      LML
+      finish_type = compiler.compiled_classes['Tile'].attributes[:finish].type
+      expect(finish_type).to be(compiler.compiled_classes['Finish'])
+    end
+  end
+
+  describe 'RS 3001 single-line definition' do
+    it 'sets the entity definition from the quoted form' do
+      doc = Lutaml::Lml.parse_document(<<~LML)
+        models M {
+          enum Stage {
+            definition "Stage codes"
+            draft
+          }
+        }
+      LML
+      expect(doc.enums.first.definition).to eq('Stage codes')
+    end
+  end
+
+  describe 'RS 3001 ref: reference spelling' do
+    it 'parses ref:(...) identically to reference:(...)' do
+      src = lambda do |keyword|
+        "instances {\n  Product \"p\" {\n    r = #{keyword}:(Product.id)\n  }\n}\n"
+      end
+      from_ref = Lutaml::Lml.parse_document(src.call('ref'))
+      from_full = Lutaml::Lml.parse_document(src.call('reference'))
+      ref_attr = from_ref.instances.instances.first.attributes.find { |a| a.name == 'r' }
+      full_attr = from_full.instances.instances.first.attributes.find { |a| a.name == 'r' }
+      expect(ref_attr.value.value).to eq(full_attr.value.value)
+      expect(ref_attr.value.to_s).to include('Product.id')
+    end
+  end
+
   describe 'enum from_table (L7a, artifact-table reference)' do
     it 'bakes artifact table rows as members at compile time' do
       artifact_path = write_grammar_artifact
