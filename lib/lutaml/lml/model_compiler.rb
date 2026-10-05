@@ -35,6 +35,9 @@ module Lutaml
         @forward_refs = {}
         @enum_names = Set.new
         @enum_classes = {}
+        @declared_namespaces = []
+        @serialization_mappings = []
+        @namespace_classes = {}
       end
 
       def compile(input)
@@ -190,12 +193,28 @@ module Lutaml
       end
 
       def compile_document(doc)
+        @declared_namespaces = Array(doc.namespaces)
+        @serialization_mappings = Array(doc.serialization_mappings)
         doc.classes.each { |c| compile_class(c) }
+        hoist_class_serialization_mappings(doc)
         doc.enums.each { |e| compile_enum(e) }
         doc.data_types.each { |dt| compile_data_type(dt) }
         resolve_forward_references
         apply_xml_mappings
+        apply_key_value_mappings
         register_string_formats(doc)
+      end
+
+      # In-class `mapping <format> { … }` is the shortcut for a sibling
+      # mapping targeting the enclosing class; hoist them so emission is
+      # uniform.
+      def hoist_class_serialization_mappings(doc)
+        (Array(doc.classes) + Array(doc.data_types)).each do |klass_def|
+          Array(klass_def.serialization_mappings).each do |mapping|
+            mapping.target = klass_def.name.to_s
+            @serialization_mappings << mapping
+          end
+        end
       end
 
       def resolve_forward_references
@@ -306,6 +325,9 @@ module Lutaml
         @compiled.each do |name, klass|
           next if @enum_names.include?(name)
 
+          custom = serialization_mapping_for(name, 'xml')
+          next apply_custom_xml_mapping(klass, custom) if custom
+
           apply_xml_mapping(klass, name)
         end
       end
@@ -320,6 +342,99 @@ module Lutaml
             mapping.map_element(attr_name.to_s, to: attr_name)
           end
         end
+      end
+
+      # RS 3010 extension: key-value mapping blocks for the declared
+      # formats (yaml/json/toml share lutaml-model's key_value model).
+      def apply_key_value_mappings
+        @compiled.each do |name, klass|
+          next if @enum_names.include?(name)
+
+          custom = serialization_mapping_for(name, 'key_value')
+          apply_custom_key_value_mapping(klass, custom) if custom
+        end
+      end
+
+      def serialization_mapping_for(target, format)
+        @serialization_mappings.find do |m|
+          m.target.to_s == target && serialization_format(m.format) == format
+        end
+      end
+
+      def serialization_format(format)
+        %w[yaml json toml].include?(format.to_s) ? 'key_value' : format.to_s
+      end
+
+      def apply_custom_xml_mapping(klass, mapping)
+        check_namespace_ambiguity(mapping)
+        ns_class = namespace_class_for(mapping.namespace_ref) if mapping.namespace_ref
+        rule_ns = mapping.rules.select { |r| r.kind == 'namespace' }
+                               .to_h { |r| [r.field, namespace_class_for(r.field)] }
+        klass.xml do |m|
+          m.root(mapping.element_name) if mapping.element_name
+          m.namespace(ns_class) if ns_class
+          m.mixed_content if mapping.mixed_content
+          mapping.rules.each do |rule|
+            case rule.kind
+            when 'element' then m.map_element(rule.wire, to: rule.field.to_sym)
+            when 'attribute' then m.map_attribute(rule.wire, to: rule.field.to_sym)
+            when 'content' then m.map_content(to: rule.field.to_sym)
+            when 'namespace' then m.namespace(rule_ns[rule.field])
+            end
+          end
+        end
+      end
+
+      def apply_custom_key_value_mapping(klass, mapping)
+        formats = mapping.format.to_s == 'key_value' ? %w[yaml json toml] : [mapping.format.to_s]
+        klass.instance_eval do
+          formats.each do |format|
+            public_send(format) do |m|
+              mapping.rules.each do |rule|
+                case rule.kind
+                when 'map' then m.map(rule.wire, to: rule.field.to_sym)
+                when 'key' then m.map_key(to_instance: rule.field.to_sym)
+                when 'value'
+                  if rule.mode == 'as_attribute'
+                    m.map_value(as_attribute: rule.field.to_sym)
+                  else
+                    m.map_value(to_instance: rule.field.to_sym)
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+
+      def check_namespace_ambiguity(mapping)
+        return unless mapping.format.to_s == 'xml'
+        return if mapping.namespace_ref || @declared_namespaces.length < 2
+
+        raise ArgumentError,
+              "mapping #{mapping.format} #{mapping.target}: ambiguous default " \
+              "namespace — #{@declared_namespaces.length} namespaces in scope " \
+              "(#{@declared_namespaces.map(&:name).join(', ')}); declare one with " \
+              "'namespace <name>'"
+      end
+
+      def namespace_class_for(ref)
+        return nil if ref.nil?
+
+        require "lutaml/xml/namespace" unless defined?(Lutaml::Xml::Namespace)
+
+        ns_class = @namespace_classes[ref]
+        return ns_class if ns_class
+
+        declared = @declared_namespaces.find { |ns| ns.name.to_s == ref }
+        raise ArgumentError, "unknown namespace '#{ref}'" unless declared
+
+        ns_class = Class.new(Lutaml::Xml::Namespace)
+        uri = declared.uri
+        prefix = declared.prefix.to_s
+        ns_class.define_singleton_method(:uri) { uri }
+        ns_class.define_singleton_method(:prefix_default) { prefix }
+        @namespace_classes[ref] = ns_class
       end
 
       def build_attributes(klass_def)

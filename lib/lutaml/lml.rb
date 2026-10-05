@@ -85,6 +85,9 @@ module Lutaml
     autoload :Value, "lutaml/lml/models/value"
     autoload :ViewFilter, "lutaml/lml/models/view_filter"
     autoload :ViewImport, "lutaml/lml/models/view_import"
+    autoload :MappingRule, "lutaml/lml/models/mapping_rule"
+    autoload :Namespace, "lutaml/lml/models/namespace"
+    autoload :SerializationMapping, "lutaml/lml/models/serialization_mapping"
 
     # Namespaces with their own autoloads
     autoload :Grammar, "lutaml/lml/grammar"
