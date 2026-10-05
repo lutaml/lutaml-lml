@@ -44,6 +44,7 @@ module Lutaml
     autoload :ModelCompiler, "lutaml/lml/model_compiler"
     autoload :ImportResolver, "lutaml/lml/import_resolver"
     autoload :ViewResolver, "lutaml/lml/view_resolver"
+    autoload :Validator, "lutaml/lml/validator"
     autoload :ViewResolution, "lutaml/lml/view_resolution"
     autoload :EntityTypes, "lutaml/lml/entity_types"
     autoload :AssociationLabelResolver, "lutaml/lml/association_label_resolver"

@@ -1,0 +1,261 @@
+# frozen_string_literal: true
+
+module Lutaml
+  module Lml
+    # RS 3001 §Validation rules evaluated over a parsed document:
+    # class constraints (unique names, unique attribute names), attribute
+    # constraints (mandatory cardinality-1 attributes populated, values
+    # matching declared types) and reference validity (ref: paths resolve
+    # to instances and are acyclic).
+    class Validator
+      Violation = Struct.new(:rule, :message, keyword_init: true)
+
+      PRIMITIVE_CONFORMITY = {
+        'Integer' => /\A-?\d+\z/,
+        'Number' => /\A-?\d+\z/,
+        'Float' => /\A-?\d+\.\d+\z/,
+        'Boolean' => /\A(true|false)\z/
+      }.freeze
+
+      COLLECTION_KEYS = %i[properties attributes instances].freeze
+
+      def self.violations(document)
+        new(document).violations
+      end
+
+      def initialize(document)
+        @document = document
+      end
+
+      def violations
+        unique_name_violations +
+          unique_attribute_violations +
+          instance_violations +
+          circular_reference_violations
+      end
+
+      private
+
+      def all_definitions
+        @all_definitions ||= begin
+          pairs = []
+          Array(@document.classes).each { |c| pairs << [c.name.to_s, c] }
+          Array(@document.enums).each { |e| pairs << [e.name.to_s, e] }
+          Array(@document.data_types).each { |d| pairs << [d.name.to_s, d] }
+          Array(@document.packages).each { |pkg| collect_package_definitions(pkg, pairs) }
+          pairs
+        end
+      end
+
+      def collect_package_definitions(pkg, pairs)
+        Array(pkg.classes).each { |c| pairs << [c.name.to_s, c] }
+        Array(pkg.enums).each { |e| pairs << [e.name.to_s, e] }
+        Array(pkg.data_types).each { |d| pairs << [d.name.to_s, d] }
+        Array(pkg.packages).each { |nested| collect_package_definitions(nested, pairs) }
+      end
+
+      def type_definitions
+        @type_definitions ||= all_definitions.to_h
+      end
+
+      def unique_name_violations
+        names = all_definitions.map(&:first)
+        names.tally.filter_map do |name, count|
+          next if count == 1
+
+          Violation.new(
+            rule: 'unique_names',
+            message: "'#{name}' is defined #{count} times"
+          )
+        end
+      end
+
+      def unique_attribute_violations
+        type_definitions.filter_map do |name, definition|
+          dupes = attribute_names(definition)
+                  .tally.select { |_attr, count| count > 1 }.keys
+          next if dupes.empty?
+
+          Violation.new(
+            rule: 'unique_attribute_names',
+            message: "#{name}: duplicate attribute(s) #{dupes.inspect}"
+          )
+        end
+      end
+
+      def attribute_names(definition)
+        Array(definition.attributes).map(&:name).map(&:to_s)
+      end
+
+      def instance_violations
+        instances.flat_map do |instance|
+          mandatory_violations(instance) +
+            type_conformity_violations(instance) +
+            reference_violations(instance)
+        end.compact
+      end
+
+      def instances
+        Array(@document.instances&.instances)
+      end
+
+      def mandatory_violations(instance)
+        definition = type_definitions[definition_type(instance)]
+        return [] unless definition.is_a?(UmlClass) || definition.is_a?(DataType)
+
+        definition.attributes.filter_map do |attr|
+          next unless mandatory?(attr)
+          next if populated?(instance, attr.name.to_s)
+
+          Violation.new(
+            rule: 'mandatory_attributes',
+            message: "instance '#{instance_name(instance)}' (#{definition_type(instance)}): " \
+                     "mandatory attribute '#{attr.name}' is not populated"
+          )
+        end
+      end
+
+      def mandatory?(attr)
+        attr.cardinality && attr.cardinality.min == '1'
+      end
+
+      def populated?(instance, attr_name)
+        pair = instance_attribute(instance, attr_name)
+        return false unless pair
+
+        value = pair[1]
+        value.respond_to?(:value) ? !value.to_s.empty? : !value.to_s.empty?
+      end
+
+      def type_conformity_violations(instance)
+        definition = type_definitions[definition_type(instance)]
+        return [] unless definition.respond_to?(:attributes)
+
+        instance_attribute_pairs(instance).filter_map do |name, value|
+          attr = Array(definition.attributes).find { |a| a.name.to_s == name }
+          next unless attr
+
+          conformity_violation(instance, name, attr, value)
+        end
+      end
+
+      def conformity_violation(instance, name, attr, value)
+        pattern = PRIMITIVE_CONFORMITY[attr.type.to_s]
+        return unless pattern
+        return if pattern.match?(value.to_s)
+
+        Violation.new(
+          rule: 'type_conformity',
+          message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
+                   "expects #{attr.type}, got #{value.to_s.inspect}"
+        )
+      end
+
+      def reference_violations(instance)
+        reference_values(instance).filter_map do |name, path|
+          target = path.to_s.split('.').first
+          unless instance_names.include?(target)
+            next Violation.new(
+              rule: 'reference_validity',
+              message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
+                       "references unknown instance '#{target}'"
+            )
+          end
+
+          attribute_violation(instance, name, path, target)
+        end
+      end
+
+      def attribute_violation(instance, _name, path, target)
+        segment = path.to_s.split('.')[1]
+        target_instance = instances.find { |i| instance_name(i) == target }
+        return if segment.nil? ||
+                  instance_attribute(target_instance, segment)
+
+        Violation.new(
+          rule: 'reference_validity',
+          message: "instance '#{instance_name(instance)}': reference '#{path}' " \
+                   "does not resolve (no attribute '#{segment}' on '#{target}')"
+        )
+      end
+
+      def instance_attribute_pairs(instance)
+        pairs = []
+        instance.each_attribute do |name, value, instances|
+          pairs << [name.to_s, value_for(value, instances)]
+        end
+        pairs
+      end
+
+      def instance_attribute(instance, attr_name)
+        instance_attribute_pairs(instance).find { |name, _value| name == attr_name }
+      end
+
+      def value_for(value, instances)
+        literal = value.respond_to?(:value) ? value.value : value
+        return instances.first if literal.is_a?(Hash) && literal[:instances]
+
+        literal
+      end
+
+      def reference_values(instance)
+        instance_attribute_pairs(instance).filter_map do |name, value|
+          literal = value.respond_to?(:value) ? value.value : value
+          next unless literal.is_a?(Hash) && literal[:reference]
+
+          [name, literal[:reference]]
+        end
+      end
+
+      def instance_names
+        @instance_names ||= instances.map { |i| instance_name(i) }
+      end
+
+      # RS 3001: circular references are invalid.
+      def circular_reference_violations
+        graph = instances.to_h do |instance|
+          targets = reference_values(instance)
+                    .map { |_name, path| path.to_s.split('.').first }
+          [instance_name(instance), targets]
+        end
+        cycles = cycles_in(graph)
+        cycles.map do |cycle|
+          Violation.new(
+            rule: 'reference_circularity',
+            message: "circular reference: #{cycle.join(' -> ')}"
+          )
+        end
+      end
+
+      def cycles_in(graph)
+        cycles = []
+        graph.each_key do |start|
+          path = walk_for_cycle(graph, start)
+          cycles << path if path
+        end
+        cycles.uniq { |cycle| cycle.sort }
+      end
+
+      def walk_for_cycle(graph, start)
+        path = [start]
+        node = start
+        loop do
+          nexts = graph[node] || []
+          node = nexts.first
+          return nil if node.nil? || node == '' || !graph.key?(node)
+          return path + [node] if path.include?(node)
+
+          path << node
+        end
+      end
+
+      def instance_name(instance)
+        instance.respond_to?(:name) ? instance.name.to_s : ''
+      end
+
+      def definition_type(instance)
+        (instance.isa || instance.type).to_s
+      end
+    end
+  end
+end

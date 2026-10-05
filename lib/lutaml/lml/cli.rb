@@ -186,11 +186,20 @@ module Lutaml
           input_path = Pathname.new(path_string)
           return report_file_error(input_path, 'File does not exist') unless input_path.exist?
 
-          parse_document(input_path)
-          say "✓ #{input_path}", :green
-          nil
+          document = parse_document(input_path)
+          violations = Lutaml::Lml::Validator.violations(document)
+          if violations.any?
+            report_file_error(input_path, violations_message(violations))
+          else
+            say "✓ #{input_path}", :green
+            nil
+          end
         rescue StandardError => e
           report_file_error(input_path, e.message)
+        end
+
+        def violations_message(violations)
+          violations.map { |v| "[#{v.rule}] #{v.message}" }.join('; ')
         end
 
         def report_file_error(input_path, message)

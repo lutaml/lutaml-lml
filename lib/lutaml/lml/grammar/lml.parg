@@ -145,7 +145,7 @@ grammar Lml version "1.0.0" {
   diagram_body = [ ws ] "{" [ whitespace ] ( *( diagram_inner_definition ) ) as members "}"
   diagram_definition = [ whitespace ] "diagram" [ ws ] class_name as name diagram_body [ whitespace ]
   diagram_definitions = diagram_definition [ whitespace ]
-  model_definitions = ( *( diagram_inner_definition ) ) as members
+  model_definitions = ( 1*( diagram_inner_definition ) ) as members
 
   view_only_definitions = ( view_import ) as view_imports / show_directive / hide_directive
   view_inner_definitions = view_only_definitions / diagram_inner_definitions
@@ -201,8 +201,10 @@ grammar Lml version "1.0.0" {
   export = [ whitespace ] "export" [ whitespace ] "{" [ whitespace ] ( *( export_format [ whitespace ] ) ) as exports "}" [ whitespace ]
   export_format = [ whitespace ] "format" ws variable as format_type [ whitespace ] "{" [ whitespace ] attributes "}" [ whitespace ]
 
-  # ---- Root (grammar/instances.rb: Full) ----
-  diagram = [ require_block ] ( models / diagram_definitions / view_definitions / instances / instance / model_definitions )
+  # ---- Root (RS 3001: a document interleaves declarations) ----
+  diagram = [ require_block ] ( *( top_level_definition ) ) as members
+
+  top_level_definition = ( models / diagram_definitions / view_definitions / instances / instance / model_definitions ) [ whitespace ]
 }
 
 entry diagram: diagram
