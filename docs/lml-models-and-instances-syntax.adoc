@@ -246,6 +246,13 @@ An `attribute <name> { ... }` block may contain:
   make the attribute optional — the default-when-omitted caveat there explains that
   omission currently means *required*.)
 * `description "<text>"` — optional human-readable documentation.
+* `default "<literal>"` — literal-only default; fires only on **absent** input
+  (an explicit nil stays explicit). A declared literal wins over the
+  optional-marker nil that a `0..1` cardinality would otherwise install.
+* `render_nil true|false` — nil policy, mirroring lutaml-model's mapping option
+  name; the compiler applies it to the yaml/json mapping rules.
+* `properties` beyond these (`<name> = <value>` lines) are captured but only
+  the two above are compiled.
 
 ==== Shorthand (convenience, inherited from the diagram syntax)
 
@@ -321,6 +328,73 @@ The design issues state that omitting `cardinality` should default to `0..1`
 optional attribute until the default is aligned.
 ====
 
+[[class-level-declarations]]
+=== Class-level declarations
+
+These appear directly inside a `class` (or `models`) body.
+
+==== `mapping` blocks — serialization wire names
+
+[source]
+----
+class Widget {
+  attribute name { type String cardinality 1 }
+  mapping yaml { map "full-name", to: "name" }
+}
+----
+
+One block per format (`yaml` / `xml` / `json` / `toml` / `csv`); each `map`
+line names the wire (serialized) key and the model attribute. The compiler
+emits the corresponding lutaml-model mapping block. The LML-side attribute is
+`wire_mappings` (the natural name `mappings` collides with lutaml-model's
+internal `Serializable#mappings`).
+
+==== `derive` — computed-field declarations
+
+[source]
+----
+derive urn: String
+----
+
+Declares existence + type only; the attribute is mappable like any other.
+The *computation* is bound by the binder from the grammar artifact's derive
+specs — LML never defines computation. The compiled class records the
+declarations in `derived_fields`.
+
+==== `string_format` — grammar-backed string formats
+
+[source]
+----
+class IsoIdentifier {
+  string_format :pubid_iso {
+    artifact "pubid/iso"
+    root "iso_identifier"
+  }
+}
+----
+
+A thin reference to a compiled parsanol artifact (single source of truth for
+capture maps and render specs — LML never duplicates them). At compile time
+the artifact resolves through the compiler's `artifact_paths:` map (reference
+-> path) or `default_artifact:`, and registration via
+`Parsanol::PARG::Lutaml.register` defines `from_<format>` on the compiled
+model. A `models`-block-level `string_format` acts as the default for classes
+without their own.
+
+==== `isa` — instance-type override
+
+[source]
+----
+instance S158Checks {
+  isa ValidationChecks
+  type = Type::standard      # ordinary data attribute
+}
+----
+
+The override keyword is `isa`; a `type` attribute is ordinary data (pubid's
+identifier-kind field is contractually named `type`). The bare
+`instance <Type> { }` header form is unchanged.
+
 === `enum` definition
 
 [source]
@@ -345,6 +419,27 @@ spelling `EnumName::value_name` (see <<enum-ref,enum references>>).
 are part of the decided syntax.* Only the block form currently populates
 `definition` on `main`.
 ====
+
+==== Enum member payloads and table-driven members
+
+[source]
+----
+enum Stage {
+  member_fields { abbreviation String  urn_segment String }
+  draft10   { abbreviation = "WD"  urn_segment = "wd" }
+  published { abbreviation = "IS"  urn_segment = "published" }
+}
+----
+
+* `member_fields { <name> <Type> ... }` — the typed payload schema, required
+  for table-driven members and validated against inline payloads.
+* Inline payload lines reuse the keyword-attribute body (`<field> = <value>`).
+* `from_table "<table>" { artifact "<ref>" }` — members come from a parsanol
+  artifact's `tables:` section at compile time (deterministic
+  materialization, no runtime data dependency); rows are validated against
+  `member_fields` (unknown field = error; missing optional field = nil; the
+  member name comes from the row's `name` column). The artifact resolves
+  through the compiler's `artifact_paths:` map or `default_artifact:`.
 
 === `data_type` and `primitive` (diagram language only)
 
@@ -798,7 +893,8 @@ Current limitations of `export`:
 | Collection `includes` filtering | Not implemented | Parsed but not honored — validation runs over *all* imported instances.
 | Export `encoding` / `reference_format` | Not implemented | Parsed but not applied by the built-in adapters (only `indent` is honored).
 | Single-quoted strings        | Raw fallback only | They retain their quote characters instead of becoming quoted-string values.
-| Data attribute named `type`  | Not supported by hydration | With or without `=`, it is treated as an instance-type override.
+| Data attribute named `type`  | Supported (`isa` override) | The instance-type override is the `isa` keyword; `type` is ordinary data.
+| `mapping` blocks / `derive` / `string_format` / attribute `default` + `render_nil` / enum `member_fields` + payloads + `from_table` | Implemented | See <<class-level-declarations,class-level declarations>> and the enum section.
 | Map / range attribute values | Grammar-only | Both parse, but data processing does not preserve usable `Hash` / `Range` values.
 | Associations in `models {}`  | Not supported (by design) | `association` is diagram-language; a `models` body accepts only `class`/`enum`.
 | Attribute `type` required    | Not enforced | An empty/`type`-less attribute body parses and compiles as `string`.
