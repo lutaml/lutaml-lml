@@ -77,7 +77,9 @@ still parses.
 
 === Comments
 
-LML uses `+#+` line comments.
+LML standardizes on `+#+` line comments (quote-aware, followed by
+whitespace or end of line), and implements the RS 3001 comment forms
+as first-class syntax:
 
 [source]
 ----
@@ -87,144 +89,28 @@ attribute dev_id {   # trailing comment after content
 }
 ----
 
-.Decision
-====
-*The LML comment marker is `+#+`.* A `+#+` begins a comment when it is (a) not inside
-a single- or double-quoted string, and (b) followed by whitespace or end of line.
-This preserves `+#+` inside strings (e.g. `+reference_format "#%{id}"+`), the
-protected-visibility prefix (`+#name+`), and member references (`+Class#member+`).
-
-The canonical `.lml` files and the LML design-issue examples (#174/#285/#286/#444)
-all use `+#+`. For diagram-language compatibility the preprocessor *also* strips
-`//` line comments, and the shared grammar additionally tolerates `+**+` line
-comments and `+*| |*+` multiline comment blocks inside
-class/enum/data-type/association (and diagram/view) bodies. Those three markers
-come from the UML diagram language
-(`lutaml/docs/_pages/uml-syntax.adoc`); they are accepted in `.lml` but
-discouraged. LML standardizes on `+#+`.
-
-WARNING: Unlike the quote-aware `+#+` stripper, the `//` stripper is a plain
-strip that is *not* quote-aware: a `//` inside a string literal (e.g. a URL, or an
-XPath such as `"//product"`) is truncated by the preprocessor. Avoid `//` inside
-string values until the `//` stripper is made quote-aware.
-
-NOTE: The `+#+` preprocessor behavior above is the decided syntax but is not yet
-implemented on `main`. The current preprocessor strips only `//`; a `+#+`
-inside a body can instead be misparsed as a protected shorthand attribute.
-====
-
-=== Strings and literals
-
-* Strings are double-quoted: `"S-158:102"`. `quoted_string` itself matches only
-  `"..."`; a single-quoted value falls through as raw text and retains its quote
-  characters rather than failing cleanly.
-* Booleans are the bare words `true` / `false`.
-* Numbers are bare integer or decimal literals: `1`, `3.14`.
-
-== Model definitions
-
-=== `models` block
-
-A model file groups its definitions in a named `models` block.
+RS 3001 comment forms are also implemented, quote-aware (a `//` inside a
+string literal such as a URL survives):
 
 [source]
 ----
-models IhoDataModels {
-  class IhoMetadata { ... }
-  class CompliantStandard { ... }
+// leading comment
+class Ceramic {
+  attribute url, String  // tail comment
 }
+
+/* multi-line
+   block comment */
 ----
 
-.Decision
-====
-*The opening brace is required*: `models <Name> { ... }`. Some design-issue drafts
-show a brace-less form (`models IhoS102Check` with a trailing `}`); that form is
-treated as malformed and is rejected. The braced form is the only supported one,
-and both canonical fixtures (`iho_data_models.lml` and `iho_s102_check.lml`) use it.
-====
-
-=== `class` definition
-
-[source]
-----
-class IhoMetadata {
-  attribute document_number {
-    type String
-    cardinality 1
-  }
-}
-----
-
-A class body contains `attribute {}` blocks (long form), shorthand attribute
-fields (see <<attributes>>), a `definition { ... }` block, and comments. The
-decided `description "..."` string form for class documentation is not yet
-implemented on `main`; it currently becomes an attribute named `description`.
-
-A class may be prefixed with a modifier — `abstract class Foo { ... }` or
-`interface class Bar { ... }` — inherited from the diagram language. The `class`
-keyword remains required after either modifier.
-
-A class (or enum/data-type) name may carry a `+<<stereotype>>+` annotation before
-its body (e.g. `+class Foo <<MyNamespace>> { ... }+`); this is a diagram-language
-feature accepted by the grammar. The `+<<...>>+` token is captured into the
-entity's `stereotype` collection (e.g. `["MyNamespace"]`) and does not affect the
-compiled model. The same annotation before an attribute's type
-(e.g. `+name: <<BasicDocument>> String+`) populates the attribute's `stereotype`.
-
-An attribute type written in quotes (e.g. `+type: "footnote"+`) is a *literal*
-value, not a reference to a type: the parsed attribute carries `literal: true`.
-Without quotes (`+type: footnote+`) the value reads as a type reference and
-`literal` is `false`.
-
-[NOTE]
-====
-*Nested `class` definitions are not supported.* Some drafts (lutaml-model #174) show
-a `class` declared inside another class or attribute body. The LML `class {}` grammar
-does not implement this and can misparse the nested declaration as a shorthand
-attribute. Classes belong only at the top level of the `models {}` block. Use a
-top-level class plus an attribute typed by it instead.
-====
-
-=== Collection class (`class <Name> < Array`) — Planned
-
-The decided collection syntax combines `< Array` with `member_type`: an ordered
-array whose elements are intended to be of that type, optionally unique by a
-key.
-
-[source]
-----
-class ValidationChecks < Array {
-  member_type ValidationCheck
-  member_unique dev_id
-}
-----
-
-[cols="1,3"]
-|===
-| Keyword | Meaning
-
-| `< Array`     | Marks a collection declaration; `member_type` is also required.
-| `member_type` | The intended element (member) type.
-| `member_unique` | An attribute of the member type that must be unique across all members (a key).
-|===
-
-.Decision
-====
-*`member_type` inside a `class ... < Array {}` body means "collection element
-type."* The UML diagram language also has a `member_type` keyword, but there it
-means an *association relationship kind*
-(`association|composition|aggregation|generalization|uses`) inside an
-`association {}` body. LML disambiguates by context: association bodies keep the
-diagram meaning; class-collection bodies use the LML meaning. `member_unique` is
-LML-only.
-====
-
-This compilation behavior is planned. On `main`, `member_type` and
-`member_unique` are parsed as ordinary attributes and are not retained as
-collection metadata; the class compiles as a plain `Serializable`. See
-<<collection-instances>> for the decided instance spelling.
-
-=== Attributes [[attributes]]
+WARNING: The `//` and `/* */` strippers run in the preprocessor (they
+must: tail comments are lexically inexpressible in the grammar), so a
+comment character sequence inside a quoted string is safe, but `+#+`
+remains the LML-idiomatic marker. The grammar-level `+**+`/`+*| |*+`
+documentation comments (captured into the document model) are accepted
+inside class/enum/data-type/association bodies. Moving all of this into
+the grammar itself is tracked upstream as the PARG skip-rule proposal
+(parsanol-ruby#134).
 
 ==== Long form (primary)
 
@@ -246,13 +132,31 @@ An `attribute <name> { ... }` block may contain:
   make the attribute optional — the default-when-omitted caveat there explains that
   omission currently means *required*.)
 * `description "<text>"` — optional human-readable documentation.
-* `default "<literal>"` — literal-only default; fires only on **absent** input
-  (an explicit nil stays explicit). A declared literal wins over the
-  optional-marker nil that a `0..1` cardinality would otherwise install.
+* `default "<literal>"` or `default: <literal>` — literal-only default;
+  fires only on **absent** input (an explicit nil stays explicit). A declared
+  literal wins over the optional-marker nil that a `0..1` cardinality would
+  otherwise install.
+* `values { v1, v2 }` — inline value set; expands into an anonymous baked enum.
+* `values <EnumName>` — types the attribute with a named enum.
+* `pattern /<regex>/` — value pattern constraint; enforced by `lutaml validate`.
 * `render_nil true|false` — nil policy, mirroring lutaml-model's mapping option
   name; the compiler applies it to the yaml/json mapping rules.
 * `properties` beyond these (`<name> = <value>` lines) are captured but only
   the two above are compiled.
+
+==== Comma form (RS 3001 normative)
+
+[source]
+----
+attribute location, String {
+  definition "Location of the studio"
+}
+attribute batch_ids, String { cardinality 0..n }
+----
+
+`attribute <name>, <Type> { ... }` — the RS 3001 normative form, with the
+same optional block contents as the long form (but `type` comes from the
+comma position).
 
 ==== Shorthand (convenience, inherited from the diagram syntax)
 
@@ -333,21 +237,50 @@ optional attribute until the default is aligned.
 
 These appear directly inside a `class` (or `models`) body.
 
-==== `mapping` blocks — serialization wire names
+==== Serialization mappings — `mapping <format> <class>`
+
+Serialization mappings are declared as sibling constructs linked to their
+class by name (canonical), or inside the class body (shortcut; the enclosing
+class is the implied target):
 
 [source]
 ----
-class Widget {
-  attribute name { type String cardinality 1 }
-  mapping yaml { map "full-name", to: "name" }
+models Ceramics {
+  namespace CeramicsNs {
+    uri "http://example.com/ceramics"
+    prefix "cer"
+  }
+
+  class Ceramic {
+    attribute location, String
+    attribute kiln, String
+    attribute notes, String
+  }
+}
+
+mapping xml Ceramic {
+  element "ceramic"
+  namespace CeramicsNs
+  map_element "location" location
+  map_attribute "kiln" kiln
+  map_content notes
+}
+
+mapping key_value Ceramic {
+  map "full-name" location
+  map_key to_instance key_name
+  map_value as_attribute values
 }
 ----
 
-One block per format (`yaml` / `xml` / `json` / `toml` / `csv`); each `map`
-line names the wire (serialized) key and the model attribute. The compiler
-emits the corresponding lutaml-model mapping block. The LML-side attribute is
-`wire_mappings` (the natural name `mappings` collides with lutaml-model's
-internal `Serializable#mappings`).
+XML rules compile into the lutaml-model `xml` mapping (`element`/`root`,
+`namespace`, `map_element`, `map_attribute`, `map_content`,
+`mixed_content`); key-value formats (`yaml`/`json`/`toml`/`key_value`)
+compile into per-format key-value mappings. Map lines use LML
+juxtaposition (wire name, then attribute); the legacy
+`map "x", to: "y"` in-class line syntax remains accepted as a
+compatibility alias. The full specification lives in the RS 3010
+declarations reference (lutaml/docs, `lml-declarations.adoc`).
 
 ==== `derive` — computed-field declarations
 
@@ -420,6 +353,27 @@ are part of the decided syntax.* Only the block form currently populates
 `definition` on `main`.
 ====
 
+==== Value declarations (RS 3001 normative)
+
+[source]
+----
+enum Finish {
+  value "Celadon" {
+    definition "Pale green glaze"
+    label = "cel"
+  }
+  value matte { definition "Non-reflective" }
+  gloss
+}
+----
+
+`value <name> { ... }` is the canonical member declaration: quoted or bare
+name, optional block. Block contents: `definition "..."` becomes the member
+description, `name = value` pairs become typed payloads (declared via
+`member_fields`), and `instance { ... }` bodies carry values-as-instances.
+The bare identifier member (`gloss`) is the documented shortcut expanding
+to `value gloss { }`.
+
 ==== Enum member payloads and table-driven members
 
 [source]
@@ -473,16 +427,23 @@ On the parsed document, both are surfaced through dedicated accessors:
 `primitive` definition never appears in `classes` — inspect `data_types` /
 `primitives` for them.
 
-=== `package` (diagram language only)
+=== `package`
 
-[NOTE]
-====
-`package` is likewise a UML *diagram*-language container (a named grouping of
-classes, see `lutaml/docs/_pages/uml-syntax.adoc` §Package). It is *not* part of the
-LML `models {}` grammar and has no grammar rule in this gem; a `Package` model class
-exists but is latent (unused by the parser). Do not use `package` in a `models`
-block.
-====
+[source]
+----
+package Ceramics {
+  enum FiringProfile { values { "low", "medium", "high" } }
+
+  class CeramicTile {
+    attribute dimensions, float { cardinality 2 }
+    attribute firing_profile, FiringProfile
+  }
+}
+----
+
+A named grouping of classes, enums, data types and nested packages
+(RS 3001 §Package). Package members join the document's type scope.
+An enum-level `values { ... }` shorthand expands into plain members.
 
 === Methods / operations (diagram language only)
 
@@ -563,9 +524,22 @@ instance S158Checks {
 ----
 
 An instance is either `instance <Type> { ... }` (type is the identifier after
-`instance`, possibly namespaced) or `instance <InitialType> { type <Type> ... }`
-(an explicit `type` line inside the body wins during hydration). There is no
-separate name field in this form.
+`instance`, possibly namespaced), `instance <InitialType> { type <Type> ... }`
+(an explicit `type` line inside the body wins during hydration), or the
+RS 3001 quoted-name form `instance "<name>" [Type] { ... }`:
+
+[source]
+----
+instances {
+  instance "square" Tile {
+    url = "http://example.com//x"
+  }
+}
+----
+
+Instance collections may be named — `instances "Glazes" { ... }` or bare
+`instances Glazes { ... }` — and `ref:(<collection>.<instance>)` paths
+resolve through the collection name.
 
 WARNING: The parser does *not* retain whether `=` was present. Consequently,
 `type ValidationChecks` and `type = "electronic"` both become an attribute named
@@ -615,6 +589,17 @@ was declared `class <CollectionClassName> < Array`.
 ====
 
 [[enum-ref]]
+=== References
+
+Reference values point at instances (or named-collection members) and
+accept both spellings:
+
+[source]
+----
+glaze = ref:(Glazes.blue_matte)
+other = reference:(Product.id)
+----
+
 === Attribute values
 
 [source]
@@ -841,6 +826,30 @@ Current limitations of `export`:
 ====
 
 [[divergences]]
+== Validation (RS 3001 §Validation rules)
+
+`lutaml validate` (and `Lutaml::Lml::Validator`) evaluates the RS 3001
+validation rules over a parsed document and reports violations:
+
+[cols="1,3"]
+|===
+| Rule | Check
+| `unique_names` | type names unique across the document (classes, enums, data types, packages)
+| `unique_attribute_names` | attribute names unique within each class/data type
+| `mandatory_attributes` | cardinality-1 (or any positive minimum) attributes populated on instances
+| `type_conformity` | instance values match declared primitive types
+| `pattern_conformity` | instance values match declared `pattern /…/` constraints
+| `reference_validity` | `ref:`/`reference:` paths resolve to known instances, attributes, or collections
+| `reference_circularity` | reference chains are acyclic
+|===
+
+== Interleaved documents
+
+The document root is a repetition of top-level constructs: a single file
+may interleave `models` blocks, `instances` collections, bare class/enum
+definitions, packages, mappings and `require` lines (RS 3001 documents
+interleave declarations). Class and enum names share one type scope.
+
 == Divergences from the UML diagram syntax
 
 [cols="1,2,2"]
@@ -848,11 +857,11 @@ Current limitations of `export`:
 | Aspect | UML diagram (`.lutaml`) | LML models/instances (`.lml`)
 
 | `member_type`     | association relationship kind | collection element type (class body); association kind (association body)
-| comments          | `//`, `+**+`, `+*\| \|*+`         | `+#+` (idiomatic); `//` is also stripped globally, while `+**+`/`+*\| \|*+` are tolerated only inside supported bodies
+| comments          | `//` (quote-aware), `/* */`, `+**+`, `+*\| \|*+` | `+#+` (idiomatic); all four are accepted, `//` and `/* */` quote-aware globally
 | attribute form    | UML shorthand primary         | `attribute { type/cardinality/description }` blocks primary (shorthand accepted)
 | cardinality upper | `+*+`                           | `n` (long form) / `+*+` (shorthand)
 | collections       | associations + multiplicity   | `class < Array` + `member_type` / `member_unique`
-| instances         | `+instance :Name {ref} { }+`    | `instance <Type> { }` / `instance <Name> { type <T> }`
+| instances         | `+instance :Name {ref} { }+`    | `instance <Type> { }` / `instance "<Name>" [Type] { }` / `instance <Name> { type <T> }`
 | model container   | `diagram <Name> { }`          | `models <Name> { }`
 |===
 
