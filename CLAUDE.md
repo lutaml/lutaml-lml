@@ -72,6 +72,10 @@ Input → Preprocessor → Parser → Transform → DataProcessor → DocumentBu
 - `CsvAdapter` — CSV import (column mapping → hydrated instances) and export
 - `ConditionEvaluator` — collection validation (count comparisons)
 
+### Validation
+
+`Validator.violations(document)` evaluates the RS 3001 §Validation rules over a parsed document — unique type/attribute names, mandatory (positive-minimum cardinality) attributes populated, primitive type and `pattern` conformity, reference resolution and circularity. `lutaml validate` reports these alongside parse errors.
+
 ### Post-Parse Resolution
 
 After parsing, three resolvers run sequentially on the document:
@@ -83,7 +87,7 @@ After parsing, three resolvers run sequentially on the document:
 ### Domain Models
 
 All models inherit from `Lutaml::Model::Serializable` directly (no external UML gem dependency):
-- `Document`, `UmlClass`, `Enum`, `DataType`, `PrimitiveType` — entity definitions
+- `Document`, `UmlClass`, `Enum`, `DataType`, `PrimitiveType`, `Namespace`, `SerializationMapping`, `MappingRule` — entity definitions
 - `Association`, `Cardinality`, `Constraint` — relationship modeling
 - `TopElementAttribute`, `Operation`, `OperationParameter`, `Value` — attribute definitions
 - `Instance`, `InstanceCollection`, `InstancesImport`, `InstancesExport` — data instances
@@ -104,7 +108,7 @@ Layout engines (`Layout::Engine` → `Layout::GraphVizEngine`) handle the actual
 
 ### CLI
 
-Thor-based CLI at `Cli::LmlCommands` with `generate`, `validate`, and `compile` commands. Supports LML, YAML, and EXP input formats.
+Thor-based CLI at `Cli::LmlCommands` with `generate`, `validate`, and `compile` commands. Supports LML, YAML, and EXP input formats. `validate` reports RS 3001 rule violations in addition to parse errors.
 
 ## Key Conventions
 
@@ -112,4 +116,5 @@ Thor-based CLI at `Cli::LmlCommands` with `generate`, `validate`, and `compile` 
 - The grammar is `grammar/lml.parg` (PARG); edit it there — never rebuild parse trees in Ruby. Capture discipline: parenthesize repetitions before `as` (`( *x ) as k`) or captures bind per-iteration; `[ x as k ]` yields `k: nil` when absent (consumers treat nil ≡ absent); `%x00-10FFFF` is the char-wise `any` (`%x00-FF` is byte-wise and fails on multibyte)
 - All models inherit from `Lutaml::Model::Serializable` directly, with flattened attribute definitions
 - Entity classification uses `self.entity_type` on model classes (polymorphic dispatch, not `is_a?`)
+- RS 3001 conformance: the normative examples of lutaml-lang.adoc are vendored as `spec/fixtures/rs3001/*.lml` (`rs3001_corpus_spec`) — every 3001 example must parse and build; serialization mappings (RS 3010 extension) compile into lutaml-model `xml`/`key_value` mappings, with sibling `mapping <format> <class>` canonical and in-class `mapping <format> { }` as the shortcut
 - Code quality: no `send`, `instance_variable_set/get`, `respond_to?`, or `require_relative`
