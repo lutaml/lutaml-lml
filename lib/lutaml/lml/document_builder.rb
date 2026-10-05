@@ -103,6 +103,7 @@ module Lutaml
 
       def add_members(model, hash)
         expand_declared_members(model, hash)
+        expand_nested_members(model, hash)
         MEMBER_KEY_MAP.each do |plural_key, singular_key|
           data = hash.delete(plural_key)
           next if data.nil?
@@ -119,6 +120,19 @@ module Lutaml
       def expand_value_declaration(model, hash)
         decl = hash.delete(:value_decl) or return
         apply_attribute(model, :attributes, decl.fetch(:attributes))
+      end
+
+      # The document root is a repetition of top-level constructs (RS 3001:
+      # documents interleave declarations), so models/packages blocks nest
+      # their members one level down; recurse into them.
+      def expand_nested_members(model, hash)
+        return unless hash.key?(:members)
+
+        members = hash.delete(:members)
+        members.to_a.each do |nested|
+          add_members(model, nested)
+          set_model_attributes(model, nested)
+        end
       end
 
       # Declaration-level member hooks: single-line definitions, canonical

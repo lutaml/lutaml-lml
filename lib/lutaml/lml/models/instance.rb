@@ -3,6 +3,7 @@
 module Lutaml
   module Lml
     class Instance < Lutaml::Model::Serializable
+      attribute :name, :string
       attribute :type, :string
       attribute :isa, :string
       attribute :attributes, "Lutaml::Lml::TopElementAttribute", collection: true
