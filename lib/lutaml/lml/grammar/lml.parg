@@ -153,8 +153,7 @@ grammar Lml version "1.0.0" {
   value_body = "{" [ whitespace ] ( *( value_inner_definition ) ) as members "}"
   value_definition = ( [ whitespace ] "value" ws ( value_name ) as value_name [ ws ] [ value_body ] [ whitespace ] ) as value_decl
 
-  from_table_body = "{" [ whitespace ] *( "artifact" [ ws ] ( map_name ) as artifact_table [ whitespace ] ) "}"
-  from_table_definition = ( [ whitespace ] "from_table" [ ws ] ( map_name ) as from_table_name [ ws ] [ from_table_body ] [ whitespace ] ) as from_table_decl
+  from_table_definition = ( [ whitespace ] "from_table" [ ws ] ( map_name ) as from_table_name [ ws ] [ "{" [ whitespace ] *( "artifact" [ ws ] ( map_name ) as artifact_table [ whitespace ] ) "}" ] [ whitespace ] ) as from_table_decl
 
   enum_values_shorthand = ( [ whitespace ] "values" ws value_set_body [ whitespace ] ) as value_set_decl
   enum_inner_definitions = definition_body / definition_line / member_fields_definition / from_table_definition / enum_values_shorthand / value_definition / enum_member_with_payload / attribute_comma_definition / attribute_definition / comment_definition / comment_multiline_definition
