@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'json'
+
 module Lutaml
   module Lml
     class ModelCompiler
@@ -21,9 +23,10 @@ module Lutaml
       # declarations. Anything else must parse as an Integer.
       UNBOUNDED_TOKENS = %w[* n N unbounded].freeze
 
-      def initialize(namespace: nil, artifact_paths: {})
+      def initialize(namespace: nil, artifact_paths: {}, default_artifact: nil)
         @namespace = namespace
         @artifact_paths = artifact_paths
+        @default_artifact = default_artifact
         @compiled = {}
         @forward_refs = {}
         @enum_names = Set.new
@@ -232,6 +235,7 @@ module Lutaml
 
       def compile_enum(enum_def)
         name = enum_def.name.to_s
+        expand_from_table(enum_def)
         values = extract_enum_values(enum_def)
 
         payload_fields = Array(enum_def.member_fields).map(&:name).map(&:to_s)
@@ -391,6 +395,53 @@ module Lutaml
         raise ValidationError, "Unrecognized cardinality token: #{val.inspect}"
       end
 
+      # L7a point 3: from_table members are baked at compile time — the
+      # artifact table's rows become the values, validated against the
+      # declared member_fields (unknown field = error; missing = nil).
+      # The member name comes from the row's "name" column.
+      def expand_from_table(enum_def)
+        return unless enum_def.from_table_name
+
+        rows = artifact_table_rows(enum_def)
+        known = Array(enum_def.member_fields).map { |f| f.name.to_s }
+        rows.each do |row|
+          row = row.transform_keys(&:to_s)
+          member_name = row.fetch('name')
+          unknown = row.keys - known - ['name']
+          if unknown.any?
+            raise ArgumentError,
+                  "enum #{enum_def.name}: table row #{member_name.inspect} has " \
+                  "undeclared fields #{unknown.inspect} (declared: #{known.inspect})"
+          end
+          payload = row.slice(*known).compact
+          enum_def.attributes << TopElementAttribute.new(
+            name: member_name,
+            properties: payload.map do |field, value|
+              TopElementAttribute.new(name: field, value: value)
+            end
+          )
+        end
+      end
+
+      def artifact_table_rows(enum_def)
+        reference = enum_def.from_table_artifact || @default_artifact
+        path = artifact_path_for(reference.to_s)
+        unless path
+          raise ArgumentError,
+                "enum #{enum_def.name}: from_table artifact #{reference.inspect} not found"
+        end
+
+        envelope = JSON.parse(File.read(path))
+        table = envelope['tables'].to_h[enum_def.from_table_name]
+        unless table
+          raise ArgumentError,
+                "enum #{enum_def.name}: table #{enum_def.from_table_name.inspect} " \
+                "not found in artifact #{reference.inspect}"
+        end
+
+        table['rows'].to_a
+      end
+
       def extract_enum_values(enum_def)
         member_fields = Array(enum_def.member_fields).map do |f|
           [f.name.to_s, f.type.to_s]
@@ -457,18 +508,12 @@ module Lutaml
       def register_string_formats(doc)
         defaults = doc.packages.flat_map(&:default_string_formats)
         doc.classes.each do |class_def|
-          Array(class_def.string_formats).each do |fmt|
-            register_string_format(class_def.name.to_s, fmt)
-          end
-          next if Array(class_def.string_formats).any? do |f|
-            f.format == defaults.first&.format
-          end
+          declared = Array(class_def.string_formats)
+          declared.each { |fmt| register_string_format(class_def.name.to_s, fmt) }
 
-          defaults.each do |fmt|
-            next if Array(class_def.string_formats).map(&:format).include?(fmt.format)
-
-            register_string_format(class_def.name.to_s, fmt)
-          end
+          declared_formats = declared.map(&:format)
+          defaults.reject { |fmt| declared_formats.include?(fmt.format) }
+                  .each { |fmt| register_string_format(class_def.name.to_s, fmt) }
         end
       end
 

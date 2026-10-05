@@ -146,4 +146,75 @@ RSpec.describe 'LML declarations (isa, defaults, derive, payloads, string_format
       source.close!
     end
   end
+
+  describe 'enum from_table (L7a, artifact-table reference)' do
+    it 'bakes artifact table rows as members at compile time' do
+      artifact_path = write_grammar_artifact
+      envelope = JSON.parse(File.read(artifact_path))
+      envelope['tables'] = {
+        'stages' => {
+          'file' => 'stages.yaml',
+          'rows' => [
+            { 'name' => 'draft10', 'abbreviation' => 'WD', 'urn_segment' => 'wd' },
+            { 'name' => 'published', 'abbreviation' => 'IS', 'urn_segment' => 'published' },
+            { 'name' => 'withdrawn', 'abbreviation' => nil }
+          ]
+        }
+      }
+      File.write(artifact_path, JSON.generate(envelope))
+
+      compiler = Lutaml::Lml::ModelCompiler.new(
+        artifact_paths: { 'code_fmt' => artifact_path }
+      )
+      source = Tempfile.new(%w[test .lml])
+      source.write(<<~LML)
+        models M {
+          enum Stage {
+            member_fields { abbreviation String  urn_segment String }
+            from_table "stages" {
+              artifact "code_fmt"
+            }
+          }
+        }
+      LML
+      source.rewind
+      compiler.compile(source)
+
+      stage = compiler.compiled_classes['Stage']
+      expect(stage.draft10.abbreviation).to eq('WD')
+      expect(stage.published.urn_segment).to eq('published')
+      expect(stage.withdrawn.abbreviation).to be_nil
+      expect(stage.values.map(&:name)).to eq(%w[draft10 published withdrawn])
+    ensure
+      source.close!
+    end
+
+    it 'rejects unknown table fields' do
+      artifact_path = write_grammar_artifact
+      envelope = JSON.parse(File.read(artifact_path))
+      envelope['tables'] = {
+        'stages' => { 'file' => 'stages.yaml', 'rows' => [{ 'name' => 'draft10', 'oops' => 'x' }] }
+      }
+      File.write(artifact_path, JSON.generate(envelope))
+
+      compiler = Lutaml::Lml::ModelCompiler.new(
+        artifact_paths: { 'code_fmt' => artifact_path }
+      )
+      source = Tempfile.new(%w[test .lml])
+      source.write(<<~LML)
+        models M {
+          enum Stage {
+            member_fields { abbreviation String }
+            from_table "stages" {
+              artifact "code_fmt"
+            }
+          }
+        }
+      LML
+      source.rewind
+      expect { compiler.compile(source) }.to raise_error(ArgumentError, /undeclared fields/)
+    ensure
+      source.close!
+    end
+  end
 end
