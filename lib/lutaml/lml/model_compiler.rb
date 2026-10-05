@@ -337,7 +337,7 @@ module Lutaml
         return if attr_names.empty?
 
         klass.xml do |mapping|
-          mapping.root(root_name)
+          mapping.element(root_name)
           attr_names.each do |attr_name|
             mapping.map_element(attr_name.to_s, to: attr_name)
           end
@@ -371,7 +371,7 @@ module Lutaml
         rule_ns = mapping.rules.select { |r| r.kind == 'namespace' }
                                .to_h { |r| [r.field, namespace_class_for(r.field)] }
         klass.xml do |m|
-          m.root(mapping.element_name) if mapping.element_name
+          m.element(mapping.element_name) if mapping.element_name
           m.namespace(ns_class) if ns_class
           m.mixed_content if mapping.mixed_content
           mapping.rules.each do |rule|

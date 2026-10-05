@@ -891,9 +891,9 @@ interleave declarations). Class and enum names share one type scope.
 |===
 | Area | Status | Notes
 
-| `+#+` comments                 | Planned | Decided quote-aware behavior; `main` currently strips only `//`.
+| `+#+` comments                 | Implemented | Quote-aware `+#+`, `//` and `/* */` stripping all live (RS 3001 §Comment forms).
 | `class < Array` + member_type/member_unique | Planned | `main` does not retain collection metadata or compile a collection.
-| Enum value `description "..."`| Planned | Currently becomes a nested attribute; only `definition {}` populates `definition`.
+| Enum value `description "..."`| Implemented | Both `description` and `definition` spellings populate the member description.
 | Enum reference resolution    | Planned | `main` currently preserves the raw `Enum::value` string.
 | Collection compile + hydrate | Planned | Collection compilation, uniqueness enforcement, and member typing remain unimplemented.
 | `members` keyword (strict)   | Planned | `main` still accepts arbitrary nested-instance attribute names.
