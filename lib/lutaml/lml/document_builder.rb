@@ -105,6 +105,7 @@ module Lutaml
         expand_mapping_section(model, hash)
         expand_class_declarations(model, hash)
         expand_enum_member_fields(model, hash)
+        expand_from_table(model, hash)
         MEMBER_KEY_MAP.each do |plural_key, singular_key|
           data = hash.delete(plural_key)
           next if data.nil?
@@ -156,6 +157,23 @@ module Lutaml
         model.derived_fields << build(:derived_field,
                                       name: derived[:name],
                                       type: unquote(derived[:type]))
+      end
+
+      # L7a: from_table declares the enum's members as an artifact table
+      # { from_table_name:, from_table_artifact? } — expansion happens at
+      # compile time (deterministic materialization, no runtime data dep)
+      def expand_from_table(model, hash)
+        decl = hash.delete(:from_table_decl)
+        return unless decl && model.is_a?(Enum)
+
+        # the members repetition splits the declaration across iteration
+        # hashes (name part, artifact part) — merge the parts
+        parts = decl.is_a?(Array) ? decl : [decl]
+        decl = parts.each_with_object({}) do |part, acc|
+          acc.merge!(part) { |_key, _old, new_val| new_val }
+        end
+        model.from_table_name = unquote(decl[:from_table_name])
+        model.from_table_artifact = unquote(decl[:artifact_table]) if decl[:artifact_table]
       end
 
       def expand_enum_member_fields(model, hash)

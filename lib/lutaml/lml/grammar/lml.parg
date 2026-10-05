@@ -114,7 +114,10 @@ grammar Lml version "1.0.0" {
   member_fields_definition = ( [ whitespace ] "member_fields" [ whitespace ] "{" [ whitespace ] ( *( member_field_line ) ) as member_fields [ whitespace ] "}" ) as member_fields_decl
   enum_member_with_payload = ( [ whitespace ] attribute_name [ ws ] ( class_body / keyword_attribute_body ) ) as attributes
 
-  enum_inner_definitions = definition_body / member_fields_definition / enum_member_with_payload / attribute_definition / comment_definition / comment_multiline_definition
+  from_table_body = "{" [ whitespace ] *( "artifact" [ ws ] ( map_name ) as artifact_table [ whitespace ] ) "}"
+  from_table_definition = ( [ whitespace ] "from_table" [ ws ] ( map_name ) as from_table_name [ ws ] [ from_table_body ] [ whitespace ] ) as from_table_decl
+
+  enum_inner_definitions = definition_body / member_fields_definition / from_table_definition / enum_member_with_payload / attribute_definition / comment_definition / comment_multiline_definition
   enum_inner_definition = enum_inner_definitions [ whitespace ]
   enum_body = [ ws ] "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
   enum_definition = [ whitespace ] "enum" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]

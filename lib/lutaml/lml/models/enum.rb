@@ -18,6 +18,8 @@ module Lutaml
                                                                    default: -> { [] }
       attribute :modifier, :string
       attribute :member_fields, "Lutaml::Lml::MemberField", collection: true, default: -> { [] }
+      attribute :from_table_name, :string
+      attribute :from_table_artifact, :string
       attribute :operations, "Lutaml::Lml::Operation", collection: true, default: -> { [] }
       attribute :values, "Lutaml::Lml::Value", collection: true, default: -> { [] }
 
