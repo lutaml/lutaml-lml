@@ -1,0 +1,7 @@
+// 3001 §Attribute: default with colon separator
+models M {
+  class Glaze {
+    attribute color, String { default: "Clear" }
+    attribute temperature, Integer { default: 1050 }
+  }
+}

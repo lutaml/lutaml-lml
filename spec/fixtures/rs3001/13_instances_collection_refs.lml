@@ -1,0 +1,10 @@
+// 3001 §Instance collection + §Internal references: named collection, class instances, ref: paths
+instances Glazes {
+  GlazeFormula "blue_matte" {
+    components = ["silica", "cobalt"]
+  }
+
+  CeramicTile "tile_002" {
+    glaze = ref:(Glazes.blue_matte)
+  }
+}

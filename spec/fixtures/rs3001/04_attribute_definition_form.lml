@@ -1,0 +1,8 @@
+// 3001 §Attribute: comma form with definition block
+models M {
+  class Studio {
+    attribute location, String {
+      definition "Location of the studio"
+    }
+  }
+}

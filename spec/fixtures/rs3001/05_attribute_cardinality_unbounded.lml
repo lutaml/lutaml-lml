@@ -1,0 +1,6 @@
+// 3001 §Attribute: unbounded cardinality
+models M {
+  class Studio {
+    attribute batch_ids, String { cardinality 0..n }
+  }
+}

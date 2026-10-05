@@ -57,7 +57,7 @@ module Lutaml
         end
 
         def merge_collection_value(existing, value)
-          current = existing.is_a?(Array) ? existing : [existing]
+          current = existing.is_a?(Array) ? existing : (existing ? [existing] : [])
           current + (value.is_a?(Array) ? value : [value])
         end
 
@@ -78,7 +78,7 @@ module Lutaml
 
         def extract_name_and_value(obj)
           result = {}
-          result[:name] = obj[:key] if obj.key?(:key)
+          result[:name] = strip_argument_colon(obj[:key]) if obj.key?(:key)
 
           if obj.key?(:comments)
             result[:name] = 'Comment'
@@ -107,8 +107,15 @@ module Lutaml
           obj.each do |key, value|
             next if EXCLUDED_PASS_THROUGH_KEYS.include?(key)
 
+            value = strip_argument_colon(value) if key == :name
             result[key] = value unless result.key?(key)
           end
+        end
+
+        # `default: "Clear"` uses the colon separator (RS 3001 §Attribute);
+        # the colon lands in the captured name and must not.
+        def strip_argument_colon(name)
+          name.to_s.sub(/:\z/, "")
         end
       end
     end

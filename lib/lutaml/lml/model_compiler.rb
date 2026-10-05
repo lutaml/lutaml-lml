@@ -9,9 +9,13 @@ module Lutaml
 
       TYPE_MAP = {
         'String' => :string,
+        'string' => :string,
         'Integer' => :integer,
+        'integer' => :integer,
         'Boolean' => :boolean,
+        'boolean' => :boolean,
         'Float' => :float,
+        'float' => :float,
         'Date' => :date,
         'date_time' => :date_time,
         'DateTime' => :date_time,

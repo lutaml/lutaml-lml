@@ -69,10 +69,11 @@ grammar Lml version "1.0.0" {
 
   keyword_type_argument = "type" [ ws ] ( 1*nonspace ) as type [ whitespace ]
   keyword_cardinality_argument = "cardinality" [ ws ] cardinality_body_definition as cardinality [ whitespace ]
-  keyword_any_argument = [ ws ] ( 1*nonspace ) as name ws [ "=" ] [ ws ] attribute_value as value [ whitespace ]
+  keyword_any_argument = [ ws ] ( 1*nonspace ) as name ws [ "=" / ":" ] [ ws ] attribute_value as value [ whitespace ]
   keyword_values_argument = "values" ws ( ( value_set_body ) as value_set / ( variable ) as value_set_ref ) [ whitespace ]
+  keyword_pattern_argument = ( "pattern" ws "/" ( *( ( "\\" any_char ) / ( !"/" any_char ) ) ) as pattern "/" [ whitespace ] )
   value_set_body = "{" [ whitespace ] ( *( ( ( data_value / variable ) as item ) [ "," ] [ whitespace ] ) ) as items "}"
-  keyword_attribute_options = *( keyword_type_argument / keyword_cardinality_argument / keyword_values_argument / ( keyword_any_argument ) as properties )
+  keyword_attribute_options = *( keyword_type_argument / keyword_cardinality_argument / keyword_values_argument / keyword_pattern_argument / ( keyword_any_argument ) as properties )
   keyword_attribute_body = "{" [ whitespace ] keyword_attribute_options [ whitespace ] "}"
   keyword_attribute_definition = ( "attribute" ws attribute_name [ ws ] keyword_attribute_body ) as attributes
 
@@ -130,7 +131,8 @@ grammar Lml version "1.0.0" {
   from_table_body = "{" [ whitespace ] *( "artifact" [ ws ] ( map_name ) as artifact_table [ whitespace ] ) "}"
   from_table_definition = ( [ whitespace ] "from_table" [ ws ] ( map_name ) as from_table_name [ ws ] [ from_table_body ] [ whitespace ] ) as from_table_decl
 
-  enum_inner_definitions = definition_body / definition_line / member_fields_definition / from_table_definition / value_definition / enum_member_with_payload / attribute_comma_definition / attribute_definition / comment_definition / comment_multiline_definition
+  enum_values_shorthand = ( [ whitespace ] "values" ws value_set_body [ whitespace ] ) as value_set_decl
+  enum_inner_definitions = definition_body / definition_line / member_fields_definition / from_table_definition / enum_values_shorthand / value_definition / enum_member_with_payload / attribute_comma_definition / attribute_definition / comment_definition / comment_multiline_definition
   enum_inner_definition = enum_inner_definitions [ whitespace ]
   enum_body = [ ws ] "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
   enum_definition = [ whitespace ] "enum" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]
@@ -195,7 +197,7 @@ grammar Lml version "1.0.0" {
   condition = [ whitespace ] "condition" ws quoted_string as condition [ whitespace ]
   import = [ whitespace ] "import" [ ws ] "{" [ whitespace ] ( *( import_definition ) ) as imports "}" [ whitespace ]
   import_definition = ( 1*nonspace ) as format_type [ ws ] quoted_string as file [ whitespace ] "{" [ whitespace ] attributes [ whitespace ] "}" [ whitespace ]
-  instances = [ whitespace ] "instances" [ whitespace ] "{" [ whitespace ] [ instances_body ] "}" [ whitespace ]
+  instances = [ whitespace ] "instances" [ ws ] [ ( quoted_string / variable ) as name ] [ whitespace ] "{" [ whitespace ] [ instances_body ] "}" [ whitespace ]
   instances_body = ( *( instances_member [ whitespace ] ) ) as instances
   instances_member = import / ( collection ) as collections / export / instance
   export = [ whitespace ] "export" [ whitespace ] "{" [ whitespace ] ( *( export_format [ whitespace ] ) ) as exports "}" [ whitespace ]

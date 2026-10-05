@@ -3,6 +3,7 @@
 module Lutaml
   module Lml
     class InstanceCollection < Lutaml::Model::Serializable
+      attribute :name, :string
       attribute :instances, "Lutaml::Lml::Instance", collection: true, default: []
       attribute :imports, "Lutaml::Lml::InstancesImport", collection: true, default: []
       attribute :exports, "Lutaml::Lml::InstancesExport", collection: true, default: []

@@ -112,7 +112,7 @@ RSpec.describe Lutaml::Lml::Validator do
         }
       LML
       expect(violations.map(&:rule)).to eq(['reference_validity'])
-      expect(violations.first.message).to include("'Missing'")
+      expect(violations.first.message).to include("'Missing.x'")
     end
 
     it 'flags circular references' do

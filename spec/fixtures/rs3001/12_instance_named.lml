@@ -1,0 +1,11 @@
+// 3001 §Instance: quoted-name instance with type
+models M {
+  class Studio {
+    attribute location, String
+  }
+}
+instances {
+  instance "paris" Studio {
+    location = "Paris"
+  }
+}

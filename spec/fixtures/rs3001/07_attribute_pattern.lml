@@ -1,0 +1,8 @@
+// 3001 §Attribute: pattern constraint
+models M {
+  class Studio {
+    attribute color, String {
+      pattern /\A#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})\z/
+    }
+  }
+}
