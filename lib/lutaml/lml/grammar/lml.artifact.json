@@ -337,12 +337,12 @@
           },
           {
             "Entity": {
-              "atom": 1788
+              "atom": 1787
             }
           },
           {
             "Entity": {
-              "atom": 1494
+              "atom": 1493
             }
           },
           {
@@ -797,12 +797,12 @@
           },
           {
             "Entity": {
-              "atom": 1487
+              "atom": 1486
             }
           },
           {
             "Entity": {
-              "atom": 1486
+              "atom": 1485
             }
           },
           {
@@ -7629,7 +7629,7 @@
           },
           {
             "Entity": {
-              "atom": 1339
+              "atom": 1338
             }
           },
           {
@@ -7707,7 +7707,7 @@
           },
           {
             "Entity": {
-              "atom": 1337
+              "atom": 1336
             }
           },
           {
@@ -7743,12 +7743,12 @@
           },
           {
             "Entity": {
-              "atom": 1333
+              "atom": 1332
             }
           },
           {
             "Entity": {
-              "atom": 1330
+              "atom": 1329
             }
           },
           {
@@ -7948,7 +7948,7 @@
           },
           {
             "Entity": {
-              "atom": 1268
+              "atom": 1267
             }
           },
           {
@@ -8052,11 +8052,6 @@
             }
           },
           {
-            "Entity": {
-              "atom": 1263
-            }
-          },
-          {
             "Str": {
               "pattern": "{"
             }
@@ -8068,7 +8063,7 @@
           },
           {
             "Repetition": {
-              "atom": 1251,
+              "atom": 1250,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8086,7 +8081,7 @@
           },
           {
             "Repetition": {
-              "atom": 1254,
+              "atom": 1253,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8100,7 +8095,7 @@
           {
             "Named": {
               "name": "artifact_table",
-              "atom": 1256
+              "atom": 1255
             }
           },
           {
@@ -8110,7 +8105,7 @@
           },
           {
             "Repetition": {
-              "atom": 1258,
+              "atom": 1257,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8119,16 +8114,16 @@
           {
             "Sequence": {
               "atoms": [
-                1253,
-                1255,
-                1257,
-                1259
+                1252,
+                1254,
+                1256,
+                1258
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1260,
+              "atom": 1259,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -8142,16 +8137,16 @@
           {
             "Sequence": {
               "atoms": [
-                1250,
-                1252,
-                1261,
-                1262
+                1249,
+                1251,
+                1260,
+                1261
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1249,
+              "atom": 1262,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8164,7 +8159,7 @@
           },
           {
             "Repetition": {
-              "atom": 1265,
+              "atom": 1264,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8178,20 +8173,20 @@
                 1237,
                 1246,
                 1248,
-                1264,
-                1266
+                1263,
+                1265
               ]
             }
           },
           {
             "Named": {
               "name": "from_table_decl",
-              "atom": 1267
+              "atom": 1266
             }
           },
           {
             "Entity": {
-              "atom": 1278
+              "atom": 1277
             }
           },
           {
@@ -8201,7 +8196,7 @@
           },
           {
             "Repetition": {
-              "atom": 1270,
+              "atom": 1269,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8229,7 +8224,7 @@
           },
           {
             "Repetition": {
-              "atom": 1275,
+              "atom": 1274,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8238,23 +8233,23 @@
           {
             "Sequence": {
               "atoms": [
+                1270,
                 1271,
                 1272,
                 1273,
-                1274,
-                1276
+                1275
               ]
             }
           },
           {
             "Named": {
               "name": "value_set_decl",
-              "atom": 1277
+              "atom": 1276
             }
           },
           {
             "Entity": {
-              "atom": 1314
+              "atom": 1313
             }
           },
           {
@@ -8264,7 +8259,7 @@
           },
           {
             "Repetition": {
-              "atom": 1280,
+              "atom": 1279,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8282,7 +8277,7 @@
           },
           {
             "Entity": {
-              "atom": 1287
+              "atom": 1286
             }
           },
           {
@@ -8298,15 +8293,15 @@
           {
             "Alternative": {
               "atoms": [
-                1285,
-                1286
+                1284,
+                1285
               ]
             }
           },
           {
             "Named": {
               "name": "value_name",
-              "atom": 1284
+              "atom": 1283
             }
           },
           {
@@ -8316,7 +8311,7 @@
           },
           {
             "Repetition": {
-              "atom": 1289,
+              "atom": 1288,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8324,7 +8319,7 @@
           },
           {
             "Entity": {
-              "atom": 1309
+              "atom": 1308
             }
           },
           {
@@ -8339,7 +8334,7 @@
           },
           {
             "Repetition": {
-              "atom": 1293,
+              "atom": 1292,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8347,7 +8342,7 @@
           },
           {
             "Entity": {
-              "atom": 1305
+              "atom": 1304
             }
           },
           {
@@ -8383,12 +8378,12 @@
           {
             "Alternative": {
               "atoms": [
+                1295,
                 1296,
                 1297,
                 1298,
                 1299,
-                1300,
-                1301
+                1300
               ]
             }
           },
@@ -8399,7 +8394,7 @@
           },
           {
             "Repetition": {
-              "atom": 1303,
+              "atom": 1302,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8408,14 +8403,14 @@
           {
             "Sequence": {
               "atoms": [
-                1302,
-                1304
+                1301,
+                1303
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1295,
+              "atom": 1294,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -8424,7 +8419,7 @@
           {
             "Named": {
               "name": "members",
-              "atom": 1306
+              "atom": 1305
             }
           },
           {
@@ -8435,16 +8430,16 @@
           {
             "Sequence": {
               "atoms": [
-                1292,
-                1294,
-                1307,
-                1308
+                1291,
+                1293,
+                1306,
+                1307
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1291,
+              "atom": 1290,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8457,7 +8452,7 @@
           },
           {
             "Repetition": {
-              "atom": 1311,
+              "atom": 1310,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8466,25 +8461,25 @@
           {
             "Sequence": {
               "atoms": [
+                1280,
                 1281,
                 1282,
-                1283,
-                1288,
-                1290,
-                1310,
-                1312
+                1287,
+                1289,
+                1309,
+                1311
               ]
             }
           },
           {
             "Named": {
               "name": "value_decl",
-              "atom": 1313
+              "atom": 1312
             }
           },
           {
             "Entity": {
-              "atom": 1325
+              "atom": 1324
             }
           },
           {
@@ -8494,7 +8489,7 @@
           },
           {
             "Repetition": {
-              "atom": 1316,
+              "atom": 1315,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8512,7 +8507,7 @@
           },
           {
             "Repetition": {
-              "atom": 1319,
+              "atom": 1318,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8531,25 +8526,25 @@
           {
             "Alternative": {
               "atoms": [
-                1321,
-                1322
+                1320,
+                1321
               ]
             }
           },
           {
             "Sequence": {
               "atoms": [
+                1316,
                 1317,
-                1318,
-                1320,
-                1323
+                1319,
+                1322
               ]
             }
           },
           {
             "Named": {
               "name": "attributes",
-              "atom": 1324
+              "atom": 1323
             }
           },
           {
@@ -8579,13 +8574,13 @@
                 1203,
                 1204,
                 1232,
-                1269,
-                1279,
-                1315,
+                1268,
+                1278,
+                1314,
+                1325,
                 1326,
                 1327,
-                1328,
-                1329
+                1328
               ]
             }
           },
@@ -8596,7 +8591,7 @@
           },
           {
             "Repetition": {
-              "atom": 1331,
+              "atom": 1330,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8606,7 +8601,7 @@
             "Sequence": {
               "atoms": [
                 1201,
-                1332
+                1331
               ]
             }
           },
@@ -8621,7 +8616,7 @@
           {
             "Named": {
               "name": "members",
-              "atom": 1334
+              "atom": 1333
             }
           },
           {
@@ -8635,8 +8630,8 @@
                 1196,
                 1197,
                 1199,
-                1335,
-                1336
+                1334,
+                1335
               ]
             }
           },
@@ -8658,7 +8653,7 @@
                 1189,
                 1191,
                 1193,
-                1338
+                1337
               ]
             }
           },
@@ -8670,7 +8665,7 @@
           },
           {
             "Entity": {
-              "atom": 1352
+              "atom": 1351
             }
           },
           {
@@ -8680,7 +8675,7 @@
           },
           {
             "Repetition": {
-              "atom": 1342,
+              "atom": 1341,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8703,7 +8698,7 @@
           },
           {
             "Repetition": {
-              "atom": 1346,
+              "atom": 1345,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8717,7 +8712,7 @@
           {
             "Named": {
               "name": "name",
-              "atom": 1348
+              "atom": 1347
             }
           },
           {
@@ -8727,7 +8722,7 @@
           },
           {
             "Repetition": {
-              "atom": 1350,
+              "atom": 1349,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8736,24 +8731,24 @@
           {
             "Sequence": {
               "atoms": [
+                1342,
                 1343,
                 1344,
-                1345,
-                1347,
-                1349,
-                1351
+                1346,
+                1348,
+                1350
               ]
             }
           },
           {
             "Named": {
               "name": "primitives",
-              "atom": 1341
+              "atom": 1340
             }
           },
           {
             "Entity": {
-              "atom": 1379
+              "atom": 1378
             }
           },
           {
@@ -8763,7 +8758,7 @@
           },
           {
             "Repetition": {
-              "atom": 1355,
+              "atom": 1354,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8786,7 +8781,7 @@
           },
           {
             "Repetition": {
-              "atom": 1359,
+              "atom": 1358,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8800,7 +8795,7 @@
           {
             "Named": {
               "name": "name",
-              "atom": 1361
+              "atom": 1360
             }
           },
           {
@@ -8810,7 +8805,7 @@
           },
           {
             "Repetition": {
-              "atom": 1363,
+              "atom": 1362,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8823,7 +8818,7 @@
           },
           {
             "Repetition": {
-              "atom": 1365,
+              "atom": 1364,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8831,7 +8826,7 @@
           },
           {
             "Entity": {
-              "atom": 1377
+              "atom": 1376
             }
           },
           {
@@ -8841,7 +8836,7 @@
           },
           {
             "Repetition": {
-              "atom": 1368,
+              "atom": 1367,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8859,7 +8854,7 @@
           },
           {
             "Repetition": {
-              "atom": 1371,
+              "atom": 1370,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8867,12 +8862,12 @@
           },
           {
             "Entity": {
-              "atom": 1333
+              "atom": 1332
             }
           },
           {
             "Repetition": {
-              "atom": 1373,
+              "atom": 1372,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -8881,7 +8876,7 @@
           {
             "Named": {
               "name": "members",
-              "atom": 1374
+              "atom": 1373
             }
           },
           {
@@ -8892,17 +8887,17 @@
           {
             "Sequence": {
               "atoms": [
+                1368,
                 1369,
-                1370,
-                1372,
-                1375,
-                1376
+                1371,
+                1374,
+                1375
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1367,
+              "atom": 1366,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8911,26 +8906,26 @@
           {
             "Sequence": {
               "atoms": [
+                1355,
                 1356,
                 1357,
-                1358,
-                1360,
-                1362,
-                1364,
-                1366,
-                1378
+                1359,
+                1361,
+                1363,
+                1365,
+                1377
               ]
             }
           },
           {
             "Named": {
               "name": "data_types",
-              "atom": 1354
+              "atom": 1353
             }
           },
           {
             "Entity": {
-              "atom": 1482
+              "atom": 1481
             }
           },
           {
@@ -8940,7 +8935,7 @@
           },
           {
             "Repetition": {
-              "atom": 1382,
+              "atom": 1381,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8964,12 +8959,12 @@
           {
             "Named": {
               "name": "name",
-              "atom": 1386
+              "atom": 1385
             }
           },
           {
             "Repetition": {
-              "atom": 1387,
+              "atom": 1386,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8982,7 +8977,7 @@
           },
           {
             "Repetition": {
-              "atom": 1389,
+              "atom": 1388,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -8990,7 +8985,7 @@
           },
           {
             "Entity": {
-              "atom": 1481
+              "atom": 1480
             }
           },
           {
@@ -9000,7 +8995,7 @@
           },
           {
             "Repetition": {
-              "atom": 1392,
+              "atom": 1391,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9018,7 +9013,7 @@
           },
           {
             "Repetition": {
-              "atom": 1395,
+              "atom": 1394,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9026,12 +9021,12 @@
           },
           {
             "Entity": {
-              "atom": 1477
+              "atom": 1476
             }
           },
           {
             "Entity": {
-              "atom": 1405
+              "atom": 1404
             }
           },
           {
@@ -9041,7 +9036,7 @@
           },
           {
             "Repetition": {
-              "atom": 1399,
+              "atom": 1398,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9065,22 +9060,22 @@
           {
             "Named": {
               "name": "owner_end_type",
-              "atom": 1403
+              "atom": 1402
             }
           },
           {
             "Sequence": {
               "atoms": [
+                1399,
                 1400,
                 1401,
-                1402,
-                1404
+                1403
               ]
             }
           },
           {
             "Entity": {
-              "atom": 1413
+              "atom": 1412
             }
           },
           {
@@ -9090,7 +9085,7 @@
           },
           {
             "Repetition": {
-              "atom": 1407,
+              "atom": 1406,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9114,22 +9109,22 @@
           {
             "Named": {
               "name": "member_end_type",
-              "atom": 1411
+              "atom": 1410
             }
           },
           {
             "Sequence": {
               "atoms": [
+                1407,
                 1408,
                 1409,
-                1410,
-                1412
+                1411
               ]
             }
           },
           {
             "Entity": {
-              "atom": 1442
+              "atom": 1441
             }
           },
           {
@@ -9139,7 +9134,7 @@
           },
           {
             "Repetition": {
-              "atom": 1415,
+              "atom": 1414,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9163,12 +9158,12 @@
           {
             "Named": {
               "name": "owner_end",
-              "atom": 1419
+              "atom": 1418
             }
           },
           {
             "Entity": {
-              "atom": 1431
+              "atom": 1430
             }
           },
           {
@@ -9183,7 +9178,7 @@
           },
           {
             "Repetition": {
-              "atom": 1423,
+              "atom": 1422,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9196,7 +9191,7 @@
           },
           {
             "Repetition": {
-              "atom": 1425,
+              "atom": 1424,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9210,7 +9205,7 @@
           {
             "Named": {
               "name": "owner_end_attribute_name",
-              "atom": 1427
+              "atom": 1426
             }
           },
           {
@@ -9220,7 +9215,7 @@
           },
           {
             "Repetition": {
-              "atom": 1429,
+              "atom": 1428,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9229,17 +9224,17 @@
           {
             "Sequence": {
               "atoms": [
-                1422,
-                1424,
-                1426,
-                1428,
-                1430
+                1421,
+                1423,
+                1425,
+                1427,
+                1429
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1421,
+              "atom": 1420,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9247,7 +9242,7 @@
           },
           {
             "Entity": {
-              "atom": 1440
+              "atom": 1439
             }
           },
           {
@@ -9257,7 +9252,7 @@
           },
           {
             "Repetition": {
-              "atom": 1434,
+              "atom": 1433,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9276,7 +9271,7 @@
           {
             "Named": {
               "name": "owner_end_cardinality",
-              "atom": 1437
+              "atom": 1436
             }
           },
           {
@@ -9287,16 +9282,16 @@
           {
             "Sequence": {
               "atoms": [
+                1434,
                 1435,
-                1436,
-                1438,
-                1439
+                1437,
+                1438
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1433,
+              "atom": 1432,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9305,18 +9300,18 @@
           {
             "Sequence": {
               "atoms": [
+                1415,
                 1416,
                 1417,
-                1418,
-                1420,
-                1432,
-                1441
+                1419,
+                1431,
+                1440
               ]
             }
           },
           {
             "Entity": {
-              "atom": 1471
+              "atom": 1470
             }
           },
           {
@@ -9326,7 +9321,7 @@
           },
           {
             "Repetition": {
-              "atom": 1444,
+              "atom": 1443,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9350,12 +9345,12 @@
           {
             "Named": {
               "name": "member_end",
-              "atom": 1448
+              "atom": 1447
             }
           },
           {
             "Entity": {
-              "atom": 1460
+              "atom": 1459
             }
           },
           {
@@ -9370,7 +9365,7 @@
           },
           {
             "Repetition": {
-              "atom": 1452,
+              "atom": 1451,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9383,7 +9378,7 @@
           },
           {
             "Repetition": {
-              "atom": 1454,
+              "atom": 1453,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9397,7 +9392,7 @@
           {
             "Named": {
               "name": "member_end_attribute_name",
-              "atom": 1456
+              "atom": 1455
             }
           },
           {
@@ -9407,7 +9402,7 @@
           },
           {
             "Repetition": {
-              "atom": 1458,
+              "atom": 1457,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9416,17 +9411,17 @@
           {
             "Sequence": {
               "atoms": [
-                1451,
-                1453,
-                1455,
-                1457,
-                1459
+                1450,
+                1452,
+                1454,
+                1456,
+                1458
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1450,
+              "atom": 1449,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9434,7 +9429,7 @@
           },
           {
             "Entity": {
-              "atom": 1469
+              "atom": 1468
             }
           },
           {
@@ -9444,7 +9439,7 @@
           },
           {
             "Repetition": {
-              "atom": 1463,
+              "atom": 1462,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9463,7 +9458,7 @@
           {
             "Named": {
               "name": "member_end_cardinality",
-              "atom": 1466
+              "atom": 1465
             }
           },
           {
@@ -9474,16 +9469,16 @@
           {
             "Sequence": {
               "atoms": [
+                1463,
                 1464,
-                1465,
-                1467,
-                1468
+                1466,
+                1467
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1462,
+              "atom": 1461,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9492,12 +9487,12 @@
           {
             "Sequence": {
               "atoms": [
+                1444,
                 1445,
                 1446,
-                1447,
-                1449,
-                1461,
-                1470
+                1448,
+                1460,
+                1469
               ]
             }
           },
@@ -9514,12 +9509,12 @@
           {
             "Alternative": {
               "atoms": [
-                1398,
-                1406,
-                1414,
-                1443,
-                1472,
-                1473
+                1397,
+                1405,
+                1413,
+                1442,
+                1471,
+                1472
               ]
             }
           },
@@ -9530,7 +9525,7 @@
           },
           {
             "Repetition": {
-              "atom": 1475,
+              "atom": 1474,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9539,14 +9534,14 @@
           {
             "Sequence": {
               "atoms": [
-                1474,
-                1476
+                1473,
+                1475
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1397,
+              "atom": 1396,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -9555,7 +9550,7 @@
           {
             "Named": {
               "name": "members",
-              "atom": 1478
+              "atom": 1477
             }
           },
           {
@@ -9566,30 +9561,30 @@
           {
             "Sequence": {
               "atoms": [
+                1392,
                 1393,
-                1394,
-                1396,
-                1479,
-                1480
+                1395,
+                1478,
+                1479
               ]
             }
           },
           {
             "Sequence": {
               "atoms": [
+                1382,
                 1383,
                 1384,
-                1385,
-                1388,
-                1390,
-                1391
+                1387,
+                1389,
+                1390
               ]
             }
           },
           {
             "Named": {
               "name": "associations",
-              "atom": 1381
+              "atom": 1380
             }
           },
           {
@@ -9612,12 +9607,12 @@
                 458,
                 502,
                 1180,
-                1340,
-                1353,
-                1380,
+                1339,
+                1352,
+                1379,
+                1482,
                 1483,
-                1484,
-                1485
+                1484
               ]
             }
           },
@@ -9639,7 +9634,7 @@
           },
           {
             "Repetition": {
-              "atom": 1488,
+              "atom": 1487,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -9648,7 +9643,7 @@
           {
             "Named": {
               "name": "members",
-              "atom": 1489
+              "atom": 1488
             }
           },
           {
@@ -9663,7 +9658,7 @@
           },
           {
             "Repetition": {
-              "atom": 1492,
+              "atom": 1491,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9678,20 +9673,20 @@
                 68,
                 70,
                 71,
+                1489,
                 1490,
-                1491,
-                1493
+                1492
               ]
             }
           },
           {
             "Entity": {
-              "atom": 1520
+              "atom": 1519
             }
           },
           {
             "Entity": {
-              "atom": 1517
+              "atom": 1516
             }
           },
           {
@@ -9701,7 +9696,7 @@
           },
           {
             "Repetition": {
-              "atom": 1497,
+              "atom": 1496,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9719,7 +9714,7 @@
           },
           {
             "Repetition": {
-              "atom": 1500,
+              "atom": 1499,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9733,12 +9728,12 @@
           {
             "Named": {
               "name": "name",
-              "atom": 1502
+              "atom": 1501
             }
           },
           {
             "Entity": {
-              "atom": 1514
+              "atom": 1513
             }
           },
           {
@@ -9748,7 +9743,7 @@
           },
           {
             "Repetition": {
-              "atom": 1505,
+              "atom": 1504,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9766,7 +9761,7 @@
           },
           {
             "Repetition": {
-              "atom": 1508,
+              "atom": 1507,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9774,12 +9769,12 @@
           },
           {
             "Entity": {
-              "atom": 1487
+              "atom": 1486
             }
           },
           {
             "Repetition": {
-              "atom": 1510,
+              "atom": 1509,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -9788,7 +9783,7 @@
           {
             "Named": {
               "name": "members",
-              "atom": 1511
+              "atom": 1510
             }
           },
           {
@@ -9799,11 +9794,11 @@
           {
             "Sequence": {
               "atoms": [
+                1505,
                 1506,
-                1507,
-                1509,
-                1512,
-                1513
+                1508,
+                1511,
+                1512
               ]
             }
           },
@@ -9814,7 +9809,7 @@
           },
           {
             "Repetition": {
-              "atom": 1515,
+              "atom": 1514,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9823,12 +9818,12 @@
           {
             "Sequence": {
               "atoms": [
+                1497,
                 1498,
-                1499,
-                1501,
+                1500,
+                1502,
                 1503,
-                1504,
-                1516
+                1515
               ]
             }
           },
@@ -9839,7 +9834,7 @@
           },
           {
             "Repetition": {
-              "atom": 1518,
+              "atom": 1517,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9848,19 +9843,19 @@
           {
             "Sequence": {
               "atoms": [
-                1496,
-                1519
+                1495,
+                1518
               ]
             }
           },
           {
             "Entity": {
-              "atom": 1624
+              "atom": 1623
             }
           },
           {
             "Entity": {
-              "atom": 1621
+              "atom": 1620
             }
           },
           {
@@ -9870,7 +9865,7 @@
           },
           {
             "Repetition": {
-              "atom": 1523,
+              "atom": 1522,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9888,7 +9883,7 @@
           },
           {
             "Repetition": {
-              "atom": 1526,
+              "atom": 1525,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9902,12 +9897,12 @@
           {
             "Named": {
               "name": "name",
-              "atom": 1528
+              "atom": 1527
             }
           },
           {
             "Entity": {
-              "atom": 1618
+              "atom": 1617
             }
           },
           {
@@ -9917,7 +9912,7 @@
           },
           {
             "Repetition": {
-              "atom": 1531,
+              "atom": 1530,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9935,7 +9930,7 @@
           },
           {
             "Repetition": {
-              "atom": 1534,
+              "atom": 1533,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9943,22 +9938,22 @@
           },
           {
             "Entity": {
-              "atom": 1614
+              "atom": 1613
             }
           },
           {
             "Entity": {
-              "atom": 1611
+              "atom": 1610
             }
           },
           {
             "Entity": {
-              "atom": 1609
+              "atom": 1608
             }
           },
           {
             "Entity": {
-              "atom": 1567
+              "atom": 1566
             }
           },
           {
@@ -9968,7 +9963,7 @@
           },
           {
             "Repetition": {
-              "atom": 1540,
+              "atom": 1539,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -9986,7 +9981,7 @@
           },
           {
             "Entity": {
-              "atom": 1553
+              "atom": 1552
             }
           },
           {
@@ -10001,7 +9996,7 @@
           },
           {
             "Lookahead": {
-              "atom": 1546,
+              "atom": 1545,
               "positive": false
             }
           },
@@ -10013,14 +10008,14 @@
           {
             "Sequence": {
               "atoms": [
-                1547,
-                1548
+                1546,
+                1547
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1549,
+              "atom": 1548,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -10029,7 +10024,7 @@
           {
             "Named": {
               "name": "path",
-              "atom": 1550
+              "atom": 1549
             }
           },
           {
@@ -10040,15 +10035,15 @@
           {
             "Sequence": {
               "atoms": [
-                1545,
-                1551,
-                1552
+                1544,
+                1550,
+                1551
               ]
             }
           },
           {
             "Entity": {
-              "atom": 1563
+              "atom": 1562
             }
           },
           {
@@ -10063,7 +10058,7 @@
           },
           {
             "Lookahead": {
-              "atom": 1556,
+              "atom": 1555,
               "positive": false
             }
           },
@@ -10075,14 +10070,14 @@
           {
             "Sequence": {
               "atoms": [
-                1557,
-                1558
+                1556,
+                1557
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1559,
+              "atom": 1558,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -10091,7 +10086,7 @@
           {
             "Named": {
               "name": "path",
-              "atom": 1560
+              "atom": 1559
             }
           },
           {
@@ -10102,17 +10097,17 @@
           {
             "Sequence": {
               "atoms": [
-                1555,
-                1561,
-                1562
+                1554,
+                1560,
+                1561
               ]
             }
           },
           {
             "Alternative": {
               "atoms": [
-                1544,
-                1554
+                1543,
+                1553
               ]
             }
           },
@@ -10123,7 +10118,7 @@
           },
           {
             "Repetition": {
-              "atom": 1565,
+              "atom": 1564,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10132,23 +10127,23 @@
           {
             "Sequence": {
               "atoms": [
+                1540,
                 1541,
                 1542,
-                1543,
-                1564,
-                1566
+                1563,
+                1565
               ]
             }
           },
           {
             "Named": {
               "name": "view_imports",
-              "atom": 1539
+              "atom": 1538
             }
           },
           {
             "Entity": {
-              "atom": 1598
+              "atom": 1597
             }
           },
           {
@@ -10158,7 +10153,7 @@
           },
           {
             "Repetition": {
-              "atom": 1570,
+              "atom": 1569,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10176,12 +10171,12 @@
           },
           {
             "Entity": {
-              "atom": 1594
+              "atom": 1593
             }
           },
           {
             "Entity": {
-              "atom": 1585
+              "atom": 1584
             }
           },
           {
@@ -10222,19 +10217,19 @@
           {
             "Alternative": {
               "atoms": [
+                1575,
                 1576,
                 1577,
                 1578,
                 1579,
                 1580,
-                1581,
-                1582
+                1581
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1583,
+              "atom": 1582,
               "min": 1,
               "max": null,
               "tag": "Repetition"
@@ -10243,7 +10238,7 @@
           {
             "Named": {
               "name": "entity_name",
-              "atom": 1584
+              "atom": 1583
             }
           },
           {
@@ -10253,7 +10248,7 @@
           },
           {
             "Repetition": {
-              "atom": 1586,
+              "atom": 1585,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10271,7 +10266,7 @@
           },
           {
             "Repetition": {
-              "atom": 1589,
+              "atom": 1588,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10279,22 +10274,22 @@
           },
           {
             "Entity": {
-              "atom": 1585
+              "atom": 1584
             }
           },
           {
             "Sequence": {
               "atoms": [
+                1586,
                 1587,
-                1588,
-                1590,
-                1591
+                1589,
+                1590
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1592,
+              "atom": 1591,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -10303,15 +10298,15 @@
           {
             "Sequence": {
               "atoms": [
-                1575,
-                1593
+                1574,
+                1592
               ]
             }
           },
           {
             "Named": {
               "name": "show_list",
-              "atom": 1574
+              "atom": 1573
             }
           },
           {
@@ -10321,7 +10316,7 @@
           },
           {
             "Repetition": {
-              "atom": 1596,
+              "atom": 1595,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10330,17 +10325,17 @@
           {
             "Sequence": {
               "atoms": [
+                1570,
                 1571,
                 1572,
-                1573,
-                1595,
-                1597
+                1594,
+                1596
               ]
             }
           },
           {
             "Entity": {
-              "atom": 1608
+              "atom": 1607
             }
           },
           {
@@ -10350,7 +10345,7 @@
           },
           {
             "Repetition": {
-              "atom": 1600,
+              "atom": 1599,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10368,13 +10363,13 @@
           },
           {
             "Entity": {
-              "atom": 1594
+              "atom": 1593
             }
           },
           {
             "Named": {
               "name": "hide_list",
-              "atom": 1604
+              "atom": 1603
             }
           },
           {
@@ -10384,7 +10379,7 @@
           },
           {
             "Repetition": {
-              "atom": 1606,
+              "atom": 1605,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10393,33 +10388,33 @@
           {
             "Sequence": {
               "atoms": [
+                1600,
                 1601,
                 1602,
-                1603,
-                1605,
-                1607
+                1604,
+                1606
               ]
             }
           },
           {
             "Alternative": {
               "atoms": [
+                1567,
                 1568,
-                1569,
-                1599
+                1598
               ]
             }
           },
           {
             "Entity": {
-              "atom": 1486
+              "atom": 1485
             }
           },
           {
             "Alternative": {
               "atoms": [
-                1538,
-                1610
+                1537,
+                1609
               ]
             }
           },
@@ -10430,7 +10425,7 @@
           },
           {
             "Repetition": {
-              "atom": 1612,
+              "atom": 1611,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10439,14 +10434,14 @@
           {
             "Sequence": {
               "atoms": [
-                1537,
-                1613
+                1536,
+                1612
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1536,
+              "atom": 1535,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -10455,7 +10450,7 @@
           {
             "Named": {
               "name": "members",
-              "atom": 1615
+              "atom": 1614
             }
           },
           {
@@ -10466,11 +10461,11 @@
           {
             "Sequence": {
               "atoms": [
+                1531,
                 1532,
-                1533,
-                1535,
-                1616,
-                1617
+                1534,
+                1615,
+                1616
               ]
             }
           },
@@ -10481,7 +10476,7 @@
           },
           {
             "Repetition": {
-              "atom": 1619,
+              "atom": 1618,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10490,12 +10485,12 @@
           {
             "Sequence": {
               "atoms": [
+                1523,
                 1524,
-                1525,
-                1527,
+                1526,
+                1528,
                 1529,
-                1530,
-                1620
+                1619
               ]
             }
           },
@@ -10506,7 +10501,7 @@
           },
           {
             "Repetition": {
-              "atom": 1622,
+              "atom": 1621,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10515,14 +10510,14 @@
           {
             "Sequence": {
               "atoms": [
-                1522,
-                1623
+                1521,
+                1622
               ]
             }
           },
           {
             "Entity": {
-              "atom": 1779
+              "atom": 1778
             }
           },
           {
@@ -10532,7 +10527,7 @@
           },
           {
             "Repetition": {
-              "atom": 1626,
+              "atom": 1625,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10550,7 +10545,7 @@
           },
           {
             "Repetition": {
-              "atom": 1629,
+              "atom": 1628,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10569,20 +10564,20 @@
           {
             "Alternative": {
               "atoms": [
-                1631,
-                1632
+                1630,
+                1631
               ]
             }
           },
           {
             "Named": {
               "name": "name",
-              "atom": 1633
+              "atom": 1632
             }
           },
           {
             "Repetition": {
-              "atom": 1634,
+              "atom": 1633,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10595,7 +10590,7 @@
           },
           {
             "Repetition": {
-              "atom": 1636,
+              "atom": 1635,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10613,7 +10608,7 @@
           },
           {
             "Repetition": {
-              "atom": 1639,
+              "atom": 1638,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10621,17 +10616,17 @@
           },
           {
             "Entity": {
-              "atom": 1774
+              "atom": 1773
             }
           },
           {
             "Entity": {
-              "atom": 1769
+              "atom": 1768
             }
           },
           {
             "Entity": {
-              "atom": 1677
+              "atom": 1676
             }
           },
           {
@@ -10641,7 +10636,7 @@
           },
           {
             "Repetition": {
-              "atom": 1644,
+              "atom": 1643,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10659,7 +10654,7 @@
           },
           {
             "Repetition": {
-              "atom": 1647,
+              "atom": 1646,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10677,7 +10672,7 @@
           },
           {
             "Repetition": {
-              "atom": 1650,
+              "atom": 1649,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10685,7 +10680,7 @@
           },
           {
             "Entity": {
-              "atom": 1671
+              "atom": 1670
             }
           },
           {
@@ -10695,7 +10690,7 @@
           },
           {
             "Repetition": {
-              "atom": 1653,
+              "atom": 1652,
               "min": 1,
               "max": null,
               "tag": "Repetition"
@@ -10704,7 +10699,7 @@
           {
             "Named": {
               "name": "format_type",
-              "atom": 1654
+              "atom": 1653
             }
           },
           {
@@ -10714,7 +10709,7 @@
           },
           {
             "Repetition": {
-              "atom": 1656,
+              "atom": 1655,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10728,7 +10723,7 @@
           {
             "Named": {
               "name": "file",
-              "atom": 1658
+              "atom": 1657
             }
           },
           {
@@ -10738,7 +10733,7 @@
           },
           {
             "Repetition": {
-              "atom": 1660,
+              "atom": 1659,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10756,7 +10751,7 @@
           },
           {
             "Repetition": {
-              "atom": 1663,
+              "atom": 1662,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10774,7 +10769,7 @@
           },
           {
             "Repetition": {
-              "atom": 1666,
+              "atom": 1665,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10792,7 +10787,7 @@
           },
           {
             "Repetition": {
-              "atom": 1669,
+              "atom": 1668,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10801,22 +10796,22 @@
           {
             "Sequence": {
               "atoms": [
-                1655,
-                1657,
-                1659,
+                1654,
+                1656,
+                1658,
+                1660,
                 1661,
-                1662,
+                1663,
                 1664,
-                1665,
+                1666,
                 1667,
-                1668,
-                1670
+                1669
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1652,
+              "atom": 1651,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -10825,7 +10820,7 @@
           {
             "Named": {
               "name": "imports",
-              "atom": 1672
+              "atom": 1671
             }
           },
           {
@@ -10840,7 +10835,7 @@
           },
           {
             "Repetition": {
-              "atom": 1675,
+              "atom": 1674,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10849,20 +10844,20 @@
           {
             "Sequence": {
               "atoms": [
+                1644,
                 1645,
-                1646,
+                1647,
                 1648,
-                1649,
-                1651,
+                1650,
+                1672,
                 1673,
-                1674,
-                1676
+                1675
               ]
             }
           },
           {
             "Entity": {
-              "atom": 1731
+              "atom": 1730
             }
           },
           {
@@ -10872,7 +10867,7 @@
           },
           {
             "Repetition": {
-              "atom": 1679,
+              "atom": 1678,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10896,7 +10891,7 @@
           {
             "Named": {
               "name": "name",
-              "atom": 1683
+              "atom": 1682
             }
           },
           {
@@ -10906,7 +10901,7 @@
           },
           {
             "Repetition": {
-              "atom": 1685,
+              "atom": 1684,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10924,7 +10919,7 @@
           },
           {
             "Repetition": {
-              "atom": 1688,
+              "atom": 1687,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10932,7 +10927,7 @@
           },
           {
             "Entity": {
-              "atom": 1698
+              "atom": 1697
             }
           },
           {
@@ -10942,7 +10937,7 @@
           },
           {
             "Repetition": {
-              "atom": 1691,
+              "atom": 1690,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10960,7 +10955,7 @@
           },
           {
             "Repetition": {
-              "atom": 1694,
+              "atom": 1693,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -10974,22 +10969,22 @@
           {
             "Named": {
               "name": "includes",
-              "atom": 1696
+              "atom": 1695
             }
           },
           {
             "Sequence": {
               "atoms": [
+                1691,
                 1692,
-                1693,
-                1695,
-                1697
+                1694,
+                1696
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1690,
+              "atom": 1689,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11002,7 +10997,7 @@
           },
           {
             "Repetition": {
-              "atom": 1700,
+              "atom": 1699,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11010,7 +11005,7 @@
           },
           {
             "Entity": {
-              "atom": 1724
+              "atom": 1723
             }
           },
           {
@@ -11020,7 +11015,7 @@
           },
           {
             "Repetition": {
-              "atom": 1703,
+              "atom": 1702,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11038,7 +11033,7 @@
           },
           {
             "Repetition": {
-              "atom": 1706,
+              "atom": 1705,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11056,7 +11051,7 @@
           },
           {
             "Repetition": {
-              "atom": 1709,
+              "atom": 1708,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11064,7 +11059,7 @@
           },
           {
             "Entity": {
-              "atom": 1720
+              "atom": 1719
             }
           },
           {
@@ -11074,7 +11069,7 @@
           },
           {
             "Repetition": {
-              "atom": 1712,
+              "atom": 1711,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11098,7 +11093,7 @@
           {
             "Named": {
               "name": "condition",
-              "atom": 1716
+              "atom": 1715
             }
           },
           {
@@ -11108,7 +11103,7 @@
           },
           {
             "Repetition": {
-              "atom": 1718,
+              "atom": 1717,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11117,17 +11112,17 @@
           {
             "Sequence": {
               "atoms": [
+                1712,
                 1713,
                 1714,
-                1715,
-                1717,
-                1719
+                1716,
+                1718
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1711,
+              "atom": 1710,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -11136,7 +11131,7 @@
           {
             "Named": {
               "name": "validations",
-              "atom": 1721
+              "atom": 1720
             }
           },
           {
@@ -11147,19 +11142,19 @@
           {
             "Sequence": {
               "atoms": [
+                1703,
                 1704,
-                1705,
+                1706,
                 1707,
-                1708,
-                1710,
-                1722,
-                1723
+                1709,
+                1721,
+                1722
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1702,
+              "atom": 1701,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11172,7 +11167,7 @@
           },
           {
             "Repetition": {
-              "atom": 1726,
+              "atom": 1725,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11190,7 +11185,7 @@
           },
           {
             "Repetition": {
-              "atom": 1729,
+              "atom": 1728,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11199,31 +11194,31 @@
           {
             "Sequence": {
               "atoms": [
+                1679,
                 1680,
                 1681,
-                1682,
-                1684,
+                1683,
+                1685,
                 1686,
-                1687,
-                1689,
-                1699,
-                1701,
-                1725,
+                1688,
+                1698,
+                1700,
+                1724,
+                1726,
                 1727,
-                1728,
-                1730
+                1729
               ]
             }
           },
           {
             "Named": {
               "name": "collections",
-              "atom": 1678
+              "atom": 1677
             }
           },
           {
             "Entity": {
-              "atom": 1767
+              "atom": 1766
             }
           },
           {
@@ -11233,7 +11228,7 @@
           },
           {
             "Repetition": {
-              "atom": 1734,
+              "atom": 1733,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11251,7 +11246,7 @@
           },
           {
             "Repetition": {
-              "atom": 1737,
+              "atom": 1736,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11269,7 +11264,7 @@
           },
           {
             "Repetition": {
-              "atom": 1740,
+              "atom": 1739,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11277,7 +11272,7 @@
           },
           {
             "Entity": {
-              "atom": 1758
+              "atom": 1757
             }
           },
           {
@@ -11287,7 +11282,7 @@
           },
           {
             "Repetition": {
-              "atom": 1743,
+              "atom": 1742,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11311,7 +11306,7 @@
           {
             "Named": {
               "name": "format_type",
-              "atom": 1747
+              "atom": 1746
             }
           },
           {
@@ -11321,7 +11316,7 @@
           },
           {
             "Repetition": {
-              "atom": 1749,
+              "atom": 1748,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11339,7 +11334,7 @@
           },
           {
             "Repetition": {
-              "atom": 1752,
+              "atom": 1751,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11362,7 +11357,7 @@
           },
           {
             "Repetition": {
-              "atom": 1756,
+              "atom": 1755,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11371,16 +11366,16 @@
           {
             "Sequence": {
               "atoms": [
+                1743,
                 1744,
                 1745,
-                1746,
-                1748,
+                1747,
+                1749,
                 1750,
-                1751,
+                1752,
                 1753,
                 1754,
-                1755,
-                1757
+                1756
               ]
             }
           },
@@ -11391,7 +11386,7 @@
           },
           {
             "Repetition": {
-              "atom": 1759,
+              "atom": 1758,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11400,14 +11395,14 @@
           {
             "Sequence": {
               "atoms": [
-                1742,
-                1760
+                1741,
+                1759
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1761,
+              "atom": 1760,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -11416,7 +11411,7 @@
           {
             "Named": {
               "name": "exports",
-              "atom": 1762
+              "atom": 1761
             }
           },
           {
@@ -11431,7 +11426,7 @@
           },
           {
             "Repetition": {
-              "atom": 1765,
+              "atom": 1764,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11440,14 +11435,14 @@
           {
             "Sequence": {
               "atoms": [
+                1734,
                 1735,
-                1736,
+                1737,
                 1738,
-                1739,
-                1741,
+                1740,
+                1762,
                 1763,
-                1764,
-                1766
+                1765
               ]
             }
           },
@@ -11459,10 +11454,10 @@
           {
             "Alternative": {
               "atoms": [
-                1643,
+                1642,
+                1731,
                 1732,
-                1733,
-                1768
+                1767
               ]
             }
           },
@@ -11473,7 +11468,7 @@
           },
           {
             "Repetition": {
-              "atom": 1770,
+              "atom": 1769,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11482,14 +11477,14 @@
           {
             "Sequence": {
               "atoms": [
-                1642,
-                1771
+                1641,
+                1770
               ]
             }
           },
           {
             "Repetition": {
-              "atom": 1772,
+              "atom": 1771,
               "min": 0,
               "max": null,
               "tag": "Repetition"
@@ -11498,12 +11493,12 @@
           {
             "Named": {
               "name": "instances",
-              "atom": 1773
+              "atom": 1772
             }
           },
           {
             "Repetition": {
-              "atom": 1641,
+              "atom": 1640,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11521,7 +11516,7 @@
           },
           {
             "Repetition": {
-              "atom": 1777,
+              "atom": 1776,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11530,16 +11525,16 @@
           {
             "Sequence": {
               "atoms": [
+                1626,
                 1627,
-                1628,
-                1630,
-                1635,
+                1629,
+                1634,
+                1636,
                 1637,
-                1638,
-                1640,
+                1639,
+                1774,
                 1775,
-                1776,
-                1778
+                1777
               ]
             }
           },
@@ -11550,17 +11545,17 @@
           },
           {
             "Entity": {
-              "atom": 1784
+              "atom": 1783
             }
           },
           {
             "Entity": {
-              "atom": 1487
+              "atom": 1486
             }
           },
           {
             "Repetition": {
-              "atom": 1782,
+              "atom": 1781,
               "min": 1,
               "max": null,
               "tag": "Repetition"
@@ -11569,18 +11564,18 @@
           {
             "Named": {
               "name": "members",
-              "atom": 1783
+              "atom": 1782
             }
           },
           {
             "Alternative": {
               "atoms": [
                 52,
-                1495,
-                1521,
-                1625,
-                1780,
-                1781
+                1494,
+                1520,
+                1624,
+                1779,
+                1780
               ]
             }
           },
@@ -11591,7 +11586,7 @@
           },
           {
             "Repetition": {
-              "atom": 1786,
+              "atom": 1785,
               "min": 0,
               "max": 1,
               "tag": "Maybe"
@@ -11600,8 +11595,8 @@
           {
             "Sequence": {
               "atoms": [
-                1785,
-                1787
+                1784,
+                1786
               ]
             }
           },
@@ -11616,19 +11611,19 @@
           {
             "Named": {
               "name": "members",
-              "atom": 1789
+              "atom": 1788
             }
           },
           {
             "Sequence": {
               "atoms": [
                 50,
-                1790
+                1789
               ]
             }
           }
         ],
-        "root": 1791
+        "root": 1790
       },
       "bindings": []
     }
@@ -11844,6 +11839,6 @@
   "derive": {},
   "tests": [],
   "docs": {},
-  "source": "# LutaML Model Language (LML) — PARG grammar\n#\n# Ported from the original Parslet grammar (removed 2026-10; git history\n# has the reference implementation if the port needs re-checking).\n# PEG semantics: ordered choice, greedy repetition. Rule order within\n# alternatives preserves the original Parslet backtracking order.\n#\n# Capture discipline: repetitions are parenthesized before `as` so a\n# capture binds the whole match (Parslet's `.repeat.as(:x)` shape);\n# `[ x as k ]` yields k: nil when absent (Parslet omits the key —\n# consumers treat nil and absent as equivalent).\ngrammar Lml version \"1.0.0\" {\n  # ---- Character primitives ----\n  alpha = %x41-5A / %x61-7A\n  word = %x41-5A / %x61-7A / %x30-39 / \"_\"\n  cardchar = %x30-39 / %x61-7A / \"*\"\n  # Parslet's `any`: any Unicode character (not just bytes)\n  any_char = %x00-10FFFF\n  # [^\\s\\n\\r] — regex \\s covers space, tab, CR, LF, VT, FF\n  nonspace = !\" \" !%x09 !%x0A !%x0B !%x0C !%x0D any_char\n  quote = %x22 / %x27\n  newline = %x0D / %x0A\n\n  ws = 1*\" \"\n  whitespace = 1*( \" \" / %x09 / [ %x0D ] %x0A / %x0D / \";\" )\n\n  # match['\"\\'']\n  quotes = %x22 / %x27\n\n  # quoted('\"', :string) | quoted(\"'\", :string)\n  dq_string = %x22 ( *( !%x22 any_char ) ) as string %x22\n  sq_string = %x27 ( *( !%x27 any_char ) ) as string %x27\n  quoted_string = dq_string / sq_string\n  # any_quoted(:path) for view import\n  dq_path = %x22 ( *( !%x22 any_char ) ) as path %x22\n  sq_path = %x27 ( *( !%x27 any_char ) ) as path %x27\n\n  boolean = ( \"true\" / \"false\" ) as boolean\n  number = ( 1*%x30-39 \".\" 1*%x30-39 ) as float / ( 1*%x30-39 ) as number\n  variable = quoted_string / 1*word\n  reference = ( \"reference:(\" / \"ref:(\" ) ( variable *( \".\" variable ) ) as reference \")\"\n  range = ( variable as start \"..\" variable as end ) as range\n  namespaced_identifier = variable *( \"::\" variable )\n  comment_definition = [ ws ] ( \"**\" / \"#\" ) ( *( !newline any_char ) ) as comments\n  comment_multiline_definition = [ ws ] \"*|\" ( *( !\"|*\" any_char ) ) as comments [ whitespace ] \"|*\"\n\n  class_name_chars = 1*( %x41-5A / %x61-7A / %x30-39 / \" \" / \"_\" / \"-\" / \":\" / \".\" )\n  class_name = class_name_chars [ \"(\" class_name_chars \")\" ]\n  cardinality_body_definition = cardchar as min [ \"..\" [ cardchar as max ] ]\n  cardinality = \"[\" cardinality_body_definition as cardinality \"]\"\n\n  data_value = boolean / reference / range / number / quoted_string\n  key_value_pair = variable as key ws [ \"=\" ] [ ws ] data_value as value\n  key_value_map = \"{\" [ whitespace ] ( *( key_value_pair whitespace ) ) as key_value_map \"}\"\n  kw_visibility_modifier = \"+\" / \"-\" / \"#\" / \"~\"\n\n  # ---- Attributes ----\n  attribute = comment_definition / ( variable as key [ ws ] [ \"+\" as add ] [ \"=\" ] [ ws ] attribute_value as value )\n  attributes = ( *( attribute_line / whitespace ) ) as attributes\n  attribute_line = [ ws ] attribute [ [ \",\" ] whitespace ]\n  visibility = kw_visibility_modifier as visibility_modifier\n  attribute_stereotype = \"<<\" ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \"/\" ) ) as stereotype \">>\"\n  typechar = %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \":\" / \"/\" / \"+\"\n  namechar = %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \"/\" / \"+\"\n  attribute_type = [ \":\" ] [ ws ] [ attribute_stereotype ] [ ws ] [ quotes as type_literal ] ( 1*typechar ) as type [ quotes ] [ ws ]\n  attribute_name = ( 1*namechar ) as name\n  attribute_definition_name = ( quotes ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \"/\" / \"+\" ) ) as name quotes ) / attribute_name\n  attribute_definition = ( [ visibility ] as visibility [ ws ] attribute_definition_name [ ws ] [ attribute_type ] [ cardinality ] [ class_body ] ) as attributes\n\n  keyword_type_argument = \"type\" [ ws ] ( 1*nonspace ) as type [ whitespace ]\n  keyword_cardinality_argument = \"cardinality\" [ ws ] cardinality_body_definition as cardinality [ whitespace ]\n  keyword_any_argument = [ ws ] ( 1*nonspace ) as name ws [ \"=\" / \":\" ] [ ws ] attribute_value as value [ whitespace ]\n  keyword_values_argument = \"values\" ws ( ( value_set_body ) as value_set / ( variable ) as value_set_ref ) [ whitespace ]\n  keyword_pattern_argument = ( \"pattern\" ws \"/\" ( *( ( \"\\\\\" any_char ) / ( !\"/\" any_char ) ) ) as pattern \"/\" [ whitespace ] )\n  value_set_body = \"{\" [ whitespace ] ( *( ( ( data_value / variable ) as item ) [ \",\" ] [ whitespace ] ) ) as items \"}\"\n  keyword_attribute_options = *( keyword_type_argument / keyword_cardinality_argument / keyword_values_argument / keyword_pattern_argument / ( keyword_any_argument ) as properties )\n  keyword_attribute_body = \"{\" [ whitespace ] keyword_attribute_options [ whitespace ] \"}\"\n  keyword_attribute_definition = ( \"attribute\" ws attribute_name [ ws ] keyword_attribute_body ) as attributes\n\n  # ---- Associations ----\n  owner_cardinality = [ ws ] \"[\" cardinality_body_definition as owner_end_cardinality \"]\"\n  owner_attribute_name = \"#\" [ visibility ] [ ws ] variable as owner_end_attribute_name [ ws ]\n  owner_definition = [ whitespace ] \"owner\" ws variable as owner_end [ owner_attribute_name ] [ owner_cardinality ]\n  owner_type = [ whitespace ] \"owner_type\" ws variable as owner_end_type\n  member_cardinality = [ ws ] \"[\" cardinality_body_definition as member_end_cardinality \"]\"\n  member_attribute_name = \"#\" [ visibility ] [ ws ] variable as member_end_attribute_name [ ws ]\n  member_definition = [ whitespace ] \"member\" ws variable as member_end [ member_attribute_name ] [ member_cardinality ]\n  member_type = [ whitespace ] \"member_type\" ws variable as member_end_type\n  association_inner_definition = ( owner_type / member_type / owner_definition / member_definition / comment_definition / comment_multiline_definition ) [ whitespace ]\n  association_body = [ ws ] \"{\" [ whitespace ] ( *( association_inner_definition ) ) as members \"}\"\n  association_definition = [ whitespace ] \"association\" ws [ variable as name ] [ ws ] association_body\n\n  # ---- Definitions ----\n  class_modifier = [ ( [ whitespace ] ( \"abstract\" / \"interface\" ) ) as modifier ws ]\n  # ---- Namespaces (RS 3010 extension: lutaml-model XmlNamespace) ----\n  namespace_uri_line = ( [ ws ] \"uri\" ws ( quoted_string / ( 1*word ) ) as uri [ whitespace ] )\n  namespace_prefix_line = ( [ ws ] \"prefix\" ws ( quoted_string / ( 1*word ) ) as prefix [ whitespace ] )\n  namespace_body = \"{\" [ whitespace ] ( *( namespace_uri_line / namespace_prefix_line ) ) as members \"}\"\n  namespace_inline = ( ws ( quoted_string ) as uri [ ws \"prefix\" ws ( quoted_string / ( 1*word ) ) as prefix ] )\n  namespace_definition = ( [ whitespace ] \"namespace\" ws ( 1*word ) as name [ ws ] ( namespace_body / namespace_inline ) [ whitespace ] ) as namespaces\n\n  # ---- Serialization mappings (RS 3010 extension: sibling-linked) ----\n  serialization_body = \"{\" [ whitespace ] ( *( serialization_line ) ) as rules \"}\"\n  serialization_line = ( mapping_element_name_line / mapping_element_line / mapping_attribute_line / mapping_content_line / mapping_namespace_line / mapping_mixed_line / legacy_map_line / mapping_map_line / mapping_map_key_line / mapping_map_value_line ) [ whitespace ]\n  legacy_map_line = ( [ ws ] \"map\" ws dq_string as wire \",\" ws \"to:\" ws ( quoted_string / ( 1*word ) ) as to [ whitespace ] ) as legacy_map\n  mapping_element_name_line = ( [ ws ] \"element\" ws dq_string as element_name [ whitespace ] ) as element_name\n  mapping_element_line = ( [ ws ] \"map_element\" ws ( element_args ) ) as map_element\n  element_args = ( dq_string as wire [ ws ( 1*word ) as field ] / ( 1*word ) as field )\n  mapping_attribute_line = ( [ ws ] \"map_attribute\" ws ( attribute_args ) ) as map_attribute\n  attribute_args = ( dq_string as wire [ ws ( 1*word ) as field ] / ( 1*word ) as field )\n  mapping_content_line = ( [ ws ] \"map_content\" ws ( 1*word ) as field ) as map_content\n  mapping_namespace_line = ( [ ws ] \"namespace\" ws ( 1*word ) as namespace_ref ) as map_namespace\n  mapping_mixed_line = ( [ ws ] \"mixed_content\" ) as mixed_content\n  mapping_map_line = ( [ ws ] \"map\" ws map_args ) as map\n  map_args = ( dq_string as wire ws ( 1*word ) as field / dq_string as wire / ( 1*word ) as field )\n  mapping_map_key_line = ( [ ws ] \"map_key\" ws \"to_instance\" ws ( 1*word ) as field ) as map_key\n  mapping_map_value_line = ( [ ws ] \"map_value\" ws ( \"to_instance\" / \"as_attribute\" ) as mode ws ( 1*word ) as field ) as map_value\n  mapping_definition = ( [ whitespace ] \"mapping\" ws ( 1*word ) as format ws ( 1*word ) as target [ ws ] serialization_body [ whitespace ] ) as serialization_mappings\n\n  # ---- Mapping blocks (lutaml-model wire names) ----\n  map_name = ( quoted_string / 1*( word / \"-\" / \".\" ) )\n  map_line = [ ws ] \"map\" ws ( map_name ) as wire \",\" ws \"to:\" ws ( map_name ) as to [ whitespace ]\n  mapping_body = [ ws ] \"{\" [ whitespace ] ( *( map_line ) ) as maps \"}\"\n  class_mapping_section = ( [ whitespace ] \"mapping\" ws ( 1*word ) as format [ ws ] serialization_body [ whitespace ] ) as serialization_mappings\n\n  derive_definition = ( [ whitespace ] \"derive\" ws attribute_name [ ws ] \":\" [ ws ] [ quotes ] ( 1*typechar ) as type [ quotes ] ) as derived_field [ whitespace ]\n  string_format_item = ( [ ws ] ( \"artifact\" / \"root\" ) as key ws ( quoted_string / 1*nonspace ) as value [ whitespace ] )\n  string_format_body = \"{\" [ whitespace ] ( *( string_format_item ) ) as items [ whitespace ] \"}\"\n  string_format_definition = ( [ whitespace ] \"string_format\" ws ( variable ) as format [ ws ] string_format_body ) as string_format\n\n  class_inner_definitions = definition_body / definition_line / class_mapping_section / derive_definition / string_format_definition / attribute_comma_definition / ( !( \"attribute\" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition\n  class_inner_definition = class_inner_definitions [ whitespace ]\n  class_body = [ ws ] \"{\" [ whitespace ] ( *( class_inner_definition ) ) as members \"}\"\n  parent_class = [ ws ] \"<\" [ ws ] ( class_name_chars ) as parent_class\n  class_definition = class_modifier [ whitespace ] \"class\" ws class_name as name [ parent_class ] [ ws ] [ attribute_stereotype ] [ class_body ]\n\n  # Balanced-brace definition text: nested \"{...}\" and \"\\\"-escapes allowed\n  definition_content = *( ( \"\\\\\" any_char ) / ( \"{\" definition_content \"}\" ) / ( !\"}\" any_char ) )\n  definition_body = [ ws ] \"definition\" [ whitespace ] \"{\" ( definition_content ) as definition \"}\"\n  definition_line = ( [ ws ] \"definition\" ws ( dq_string / sq_string ) ) as definition [ whitespace ]\n\n  member_field_line = [ ws ] attribute_name [ ws ] ( 1*nonspace ) as member_field_type [ whitespace ]\n  member_fields_definition = ( [ whitespace ] \"member_fields\" [ whitespace ] \"{\" [ whitespace ] ( *( member_field_line ) ) as member_fields [ whitespace ] \"}\" ) as member_fields_decl\n  attribute_comma_definition = ( [ whitespace ] \"attribute\" ws attribute_name \",\" [ ws ] ( 1*typechar ) as type [ ws ] [ \"{\" [ whitespace ] keyword_attribute_options [ whitespace ] \"}\" ] [ whitespace ] ) as attributes\n  enum_member_with_payload = ( [ whitespace ] attribute_name [ ws ] ( class_body / keyword_attribute_body ) ) as attributes\n\n  # ---- Canonical value construct (RS 3001 par. Value / par. Enums) ----\n  # `value <name> { block }` is the canonical enum member; the bare\n  # identifier member is its documented shortcut. from_table expands to\n  # value members at compile time.\n  value_name = quoted_string / map_name\n  value_inner_definition = ( definition_body / definition_line / instance / attribute_line / comment_definition / comment_multiline_definition ) [ whitespace ]\n  value_body = \"{\" [ whitespace ] ( *( value_inner_definition ) ) as members \"}\"\n  value_definition = ( [ whitespace ] \"value\" ws ( value_name ) as value_name [ ws ] [ value_body ] [ whitespace ] ) as value_decl\n\n  from_table_body = \"{\" [ whitespace ] *( \"artifact\" [ ws ] ( map_name ) as artifact_table [ whitespace ] ) \"}\"\n  from_table_definition = ( [ whitespace ] \"from_table\" [ ws ] ( map_name ) as from_table_name [ ws ] [ from_table_body ] [ whitespace ] ) as from_table_decl\n\n  enum_values_shorthand = ( [ whitespace ] \"values\" ws value_set_body [ whitespace ] ) as value_set_decl\n  enum_inner_definitions = definition_body / definition_line / member_fields_definition / from_table_definition / enum_values_shorthand / value_definition / enum_member_with_payload / attribute_comma_definition / attribute_definition / comment_definition / comment_multiline_definition\n  enum_inner_definition = enum_inner_definitions [ whitespace ]\n  enum_body = [ ws ] \"{\" [ whitespace ] ( *( enum_inner_definition ) ) as members \"}\"\n  enum_definition = [ whitespace ] \"enum\" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]\n  data_type_body = [ ws ] \"{\" [ whitespace ] ( *( enum_inner_definition ) ) as members \"}\"\n  data_type_definition = [ whitespace ] \"data_type\" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ data_type_body ]\n  primitive_definition = [ whitespace ] \"primitive\" ws [ quotes ] class_name as name [ quotes ]\n\n  package_body = [ ws ] \"{\" [ whitespace ] ( *( diagram_inner_definition ) ) as members \"}\"\n  package_definition = ( [ whitespace ] \"package\" ws class_name as name [ ws ] package_body [ whitespace ] ) as packages\n  diagram_inner_definitions = namespace_definition / mapping_definition / package_definition / title_definition / caption_definition / fontname_definition / ( class_definition ) as classes / ( enum_definition ) as enums / ( primitive_definition ) as primitives / ( data_type_definition ) as data_types / ( association_definition ) as associations / comment_definition / comment_multiline_definition\n  diagram_inner_definition = diagram_inner_definitions [ whitespace ]\n  diagram_body = [ ws ] \"{\" [ whitespace ] ( *( diagram_inner_definition ) ) as members \"}\"\n  diagram_definition = [ whitespace ] \"diagram\" [ ws ] class_name as name diagram_body [ whitespace ]\n  diagram_definitions = diagram_definition [ whitespace ]\n  model_definitions = ( 1*( diagram_inner_definition ) ) as members\n\n  view_only_definitions = ( view_import ) as view_imports / show_directive / hide_directive\n  view_inner_definitions = view_only_definitions / diagram_inner_definitions\n  view_inner_definition = view_inner_definitions [ whitespace ]\n  view_body = [ ws ] \"{\" [ whitespace ] ( *( view_inner_definition ) ) as members \"}\"\n  view_definition = [ whitespace ] \"view\" [ ws ] class_name as name view_body [ whitespace ]\n  view_definitions = view_definition [ whitespace ]\n\n  title_text = ( %x22 ( 1*( !%x22 any_char ) ) as title %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as title %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \",\" / \".\" / \":\" / \";\" / \"(\" / \")\" / \"+\" / \"'\" / \"/\" ) ) as title\n  title_definition = [ whitespace ] \"title\" ws title_text\n  caption_text = ( %x22 ( 1*( !%x22 any_char ) ) as caption %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as caption %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \",\" / \".\" / \":\" / \";\" / \"(\" / \")\" / \"+\" / \"'\" / \"/\" ) ) as caption\n  caption_definition = [ whitespace ] \"caption\" ws caption_text\n  fontname_text = [ quotes ] ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" ) ) as fontname [ quotes ]\n  fontname_definition = [ whitespace ] \"fontname\" ws fontname_text\n\n  # ---- Views ----\n  # `import` here carries a required trailing space (word boundary)\n  view_import = [ whitespace ] \"import\" ws ( dq_path / sq_path ) [ whitespace ]\n  entity_name_atom = ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \".\" / \":\" / \"-\" ) ) as entity_name\n  entity_name_list = entity_name_atom *( [ ws ] \",\" [ ws ] entity_name_atom )\n  show_directive = [ whitespace ] \"show\" ws ( entity_name_list ) as show_list [ whitespace ]\n  hide_directive = [ whitespace ] \"hide\" ws ( entity_name_list ) as hide_list [ whitespace ]\n\n  # ---- Requires ----\n  require_stmt = [ whitespace ] \"require\" ws quoted_string as require [ whitespace ]\n  require_block = ( *( require_stmt [ whitespace ] ) ) as requires\n\n  # ---- Instances ----\n  instance = instance_named / keyword_instance / class_instance\n  instance_named = ( [ whitespace ] \"instance\" ws quoted_string as name [ ws ] [ ( namespaced_identifier ) as instance_type ] [ ws ] \"{\" [ whitespace ] ( ( [ ws ] instance ) / attributes ) \"}\" [ whitespace ] ) as instance\n  isa_definition = [ whitespace ] \"isa\" ws ( namespaced_identifier ) as isa [ whitespace ]\n  keyword_instance = ( [ whitespace ] \"instance\" [ ws ( namespaced_identifier ) as instance_type ] [ ws ] \"{\" [ whitespace ] [ isa_definition ] ( ( [ ws ] instance ) / attributes ) \"}\" ) as instance [ whitespace ]\n  class_instance = ( variable as instance_type [ whitespace ] quoted_string as name [ whitespace ] [ [ whitespace ] \"extends\" [ whitespace ] quoted_string as parent [ whitespace ] ] \"{\" [ whitespace ] [ lml_instance_body ] \"}\" ) as instance [ whitespace ]\n  lml_instance_body = lml_instance_members [ whitespace ]\n  instance_template = [ whitespace ] \"template\" [ whitespace ] \"{\" [ whitespace ] attributes [ whitespace ] \"}\"\n  lml_instance_members = ( instance_template ) as template / attributes\n  models = [ whitespace ] \"models\" [ whitespace ] variable as name [ whitespace ] \"{\" ( *( ( ( string_format_definition ) as default_string_formats ) / model_body ) ) as members \"}\" [ whitespace ]\n  model_body = diagram_inner_definition\n\n  # ---- Data structures ----\n  attribute_value = instance / list / key_value_map / data_value / 1*( !%x0A any_char )\n  list_item = instance / data_value\n  list = \"[\" [ whitespace ] ( *( list_item [ ws ] [ \",\" ] [ whitespace ] ) ) as list [ whitespace ] \"]\"\n  collection = [ whitespace ] \"collection\" ws quoted_string as name [ ws ] \"{\" [ whitespace ] [ includes ] [ whitespace ] [ validation ] [ whitespace ] \"}\" [ whitespace ]\n  includes = [ whitespace ] \"includes\" [ ws ] ( list ) as includes\n  validation = [ whitespace ] \"validation\" [ ws ] \"{\" [ whitespace ] ( *( condition ) ) as validations \"}\"\n  condition = [ whitespace ] \"condition\" ws quoted_string as condition [ whitespace ]\n  import = [ whitespace ] \"import\" [ ws ] \"{\" [ whitespace ] ( *( import_definition ) ) as imports \"}\" [ whitespace ]\n  import_definition = ( 1*nonspace ) as format_type [ ws ] quoted_string as file [ whitespace ] \"{\" [ whitespace ] attributes [ whitespace ] \"}\" [ whitespace ]\n  instances = [ whitespace ] \"instances\" [ ws ] [ ( quoted_string / variable ) as name ] [ whitespace ] \"{\" [ whitespace ] [ instances_body ] \"}\" [ whitespace ]\n  instances_body = ( *( instances_member [ whitespace ] ) ) as instances\n  instances_member = import / ( collection ) as collections / export / instance\n  export = [ whitespace ] \"export\" [ whitespace ] \"{\" [ whitespace ] ( *( export_format [ whitespace ] ) ) as exports \"}\" [ whitespace ]\n  export_format = [ whitespace ] \"format\" ws variable as format_type [ whitespace ] \"{\" [ whitespace ] attributes \"}\" [ whitespace ]\n\n  # ---- Root (RS 3001: a document interleaves declarations) ----\n  diagram = [ require_block ] ( *( top_level_definition ) ) as members\n\n  top_level_definition = ( models / diagram_definitions / view_definitions / instances / instance / model_definitions ) [ whitespace ]\n}\n\nentry diagram: diagram\n",
-  "checksum": "sha256:8a4ebfebe35c428805296211fab753c6ec7e1dc89ec15d51d8997e4868bc4b74"
+  "source": "# LutaML Model Language (LML) — PARG grammar\n#\n# Ported from the original Parslet grammar (removed 2026-10; git history\n# has the reference implementation if the port needs re-checking).\n# PEG semantics: ordered choice, greedy repetition. Rule order within\n# alternatives preserves the original Parslet backtracking order.\n#\n# Capture discipline: repetitions are parenthesized before `as` so a\n# capture binds the whole match (Parslet's `.repeat.as(:x)` shape);\n# `[ x as k ]` yields k: nil when absent (Parslet omits the key —\n# consumers treat nil and absent as equivalent).\ngrammar Lml version \"1.0.0\" {\n  # ---- Character primitives ----\n  alpha = %x41-5A / %x61-7A\n  word = %x41-5A / %x61-7A / %x30-39 / \"_\"\n  cardchar = %x30-39 / %x61-7A / \"*\"\n  # Parslet's `any`: any Unicode character (not just bytes)\n  any_char = %x00-10FFFF\n  # [^\\s\\n\\r] — regex \\s covers space, tab, CR, LF, VT, FF\n  nonspace = !\" \" !%x09 !%x0A !%x0B !%x0C !%x0D any_char\n  quote = %x22 / %x27\n  newline = %x0D / %x0A\n\n  ws = 1*\" \"\n  whitespace = 1*( \" \" / %x09 / [ %x0D ] %x0A / %x0D / \";\" )\n\n  # match['\"\\'']\n  quotes = %x22 / %x27\n\n  # quoted('\"', :string) | quoted(\"'\", :string)\n  dq_string = %x22 ( *( !%x22 any_char ) ) as string %x22\n  sq_string = %x27 ( *( !%x27 any_char ) ) as string %x27\n  quoted_string = dq_string / sq_string\n  # any_quoted(:path) for view import\n  dq_path = %x22 ( *( !%x22 any_char ) ) as path %x22\n  sq_path = %x27 ( *( !%x27 any_char ) ) as path %x27\n\n  boolean = ( \"true\" / \"false\" ) as boolean\n  number = ( 1*%x30-39 \".\" 1*%x30-39 ) as float / ( 1*%x30-39 ) as number\n  variable = quoted_string / 1*word\n  reference = ( \"reference:(\" / \"ref:(\" ) ( variable *( \".\" variable ) ) as reference \")\"\n  range = ( variable as start \"..\" variable as end ) as range\n  namespaced_identifier = variable *( \"::\" variable )\n  comment_definition = [ ws ] ( \"**\" / \"#\" ) ( *( !newline any_char ) ) as comments\n  comment_multiline_definition = [ ws ] \"*|\" ( *( !\"|*\" any_char ) ) as comments [ whitespace ] \"|*\"\n\n  class_name_chars = 1*( %x41-5A / %x61-7A / %x30-39 / \" \" / \"_\" / \"-\" / \":\" / \".\" )\n  class_name = class_name_chars [ \"(\" class_name_chars \")\" ]\n  cardinality_body_definition = cardchar as min [ \"..\" [ cardchar as max ] ]\n  cardinality = \"[\" cardinality_body_definition as cardinality \"]\"\n\n  data_value = boolean / reference / range / number / quoted_string\n  key_value_pair = variable as key ws [ \"=\" ] [ ws ] data_value as value\n  key_value_map = \"{\" [ whitespace ] ( *( key_value_pair whitespace ) ) as key_value_map \"}\"\n  kw_visibility_modifier = \"+\" / \"-\" / \"#\" / \"~\"\n\n  # ---- Attributes ----\n  attribute = comment_definition / ( variable as key [ ws ] [ \"+\" as add ] [ \"=\" ] [ ws ] attribute_value as value )\n  attributes = ( *( attribute_line / whitespace ) ) as attributes\n  attribute_line = [ ws ] attribute [ [ \",\" ] whitespace ]\n  visibility = kw_visibility_modifier as visibility_modifier\n  attribute_stereotype = \"<<\" ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \"/\" ) ) as stereotype \">>\"\n  typechar = %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \":\" / \"/\" / \"+\"\n  namechar = %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \"/\" / \"+\"\n  attribute_type = [ \":\" ] [ ws ] [ attribute_stereotype ] [ ws ] [ quotes as type_literal ] ( 1*typechar ) as type [ quotes ] [ ws ]\n  attribute_name = ( 1*namechar ) as name\n  attribute_definition_name = ( quotes ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \"/\" / \"+\" ) ) as name quotes ) / attribute_name\n  attribute_definition = ( [ visibility ] as visibility [ ws ] attribute_definition_name [ ws ] [ attribute_type ] [ cardinality ] [ class_body ] ) as attributes\n\n  keyword_type_argument = \"type\" [ ws ] ( 1*nonspace ) as type [ whitespace ]\n  keyword_cardinality_argument = \"cardinality\" [ ws ] cardinality_body_definition as cardinality [ whitespace ]\n  keyword_any_argument = [ ws ] ( 1*nonspace ) as name ws [ \"=\" / \":\" ] [ ws ] attribute_value as value [ whitespace ]\n  keyword_values_argument = \"values\" ws ( ( value_set_body ) as value_set / ( variable ) as value_set_ref ) [ whitespace ]\n  keyword_pattern_argument = ( \"pattern\" ws \"/\" ( *( ( \"\\\\\" any_char ) / ( !\"/\" any_char ) ) ) as pattern \"/\" [ whitespace ] )\n  value_set_body = \"{\" [ whitespace ] ( *( ( ( data_value / variable ) as item ) [ \",\" ] [ whitespace ] ) ) as items \"}\"\n  keyword_attribute_options = *( keyword_type_argument / keyword_cardinality_argument / keyword_values_argument / keyword_pattern_argument / ( keyword_any_argument ) as properties )\n  keyword_attribute_body = \"{\" [ whitespace ] keyword_attribute_options [ whitespace ] \"}\"\n  keyword_attribute_definition = ( \"attribute\" ws attribute_name [ ws ] keyword_attribute_body ) as attributes\n\n  # ---- Associations ----\n  owner_cardinality = [ ws ] \"[\" cardinality_body_definition as owner_end_cardinality \"]\"\n  owner_attribute_name = \"#\" [ visibility ] [ ws ] variable as owner_end_attribute_name [ ws ]\n  owner_definition = [ whitespace ] \"owner\" ws variable as owner_end [ owner_attribute_name ] [ owner_cardinality ]\n  owner_type = [ whitespace ] \"owner_type\" ws variable as owner_end_type\n  member_cardinality = [ ws ] \"[\" cardinality_body_definition as member_end_cardinality \"]\"\n  member_attribute_name = \"#\" [ visibility ] [ ws ] variable as member_end_attribute_name [ ws ]\n  member_definition = [ whitespace ] \"member\" ws variable as member_end [ member_attribute_name ] [ member_cardinality ]\n  member_type = [ whitespace ] \"member_type\" ws variable as member_end_type\n  association_inner_definition = ( owner_type / member_type / owner_definition / member_definition / comment_definition / comment_multiline_definition ) [ whitespace ]\n  association_body = [ ws ] \"{\" [ whitespace ] ( *( association_inner_definition ) ) as members \"}\"\n  association_definition = [ whitespace ] \"association\" ws [ variable as name ] [ ws ] association_body\n\n  # ---- Definitions ----\n  class_modifier = [ ( [ whitespace ] ( \"abstract\" / \"interface\" ) ) as modifier ws ]\n  # ---- Namespaces (RS 3010 extension: lutaml-model XmlNamespace) ----\n  namespace_uri_line = ( [ ws ] \"uri\" ws ( quoted_string / ( 1*word ) ) as uri [ whitespace ] )\n  namespace_prefix_line = ( [ ws ] \"prefix\" ws ( quoted_string / ( 1*word ) ) as prefix [ whitespace ] )\n  namespace_body = \"{\" [ whitespace ] ( *( namespace_uri_line / namespace_prefix_line ) ) as members \"}\"\n  namespace_inline = ( ws ( quoted_string ) as uri [ ws \"prefix\" ws ( quoted_string / ( 1*word ) ) as prefix ] )\n  namespace_definition = ( [ whitespace ] \"namespace\" ws ( 1*word ) as name [ ws ] ( namespace_body / namespace_inline ) [ whitespace ] ) as namespaces\n\n  # ---- Serialization mappings (RS 3010 extension: sibling-linked) ----\n  serialization_body = \"{\" [ whitespace ] ( *( serialization_line ) ) as rules \"}\"\n  serialization_line = ( mapping_element_name_line / mapping_element_line / mapping_attribute_line / mapping_content_line / mapping_namespace_line / mapping_mixed_line / legacy_map_line / mapping_map_line / mapping_map_key_line / mapping_map_value_line ) [ whitespace ]\n  legacy_map_line = ( [ ws ] \"map\" ws dq_string as wire \",\" ws \"to:\" ws ( quoted_string / ( 1*word ) ) as to [ whitespace ] ) as legacy_map\n  mapping_element_name_line = ( [ ws ] \"element\" ws dq_string as element_name [ whitespace ] ) as element_name\n  mapping_element_line = ( [ ws ] \"map_element\" ws ( element_args ) ) as map_element\n  element_args = ( dq_string as wire [ ws ( 1*word ) as field ] / ( 1*word ) as field )\n  mapping_attribute_line = ( [ ws ] \"map_attribute\" ws ( attribute_args ) ) as map_attribute\n  attribute_args = ( dq_string as wire [ ws ( 1*word ) as field ] / ( 1*word ) as field )\n  mapping_content_line = ( [ ws ] \"map_content\" ws ( 1*word ) as field ) as map_content\n  mapping_namespace_line = ( [ ws ] \"namespace\" ws ( 1*word ) as namespace_ref ) as map_namespace\n  mapping_mixed_line = ( [ ws ] \"mixed_content\" ) as mixed_content\n  mapping_map_line = ( [ ws ] \"map\" ws map_args ) as map\n  map_args = ( dq_string as wire ws ( 1*word ) as field / dq_string as wire / ( 1*word ) as field )\n  mapping_map_key_line = ( [ ws ] \"map_key\" ws \"to_instance\" ws ( 1*word ) as field ) as map_key\n  mapping_map_value_line = ( [ ws ] \"map_value\" ws ( \"to_instance\" / \"as_attribute\" ) as mode ws ( 1*word ) as field ) as map_value\n  mapping_definition = ( [ whitespace ] \"mapping\" ws ( 1*word ) as format ws ( 1*word ) as target [ ws ] serialization_body [ whitespace ] ) as serialization_mappings\n\n  # ---- Mapping blocks (lutaml-model wire names) ----\n  map_name = ( quoted_string / 1*( word / \"-\" / \".\" ) )\n  map_line = [ ws ] \"map\" ws ( map_name ) as wire \",\" ws \"to:\" ws ( map_name ) as to [ whitespace ]\n  mapping_body = [ ws ] \"{\" [ whitespace ] ( *( map_line ) ) as maps \"}\"\n  class_mapping_section = ( [ whitespace ] \"mapping\" ws ( 1*word ) as format [ ws ] serialization_body [ whitespace ] ) as serialization_mappings\n\n  derive_definition = ( [ whitespace ] \"derive\" ws attribute_name [ ws ] \":\" [ ws ] [ quotes ] ( 1*typechar ) as type [ quotes ] ) as derived_field [ whitespace ]\n  string_format_item = ( [ ws ] ( \"artifact\" / \"root\" ) as key ws ( quoted_string / 1*nonspace ) as value [ whitespace ] )\n  string_format_body = \"{\" [ whitespace ] ( *( string_format_item ) ) as items [ whitespace ] \"}\"\n  string_format_definition = ( [ whitespace ] \"string_format\" ws ( variable ) as format [ ws ] string_format_body ) as string_format\n\n  class_inner_definitions = definition_body / definition_line / class_mapping_section / derive_definition / string_format_definition / attribute_comma_definition / ( !( \"attribute\" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition\n  class_inner_definition = class_inner_definitions [ whitespace ]\n  class_body = [ ws ] \"{\" [ whitespace ] ( *( class_inner_definition ) ) as members \"}\"\n  parent_class = [ ws ] \"<\" [ ws ] ( class_name_chars ) as parent_class\n  class_definition = class_modifier [ whitespace ] \"class\" ws class_name as name [ parent_class ] [ ws ] [ attribute_stereotype ] [ class_body ]\n\n  # Balanced-brace definition text: nested \"{...}\" and \"\\\"-escapes allowed\n  definition_content = *( ( \"\\\\\" any_char ) / ( \"{\" definition_content \"}\" ) / ( !\"}\" any_char ) )\n  definition_body = [ ws ] \"definition\" [ whitespace ] \"{\" ( definition_content ) as definition \"}\"\n  definition_line = ( [ ws ] \"definition\" ws ( dq_string / sq_string ) ) as definition [ whitespace ]\n\n  member_field_line = [ ws ] attribute_name [ ws ] ( 1*nonspace ) as member_field_type [ whitespace ]\n  member_fields_definition = ( [ whitespace ] \"member_fields\" [ whitespace ] \"{\" [ whitespace ] ( *( member_field_line ) ) as member_fields [ whitespace ] \"}\" ) as member_fields_decl\n  attribute_comma_definition = ( [ whitespace ] \"attribute\" ws attribute_name \",\" [ ws ] ( 1*typechar ) as type [ ws ] [ \"{\" [ whitespace ] keyword_attribute_options [ whitespace ] \"}\" ] [ whitespace ] ) as attributes\n  enum_member_with_payload = ( [ whitespace ] attribute_name [ ws ] ( class_body / keyword_attribute_body ) ) as attributes\n\n  # ---- Canonical value construct (RS 3001 par. Value / par. Enums) ----\n  # `value <name> { block }` is the canonical enum member; the bare\n  # identifier member is its documented shortcut. from_table expands to\n  # value members at compile time.\n  value_name = quoted_string / map_name\n  value_inner_definition = ( definition_body / definition_line / instance / attribute_line / comment_definition / comment_multiline_definition ) [ whitespace ]\n  value_body = \"{\" [ whitespace ] ( *( value_inner_definition ) ) as members \"}\"\n  value_definition = ( [ whitespace ] \"value\" ws ( value_name ) as value_name [ ws ] [ value_body ] [ whitespace ] ) as value_decl\n\n  from_table_definition = ( [ whitespace ] \"from_table\" [ ws ] ( map_name ) as from_table_name [ ws ] [ \"{\" [ whitespace ] *( \"artifact\" [ ws ] ( map_name ) as artifact_table [ whitespace ] ) \"}\" ] [ whitespace ] ) as from_table_decl\n\n  enum_values_shorthand = ( [ whitespace ] \"values\" ws value_set_body [ whitespace ] ) as value_set_decl\n  enum_inner_definitions = definition_body / definition_line / member_fields_definition / from_table_definition / enum_values_shorthand / value_definition / enum_member_with_payload / attribute_comma_definition / attribute_definition / comment_definition / comment_multiline_definition\n  enum_inner_definition = enum_inner_definitions [ whitespace ]\n  enum_body = [ ws ] \"{\" [ whitespace ] ( *( enum_inner_definition ) ) as members \"}\"\n  enum_definition = [ whitespace ] \"enum\" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]\n  data_type_body = [ ws ] \"{\" [ whitespace ] ( *( enum_inner_definition ) ) as members \"}\"\n  data_type_definition = [ whitespace ] \"data_type\" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ data_type_body ]\n  primitive_definition = [ whitespace ] \"primitive\" ws [ quotes ] class_name as name [ quotes ]\n\n  package_body = [ ws ] \"{\" [ whitespace ] ( *( diagram_inner_definition ) ) as members \"}\"\n  package_definition = ( [ whitespace ] \"package\" ws class_name as name [ ws ] package_body [ whitespace ] ) as packages\n  diagram_inner_definitions = namespace_definition / mapping_definition / package_definition / title_definition / caption_definition / fontname_definition / ( class_definition ) as classes / ( enum_definition ) as enums / ( primitive_definition ) as primitives / ( data_type_definition ) as data_types / ( association_definition ) as associations / comment_definition / comment_multiline_definition\n  diagram_inner_definition = diagram_inner_definitions [ whitespace ]\n  diagram_body = [ ws ] \"{\" [ whitespace ] ( *( diagram_inner_definition ) ) as members \"}\"\n  diagram_definition = [ whitespace ] \"diagram\" [ ws ] class_name as name diagram_body [ whitespace ]\n  diagram_definitions = diagram_definition [ whitespace ]\n  model_definitions = ( 1*( diagram_inner_definition ) ) as members\n\n  view_only_definitions = ( view_import ) as view_imports / show_directive / hide_directive\n  view_inner_definitions = view_only_definitions / diagram_inner_definitions\n  view_inner_definition = view_inner_definitions [ whitespace ]\n  view_body = [ ws ] \"{\" [ whitespace ] ( *( view_inner_definition ) ) as members \"}\"\n  view_definition = [ whitespace ] \"view\" [ ws ] class_name as name view_body [ whitespace ]\n  view_definitions = view_definition [ whitespace ]\n\n  title_text = ( %x22 ( 1*( !%x22 any_char ) ) as title %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as title %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \",\" / \".\" / \":\" / \";\" / \"(\" / \")\" / \"+\" / \"'\" / \"/\" ) ) as title\n  title_definition = [ whitespace ] \"title\" ws title_text\n  caption_text = ( %x22 ( 1*( !%x22 any_char ) ) as caption %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as caption %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" / \",\" / \".\" / \":\" / \";\" / \"(\" / \")\" / \"+\" / \"'\" / \"/\" ) ) as caption\n  caption_definition = [ whitespace ] \"caption\" ws caption_text\n  fontname_text = [ quotes ] ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \"-\" / \" \" ) ) as fontname [ quotes ]\n  fontname_definition = [ whitespace ] \"fontname\" ws fontname_text\n\n  # ---- Views ----\n  # `import` here carries a required trailing space (word boundary)\n  view_import = [ whitespace ] \"import\" ws ( dq_path / sq_path ) [ whitespace ]\n  entity_name_atom = ( 1*( %x41-5A / %x61-7A / %x30-39 / \"_\" / \".\" / \":\" / \"-\" ) ) as entity_name\n  entity_name_list = entity_name_atom *( [ ws ] \",\" [ ws ] entity_name_atom )\n  show_directive = [ whitespace ] \"show\" ws ( entity_name_list ) as show_list [ whitespace ]\n  hide_directive = [ whitespace ] \"hide\" ws ( entity_name_list ) as hide_list [ whitespace ]\n\n  # ---- Requires ----\n  require_stmt = [ whitespace ] \"require\" ws quoted_string as require [ whitespace ]\n  require_block = ( *( require_stmt [ whitespace ] ) ) as requires\n\n  # ---- Instances ----\n  instance = instance_named / keyword_instance / class_instance\n  instance_named = ( [ whitespace ] \"instance\" ws quoted_string as name [ ws ] [ ( namespaced_identifier ) as instance_type ] [ ws ] \"{\" [ whitespace ] ( ( [ ws ] instance ) / attributes ) \"}\" [ whitespace ] ) as instance\n  isa_definition = [ whitespace ] \"isa\" ws ( namespaced_identifier ) as isa [ whitespace ]\n  keyword_instance = ( [ whitespace ] \"instance\" [ ws ( namespaced_identifier ) as instance_type ] [ ws ] \"{\" [ whitespace ] [ isa_definition ] ( ( [ ws ] instance ) / attributes ) \"}\" ) as instance [ whitespace ]\n  class_instance = ( variable as instance_type [ whitespace ] quoted_string as name [ whitespace ] [ [ whitespace ] \"extends\" [ whitespace ] quoted_string as parent [ whitespace ] ] \"{\" [ whitespace ] [ lml_instance_body ] \"}\" ) as instance [ whitespace ]\n  lml_instance_body = lml_instance_members [ whitespace ]\n  instance_template = [ whitespace ] \"template\" [ whitespace ] \"{\" [ whitespace ] attributes [ whitespace ] \"}\"\n  lml_instance_members = ( instance_template ) as template / attributes\n  models = [ whitespace ] \"models\" [ whitespace ] variable as name [ whitespace ] \"{\" ( *( ( ( string_format_definition ) as default_string_formats ) / model_body ) ) as members \"}\" [ whitespace ]\n  model_body = diagram_inner_definition\n\n  # ---- Data structures ----\n  attribute_value = instance / list / key_value_map / data_value / 1*( !%x0A any_char )\n  list_item = instance / data_value\n  list = \"[\" [ whitespace ] ( *( list_item [ ws ] [ \",\" ] [ whitespace ] ) ) as list [ whitespace ] \"]\"\n  collection = [ whitespace ] \"collection\" ws quoted_string as name [ ws ] \"{\" [ whitespace ] [ includes ] [ whitespace ] [ validation ] [ whitespace ] \"}\" [ whitespace ]\n  includes = [ whitespace ] \"includes\" [ ws ] ( list ) as includes\n  validation = [ whitespace ] \"validation\" [ ws ] \"{\" [ whitespace ] ( *( condition ) ) as validations \"}\"\n  condition = [ whitespace ] \"condition\" ws quoted_string as condition [ whitespace ]\n  import = [ whitespace ] \"import\" [ ws ] \"{\" [ whitespace ] ( *( import_definition ) ) as imports \"}\" [ whitespace ]\n  import_definition = ( 1*nonspace ) as format_type [ ws ] quoted_string as file [ whitespace ] \"{\" [ whitespace ] attributes [ whitespace ] \"}\" [ whitespace ]\n  instances = [ whitespace ] \"instances\" [ ws ] [ ( quoted_string / variable ) as name ] [ whitespace ] \"{\" [ whitespace ] [ instances_body ] \"}\" [ whitespace ]\n  instances_body = ( *( instances_member [ whitespace ] ) ) as instances\n  instances_member = import / ( collection ) as collections / export / instance\n  export = [ whitespace ] \"export\" [ whitespace ] \"{\" [ whitespace ] ( *( export_format [ whitespace ] ) ) as exports \"}\" [ whitespace ]\n  export_format = [ whitespace ] \"format\" ws variable as format_type [ whitespace ] \"{\" [ whitespace ] attributes \"}\" [ whitespace ]\n\n  # ---- Root (RS 3001: a document interleaves declarations) ----\n  diagram = [ require_block ] ( *( top_level_definition ) ) as members\n\n  top_level_definition = ( models / diagram_definitions / view_definitions / instances / instance / model_definitions ) [ whitespace ]\n}\n\nentry diagram: diagram\n",
+  "checksum": "sha256:9ef900b9d1950b9bf0a62661d1dadec2596dd914ea7928e24a31bcbe534f646d"
 }
