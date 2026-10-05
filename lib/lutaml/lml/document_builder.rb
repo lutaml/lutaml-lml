@@ -102,10 +102,7 @@ module Lutaml
       end
 
       def add_members(model, hash)
-        expand_mapping_section(model, hash)
-        expand_class_declarations(model, hash)
-        expand_enum_member_fields(model, hash)
-        expand_from_table(model, hash)
+        expand_declared_members(model, hash)
         MEMBER_KEY_MAP.each do |plural_key, singular_key|
           data = hash.delete(plural_key)
           next if data.nil?
@@ -115,6 +112,33 @@ module Lutaml
         end
 
         remap_filter_keys(hash, model)
+      end
+
+      # RS 3001 §Value: the canonical `value` construct normalizes into
+      # the same member shape the bare-identifier shortcut produces.
+      def expand_value_declaration(model, hash)
+        decl = hash.delete(:value_decl) or return
+        apply_attribute(model, :attributes, decl.fetch(:attributes))
+      end
+
+      # Declaration-level member hooks: single-line definitions, canonical
+      # `value` members, mapping sections, class declarations, enum
+      # member_fields and from_table all arrive as bare member hashes.
+      def expand_declared_members(model, hash)
+        expand_definition_text(model, hash)
+        expand_value_declaration(model, hash)
+        expand_mapping_section(model, hash)
+        expand_class_declarations(model, hash)
+        expand_enum_member_fields(model, hash)
+        expand_from_table(model, hash)
+      end
+
+      # RS 3001 §Definition single-line form (`definition "text"`) arrives
+      # as a quoted-string capture; unwrap it for the entity's definition.
+      def expand_definition_text(model, hash)
+        return unless hash.key?(:definition) && model.class.attributes.key?(:definition)
+
+        model.definition = unquote(hash.delete(:definition))
       end
 
       # A mapping section arrives as a bare member hash

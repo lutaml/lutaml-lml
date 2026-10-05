@@ -19,6 +19,7 @@ module Lutaml
       attribute :definition, Lutaml::Lml::Types::TextType
       attribute :association, :string
       attribute :default, :string
+      attribute :value_set, :string, collection: true, default: -> { [] }
 
       # LML-specific attributes
       attribute :properties, "Lutaml::Lml::TopElementAttribute", collection: true, default: -> { [] }
@@ -53,6 +54,7 @@ module Lutaml
         map "definition", to: :definition
         map "association", to: :association
         map "default", to: :default
+        map "value_set", to: :value_set
         map "properties", to: :properties
         map "value", to: :value, with: { to: :value_to, from: :value_from }
         map "attributes", to: :attributes
