@@ -24,7 +24,9 @@ module Lutaml
         mapping: ::Lutaml::Lml::Mapping,
         string_format: ::Lutaml::Lml::StringFormat,
         derived_field: ::Lutaml::Lml::DerivedField,
-        member_field: ::Lutaml::Lml::MemberField
+        member_field: ::Lutaml::Lml::MemberField,
+        namespace: ::Lutaml::Lml::Namespace,
+        serialization_mapping: ::Lutaml::Lml::SerializationMapping
       }.freeze
 
       attr_reader :registry
@@ -36,7 +38,7 @@ module Lutaml
       FACTORY_KEYS = %i[
         document package class enum data_type diagram view_import view_filter
         attribute association operation constraint value cardinality mapping
-        string_format derived_field
+        string_format derived_field namespace serialization_mapping
       ].freeze
 
       MEMBER_KEY_MAP = {
@@ -52,7 +54,9 @@ module Lutaml
         constraints: :constraint,
         values: :value,
         mappings: :mapping,
-        member_fields: :member_field
+        member_fields: :member_field,
+        namespaces: :namespace,
+        serialization_mappings: :serialization_mapping
       }.freeze
 
       FACTORY_KEYS.each do |key|
@@ -103,6 +107,8 @@ module Lutaml
 
       def add_members(model, hash)
         expand_declared_members(model, hash)
+        normalize_namespace_declaration(hash)
+        normalize_serialization_mapping(hash)
         expand_instances_collection_name(hash)
         expand_nested_members(model, hash)
         MEMBER_KEY_MAP.each do |plural_key, singular_key|
@@ -131,6 +137,76 @@ module Lutaml
       def expand_value_declaration(model, hash)
         decl = hash.delete(:value_decl) or return
         apply_attribute(model, :attributes, decl.fetch(:attributes))
+      end
+
+      # Namespace declaration bodies arrive as keyword-line members
+      # ({uri: …}, {prefix: …}); flatten them onto the namespace hash.
+      def normalize_namespace_declaration(hash)
+        ns = hash[:namespaces] or return
+        Array(ns.delete(:members)).each do |pair|
+          pair.each { |key, value| ns[key] = unquote(value) }
+        end
+      end
+
+      # Serialization mapping rules arrive keyed by their line construct
+      # ({map_element: {wire:, field:}}); normalize into plain MappingRule
+      # hashes so the model cast lands typed rules.
+      def normalize_serialization_mapping(hash)
+        mapping = hash[:serialization_mappings] or return
+        rules = Array(mapping[:rules])
+        return if rules.any? && rules.all? { |e| e.is_a?(Hash) && e.key?(:kind) }
+
+        rules = rules.filter_map do |entry|
+          next nil unless entry.is_a?(Hash)
+
+          if entry[:wire] && entry[:to]
+            next { kind: 'map', wire: unquote(entry[:wire]), field: unquote(entry[:to]) }
+          end
+
+          first_key = entry.keys.first
+          kind = first_key.to_s
+          body = entry[first_key] || {}
+          unless body.is_a?(Hash)
+            kind_n = normalize_mapping_kind(kind)
+            next nil if body.to_s.empty?
+
+            term = unquote(body)
+            next { kind: kind_n, wire: term, field: term } if %w[element attribute map].include?(kind_n)
+            if kind_n == 'namespace'
+              mapping[:namespace_ref] = term
+              next nil
+            end
+
+            next { kind: kind_n, field: term }
+          end
+          if kind == 'element_name'
+            mapping[:element_name] = unquote(body[:element_name])
+            next nil
+          end
+          if kind == 'map_namespace'
+            mapping[:namespace_ref] = unquote(body[:namespace_ref])
+            next nil
+          end
+          normalized = { kind: normalize_mapping_kind(kind) }
+          wire = body[:wire] || body[:element_wire]
+          normalized[:wire] = unquote(wire) if wire
+          field = body[:field] || body[:to_field] || body[:element_field] ||
+                  body[:attribute_field] || body[:to]
+          normalized[:field] = unquote(field) if field
+          normalized[:mode] = body[:mode] if body[:mode]
+          normalized[:namespace_ref] = unquote(body[:namespace_ref]) if body[:namespace_ref]
+          normalized
+        end
+        mapping[:rules] = rules
+      end
+
+      def normalize_mapping_kind(kind)
+        {
+          'map_element' => 'element', 'map_attribute' => 'attribute',
+          'map_content' => 'content', 'map_namespace' => 'namespace',
+          'map_key' => 'key', 'map_value' => 'value', 'map' => 'map',
+          'legacy_map' => 'map'
+        }.fetch(kind, kind)
       end
 
       # A named instances collection (`instances "Glazes" { ... }`) arrives

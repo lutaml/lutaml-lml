@@ -16,6 +16,8 @@ module Lutaml
       attribute :data_types, "Lutaml::Lml::DataType", collection: true, default: -> { [] }
       attribute :enums, "Lutaml::Lml::Enum", collection: true, default: -> { [] }
       attribute :packages, "Lutaml::Lml::Package", collection: true, default: -> { [] }
+      attribute :namespaces, "Lutaml::Lml::Namespace", collection: true, default: -> { [] }
+      attribute :serialization_mappings, "Lutaml::Lml::SerializationMapping", collection: true, default: -> { [] }
       attribute :primitives, "Lutaml::Lml::PrimitiveType", collection: true, default: -> { [] }
       attribute :associations, "Lutaml::Lml::Association", collection: true, default: -> { [] }
       attribute :diagrams, "Lutaml::Lml::Diagram", collection: true, default: -> { [] }

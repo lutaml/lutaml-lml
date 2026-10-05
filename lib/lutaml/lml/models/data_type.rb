@@ -7,6 +7,7 @@ module Lutaml
       attribute :name, :string
       attribute :wire_mappings, "Lutaml::Lml::Mapping", collection: true, default: -> { [] }
       attribute :derived_fields, "Lutaml::Lml::DerivedField", collection: true, default: -> { [] }
+      attribute :serialization_mappings, "Lutaml::Lml::SerializationMapping", collection: true, default: -> { [] }
       attribute :definition, Lutaml::Lml::Types::TextType
       attribute :keyword, :string, default: "dataType"
       attribute :stereotype, :string, collection: true, default: -> { [] }

@@ -26,6 +26,7 @@ module Lutaml
       attribute :wire_mappings, "Lutaml::Lml::Mapping", collection: true, default: -> { [] }
       attribute :string_formats, "Lutaml::Lml::StringFormat", collection: true, default: -> { [] }
       attribute :derived_fields, "Lutaml::Lml::DerivedField", collection: true, default: -> { [] }
+      attribute :serialization_mappings, "Lutaml::Lml::SerializationMapping", collection: true, default: -> { [] }
 
       # LML-specific
       attribute :parent_class, :string
