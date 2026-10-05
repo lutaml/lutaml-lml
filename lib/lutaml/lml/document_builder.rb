@@ -103,6 +103,7 @@ module Lutaml
 
       def add_members(model, hash)
         expand_declared_members(model, hash)
+        expand_instances_collection_name(hash)
         expand_nested_members(model, hash)
         MEMBER_KEY_MAP.each do |plural_key, singular_key|
           data = hash.delete(plural_key)
@@ -115,11 +116,32 @@ module Lutaml
         remap_filter_keys(hash, model)
       end
 
+      # RS 3001 §Enums: an enum-level `values { v1, v2 }` shorthand
+      # expands into plain members.
+      def expand_value_set_declaration(model, hash)
+        decl = hash.delete(:value_set_decl) or return
+        Array(decl[:items]).each do |item|
+          name = unquote(item[:item])
+          model.attributes << TopElementAttribute.new(name: name)
+        end
+      end
+
       # RS 3001 §Value: the canonical `value` construct normalizes into
       # the same member shape the bare-identifier shortcut produces.
       def expand_value_declaration(model, hash)
         decl = hash.delete(:value_decl) or return
         apply_attribute(model, :attributes, decl.fetch(:attributes))
+      end
+
+      # A named instances collection (`instances "Glazes" { ... }`) arrives
+      # with its name as a sibling of the collection body; move it inside
+      # so the InstanceCollection carries it.
+      def expand_instances_collection_name(hash)
+        return unless hash.key?(:instances) && hash.key?(:name)
+
+        name = unquote(hash.delete(:name))
+        body = hash[:instances].is_a?(Hash) ? hash[:instances] : {}
+        body[:name] = name unless body.key?(:name)
       end
 
       # The document root is a repetition of top-level constructs (RS 3001:
@@ -141,6 +163,7 @@ module Lutaml
       def expand_declared_members(model, hash)
         expand_definition_text(model, hash)
         expand_value_declaration(model, hash)
+        expand_value_set_declaration(model, hash)
         expand_mapping_section(model, hash)
         expand_class_declarations(model, hash)
         expand_enum_member_fields(model, hash)

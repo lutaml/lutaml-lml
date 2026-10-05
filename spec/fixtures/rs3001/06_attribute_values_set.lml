@@ -1,0 +1,8 @@
+// 3001 §Attribute: inline values set
+models M {
+  class Studio {
+    attribute firing_profile, FiringProfile {
+      values { "low", "medium", "high" }
+    }
+  }
+}

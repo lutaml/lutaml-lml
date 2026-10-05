@@ -1,0 +1,8 @@
+// 3001 §Definition: block form
+class Matte {
+  definition {
+    Non-reflective finish.
+
+    A matte finish is a non-reflective finish that is often used in ceramics.
+  }
+}

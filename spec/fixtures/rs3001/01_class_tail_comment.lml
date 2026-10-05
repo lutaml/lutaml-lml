@@ -1,0 +1,4 @@
+// 3001 §Comment: tail comment after a declaration
+class Studio { // This is a comment
+  attribute location, String
+}

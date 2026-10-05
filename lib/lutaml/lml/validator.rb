@@ -153,23 +153,38 @@ module Lutaml
 
       def reference_violations(instance)
         reference_values(instance).filter_map do |name, path|
-          target = path.to_s.split('.').first
-          unless instance_names.include?(target)
+          segments = path.to_s.split('.')
+          unless resolvable_reference?(segments)
             next Violation.new(
               rule: 'reference_validity',
               message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
-                       "references unknown instance '#{target}'"
+                       "references unknown path '#{path}'"
             )
           end
 
-          attribute_violation(instance, name, path, target)
+          attribute_violation(instance, name, path, segments.first)
         end
+      end
+
+      # RS 3001 reference paths: `instance` / `instance.attribute` /
+      # `collection.instance`.
+      def resolvable_reference?(segments)
+        case segments.length
+        when 1 then instance_names.include?(segments.first)
+        when 2 then instance_names.include?(segments.first) ||
+          collection_names.include?(segments.first)
+        else false
+        end
+      end
+
+      def collection_names
+        @collection_names ||= [@document.instances&.name].compact
       end
 
       def attribute_violation(instance, _name, path, target)
         segment = path.to_s.split('.')[1]
         target_instance = instances.find { |i| instance_name(i) == target }
-        return if segment.nil? ||
+        return if segment.nil? || target_instance.nil? ||
                   instance_attribute(target_instance, segment)
 
         Violation.new(
