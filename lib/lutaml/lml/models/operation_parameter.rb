@@ -6,6 +6,7 @@ module Lutaml
       attribute :name, :string
       attribute :type, :string
       attribute :direction, :string, default: "in"
+      attribute :default, :string
     end
   end
 end

@@ -244,6 +244,45 @@ module Lutaml
         expand_class_declarations(model, hash)
         expand_enum_member_fields(model, hash)
         expand_from_table(model, hash)
+        expand_operation_members(model, hash)
+      end
+
+      # Operation members arrive with grammar capture names
+      # (`visibility_modifier`, `param_default`) and per-iteration
+      # stereotype hashes; normalize to the model's field names.
+      def expand_operation_members(model, hash)
+        ops = hash.delete(:operations)
+        return unless ops && model.class.attributes.key?(:operations)
+
+        Array(ops.is_a?(Hash) ? [ops] : ops).each do |op|
+          model.operations << build(:operation, normalize_operation_hash(op))
+        end
+      end
+
+      def normalize_operation_hash(op)
+        op = op.dup
+        if (vis = op.delete(:visibility_modifier))
+          op[:visibility] = Transform::VISIBILITY_MAP.fetch(vis.to_s, 'public')
+        end
+        stereo = op[:stereotype]
+        if stereo
+          items = stereo.is_a?(Array) ? stereo : [stereo]
+          op[:stereotype] = items.map { |x| x.is_a?(Hash) ? x[:stereotype].to_s : x.to_s }
+        end
+        params = op[:owned_parameter]
+        if params
+          list = params.is_a?(Array) ? params : [params]
+          op[:owned_parameter] = list.map { |param| normalize_operation_param(param) }
+        end
+        op
+      end
+
+      def normalize_operation_param(param)
+        param = param.dup
+        if (default = param.delete(:param_default))
+          param[:default] = default.is_a?(Hash) ? default[:string].to_s : default.to_s
+        end
+        param
       end
 
       # RS 3001 §Definition single-line form (`definition "text"`) arrives

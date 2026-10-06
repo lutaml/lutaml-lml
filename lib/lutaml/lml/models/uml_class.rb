@@ -20,7 +20,7 @@ module Lutaml
       attribute :attributes, "Lutaml::Lml::TopElementAttribute", collection: true
       attribute :modifier, :string
       attribute :constraints, "Lutaml::Lml::Constraint", collection: true
-      attribute :operations, "Lutaml::Lml::Operation", collection: true
+      attribute :operations, "Lutaml::Lml::Operation", collection: true, default: -> { [] }
       attribute :data_types, "Lutaml::Lml::DataType", collection: true
       attribute :associations, "Lutaml::Lml::Association", collection: true
       attribute :wire_mappings, "Lutaml::Lml::Mapping", collection: true, default: -> { [] }
