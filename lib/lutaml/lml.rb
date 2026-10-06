@@ -80,6 +80,7 @@ module Lutaml
     autoload :OperationParameter, "lutaml/lml/models/operation_parameter"
     autoload :Package, "lutaml/lml/models/package"
     autoload :PrimitiveType, "lutaml/lml/models/primitive_type"
+    autoload :Reference, "lutaml/lml/models/reference"
     autoload :TopElementAttribute, "lutaml/lml/models/top_element_attribute"
     autoload :UmlClass, "lutaml/lml/models/uml_class"
     autoload :Value, "lutaml/lml/models/value"

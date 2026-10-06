@@ -83,6 +83,18 @@ module Lutaml
         model.value = value
       end
 
+      # RS 3001 par. Value type: the typed view of a reference value
+      # (`reference:(...)` / `ref:(...)`). Nil for every other value shape;
+      # for a list of references, the first reference.
+      def reference
+        literal = value.respond_to?(:value) ? value.value : value
+        cargo = literal.is_a?(::Array) ? literal.first : literal
+        cargo = cargo.value if cargo.is_a?(LiteralValue)
+        return nil unless cargo.is_a?(::Hash) && cargo[:reference]
+
+        Reference.new(path: cargo[:reference].to_s)
+      end
+
       private
 
       # A LiteralValue sits at the top level for a map literal, and inside the
