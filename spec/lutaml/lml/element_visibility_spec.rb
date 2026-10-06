@@ -46,4 +46,44 @@ RSpec.describe 'Element visibility modifier' do
     expect(doc.classes.first.name).to eq('Foo')
     expect(doc.classes.first.visibility).to eq('package')
   end
+
+  describe 'canonical in-block declarations (par. Declaration modifiers)' do
+    it 'sets visibility from the block declaration' do
+      doc = parse(<<~LML)
+        class Glaze {
+          visibility private
+          attribute color, String
+        }
+      LML
+      expect(doc.classes.first.visibility).to eq('private')
+    end
+
+    it 'maps abstract true/false onto is_abstract' do
+      doc = parse(<<~LML)
+        class Base { abstract true }
+        class Leaf { abstract false }
+      LML
+      expect(doc.classes.first.is_abstract).to be(true)
+      expect(doc.classes.last.is_abstract).to be(false)
+    end
+
+    it 'applies to enum bodies' do
+      doc = parse("enum Finish {\n  visibility protected\n  matte\n}\n")
+      expect(doc.enums.first.visibility).to eq('protected')
+    end
+  end
+
+  describe 'package visibility' do
+    it 'parses visibility on package declarations' do
+      doc = parse("private package Ceramics {\n  class Tile { }\n}\n")
+      expect(doc.packages.first.visibility).to eq('private')
+      expect(doc.packages.first.classes.first.name).to eq('Tile')
+    end
+
+    it 'keeps bare package declarations binding as packages' do
+      doc = parse("package Ceramics {\n  class Tile { }\n}\n")
+      expect(doc.packages.first.name).to eq('Ceramics')
+      expect(doc.packages.first.classes.first.name).to eq('Tile')
+    end
+  end
 end

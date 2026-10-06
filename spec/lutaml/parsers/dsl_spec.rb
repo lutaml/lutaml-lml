@@ -83,7 +83,7 @@ RSpec.describe "DSL (.lutaml) parsing via Lutaml::Lml::Parser" do
       expect(by_name(attributes, "privateAttributeProfile").visibility)
         .to eq("private")
       expect(by_name(attributes, "friendlyAttributeProfile").visibility)
-        .to eq("friendly")
+        .to eq("package")
       expect(by_name(attributes, "friendlyAttributeProfile").stereotype)
         .to eq(["Type"])
       expect(by_name(attributes, "protectedAttributeProfile").visibility)

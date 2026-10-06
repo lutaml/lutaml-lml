@@ -8,7 +8,7 @@ module Lutaml
       VISIBILITY_MAP = {
         '-' => 'private',
         '#' => 'protected',
-        '~' => 'friendly'
+        '~' => 'package'
       }.freeze
 
       rule(visibility_modifier: simple(:visibility_value)) do

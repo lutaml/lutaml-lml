@@ -237,6 +237,7 @@ module Lutaml
       # `value` members, mapping sections, class declarations, enum
       # member_fields and from_table all arrive as bare member hashes.
       def expand_declared_members(model, hash)
+        expand_abstract_declaration(model, hash)
         expand_definition_text(model, hash)
         expand_value_declaration(model, hash)
         expand_value_set_declaration(model, hash)
@@ -287,6 +288,16 @@ module Lutaml
 
       # RS 3001 §Definition single-line form (`definition "text"`) arrives
       # as a quoted-string capture; unwrap it for the entity's definition.
+      # RS 3001 declaration modifiers: `abstract true` maps onto the
+      # is_abstract field (the visibility declaration flows through the
+      # generic attribute path).
+      def expand_abstract_declaration(model, hash)
+        value = hash.delete(:abstract)
+        return unless value && model.class.attributes.key?(:is_abstract)
+
+        model.is_abstract = value.to_s == 'true'
+      end
+
       def expand_definition_text(model, hash)
         return unless hash.key?(:definition) && model.class.attributes.key?(:definition)
 

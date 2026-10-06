@@ -7,7 +7,8 @@ module Lutaml
         ACCESS_SYMBOLS = {
           'public' => '+',
           'protected' => '#',
-          'private' => '-'
+          'private' => '-',
+          'package' => '~'
         }.freeze
 
         def format_attribute(node)
