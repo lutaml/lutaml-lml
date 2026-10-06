@@ -20,18 +20,23 @@ RSpec.describe Lutaml::Lml::Preprocessor do
       file.close!
     end
 
-    it "removes // comments" do
+    it "preserves // comments for grammar-level trivia" do
       file = make_file("diagram Test // this is a comment\nend")
       result = described_class.call(file)
-      expect(result).to eq("diagram Test \nend")
+      expect(result).to eq("diagram Test // this is a comment\nend")
       file.close!
     end
 
-    it "removes inline comments" do
+    it "preserves inline comments and raises on unterminated block comments" do
       file = make_file("class MyClass // inline comment\ntitle \"Test\" // another\nend")
       result = described_class.call(file)
-      expect(result).not_to include("//")
+      expect(result).to include("// inline comment")
       file.close!
+
+      bad = make_file("class MyClass {\n/* never closed\n")
+      expect { described_class.call(bad) }
+        .to raise_error(Lutaml::Lml::Error, /unterminated block comment/)
+      bad.close!
     end
   end
 

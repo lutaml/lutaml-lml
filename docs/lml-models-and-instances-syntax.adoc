@@ -103,14 +103,16 @@ class Ceramic {
    block comment */
 ----
 
-WARNING: The `//` and `/* */` strippers run in the preprocessor (they
-must: tail comments are lexically inexpressible in the grammar), so a
-comment character sequence inside a quoted string is safe, but `+#+`
-remains the LML-idiomatic marker. The grammar-level `+**+`/`+*| |*+`
-documentation comments (captured into the document model) are accepted
-inside class/enum/data-type/association bodies. Moving all of this into
-the grammar itself is tracked upstream as the PARG skip-rule proposal
-(parsanol-ruby#134).
+`//` and `/* */` are consumed by the grammar itself as skip trivia
+(parsanol-ruby#134): they are ignored between any two tokens — leading,
+trailing, between a keyword and its name — and a comment sequence
+inside a quoted string survives (string scans are atomic rules). The
+grammar-level `+**+`/`+*| |*+` documentation comments (captured into
+the document model) are accepted inside
+class/enum/data-type/association bodies, and `+#+` remains the
+LML-idiomatic marker for those. The preprocessor now only expands
+`include` directives (and rejects unterminated block comments with a
+precise diagnostic).
 
 ==== Long form (primary)
 
@@ -793,9 +795,9 @@ Two current limitations of the `import` example above:
   nested-block form shown is parsed into a single `columns` attribute that the
   adapter does not consume, so it currently yields no mappings — treat the
   `columns { }` wrapper as Planned.
-* *XPath with `//`.* `where "//product"` is corrupted by the non-quote-aware `//`
-  comment stripper (see the Comments WARNING) before parsing; avoid `//` in an XPath
-  string until the stripper is quote-aware.
+* *XPath with `//`.* Quoted XPath strings such as `where "//product"` survive
+  (string scans are atomic under the grammar-level trivia); bare (unquoted) values
+  beginning with `//` are still read as comments.
 ====
 
 === `export` — format targets

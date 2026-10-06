@@ -10,30 +10,82 @@
 # `[ x as k ]` yields k: nil when absent (Parslet omits the key —
 # consumers treat nil and absent as equivalent).
 grammar Lml version "1.0.0" {
+  # ---- Trivia (parsanol-ruby#134 skip rule) ----
+  # Grammar-native trivia replaces the pre-parse comment stripping:
+  # `//` line and `/* */` block comments (RS 3001 par. Comment) plus
+  # blanks/tabs are consumed and ignored between tokens. Newlines stay
+  # grammar-visible (line-oriented rules keep their semantics; the
+  # preprocessor preserved them too). Atomic token rules keep string
+  # literals and identifiers contiguous.
+  skip = trivia
+  trivia = 1*( ( 1*( " " / %x09 ) ) / ( line_comment [ ( [ %x0D ] %x0A / %x0D ) ] ) / block_comment )
+  line_comment = "//" ( *( !newline any_char ) )
+  block_comment = "/*" ( *( !"*/" any_char ) ) "*/"
+  atomic kw_association_sp = "association" 1*" "
+  atomic kw_artifact_sp = "artifact" 1*" "
+  atomic kw_attribute_sp = "attribute" 1*" "
+  atomic kw_caption_sp = "caption" 1*" "
+  atomic kw_class_sp = "class" 1*" "
+  atomic kw_collection_sp = "collection" 1*" "
+  atomic kw_condition_sp = "condition" 1*" "
+  atomic kw_data_type_sp = "data_type" 1*" "
+  atomic kw_definition_sp = "definition" 1*" "
+  atomic kw_derive_sp = "derive" 1*" "
+  atomic kw_element_sp = "element" 1*" "
+  atomic kw_enum_sp = "enum" 1*" "
+  atomic kw_fontname_sp = "fontname" 1*" "
+  atomic kw_format_sp = "format" 1*" "
+  atomic kw_hide_sp = "hide" 1*" "
+  atomic kw_import_sp = "import" 1*" "
+  atomic kw_instance_sp = "instance" 1*" "
+  atomic kw_isa_sp = "isa" 1*" "
+  atomic kw_map_sp = "map" 1*" "
+  atomic kw_map_attribute_sp = "map_attribute" 1*" "
+  atomic kw_map_content_sp = "map_content" 1*" "
+  atomic kw_map_element_sp = "map_element" 1*" "
+  atomic kw_map_key_sp = "map_key" 1*" "
+  atomic kw_map_value_sp = "map_value" 1*" "
+  atomic kw_mapping_sp = "mapping" 1*" "
+  atomic kw_member_sp = "member" 1*" "
+  atomic kw_member_type_sp = "member_type" 1*" "
+  atomic kw_namespace_sp = "namespace" 1*" "
+  atomic kw_owner_sp = "owner" 1*" "
+  atomic kw_owner_type_sp = "owner_type" 1*" "
+  atomic kw_package_sp = "package" 1*" "
+  atomic kw_pattern_sp = "pattern" 1*" "
+  atomic kw_prefix_sp = "prefix" 1*" "
+  atomic kw_primitive_sp = "primitive" 1*" "
+  atomic kw_require_sp = "require" 1*" "
+  atomic kw_show_sp = "show" 1*" "
+  atomic kw_string_format_sp = "string_format" 1*" "
+  atomic kw_title_sp = "title" 1*" "
+  atomic kw_to_instance_sp = "to_instance" 1*" "
+  atomic kw_uri_sp = "uri" 1*" "
+  atomic kw_value_sp = "value" 1*" "
+  atomic kw_values_sp = "values" 1*" "
   # ---- Character primitives ----
   alpha = %x41-5A / %x61-7A
-  word = %x41-5A / %x61-7A / %x30-39 / "_"
+  atomic word = %x41-5A / %x61-7A / %x30-39 / "_"
   cardchar = %x30-39 / %x61-7A / "*"
   # Parslet's `any`: any Unicode character (not just bytes)
   any_char = %x00-10FFFF
   # [^\s\n\r] — regex \s covers space, tab, CR, LF, VT, FF
-  nonspace = !" " !%x09 !%x0A !%x0B !%x0C !%x0D any_char
+  atomic nonspace = !" " !%x09 !%x0A !%x0B !%x0C !%x0D any_char
   quote = %x22 / %x27
   newline = %x0D / %x0A
 
-  ws = 1*" "
-  whitespace = 1*( " " / %x09 / [ %x0D ] %x0A / %x0D / ";" )
+    whitespace = 1*( " " / %x09 / [ %x0D ] %x0A / %x0D / ";" )
 
   # match['"\'']
   quotes = %x22 / %x27
 
   # quoted('"', :string) | quoted("'", :string)
-  dq_string = %x22 ( *( !%x22 any_char ) ) as string %x22
-  sq_string = %x27 ( *( !%x27 any_char ) ) as string %x27
+  atomic dq_string = %x22 ( *( !%x22 any_char ) ) as string %x22
+  atomic sq_string = %x27 ( *( !%x27 any_char ) ) as string %x27
   quoted_string = dq_string / sq_string
   # any_quoted(:path) for view import
-  dq_path = %x22 ( *( !%x22 any_char ) ) as path %x22
-  sq_path = %x27 ( *( !%x27 any_char ) ) as path %x27
+  atomic dq_path = %x22 ( *( !%x22 any_char ) ) as path %x22
+  atomic sq_path = %x27 ( *( !%x27 any_char ) ) as path %x27
 
   boolean = ( "true" / "false" ) as boolean
   number = ( 1*%x30-39 "." 1*%x30-39 ) as float / ( 1*%x30-39 ) as number
@@ -41,8 +93,8 @@ grammar Lml version "1.0.0" {
   reference = ( "reference:(" / "ref:(" ) ( variable *( "." variable ) ) as reference ")"
   range = ( variable as start ".." variable as end ) as range
   namespaced_identifier = variable *( "::" variable )
-  comment_definition = [ ws ] ( "**" / "#" ) ( *( !newline any_char ) ) as comments
-  comment_multiline_definition = [ ws ] "*|" ( *( !"|*" any_char ) ) as comments [ whitespace ] "|*"
+  comment_definition = ( "**" / "#" ) ( *( !newline %x00-10FFFF ) ) as comments
+  comment_multiline_definition = "*|" ( *( !"|*" %x00-10FFFF ) ) as comments [ whitespace ] "|*"
 
   class_name_chars = 1*( %x41-5A / %x61-7A / %x30-39 / " " / "_" / "-" / ":" / "." )
   class_name = class_name_chars [ "(" class_name_chars ")" ]
@@ -50,99 +102,103 @@ grammar Lml version "1.0.0" {
   cardinality = "[" cardinality_body_definition as cardinality "]"
 
   data_value = boolean / reference / range / number / quoted_string
-  key_value_pair = variable as key ws [ "=" ] [ ws ] data_value as value
+  key_value_pair = variable as key [ "=" ] data_value as value
   key_value_map = "{" [ whitespace ] ( *( key_value_pair whitespace ) ) as key_value_map "}"
   kw_visibility_modifier = "+" / "-" / "#" / "~"
 
   # ---- Attributes ----
-  attribute = comment_definition / ( variable as key [ ws ] [ "+" as add ] [ "=" ] [ ws ] attribute_value as value )
+  attribute = comment_definition / ( variable as key [ "+" as add ] [ "=" ] attribute_value as value )
   attributes = ( *( attribute_line / whitespace ) ) as attributes
-  attribute_line = [ ws ] attribute [ [ "," ] whitespace ]
+  attribute_line = attribute [ [ "," ] whitespace ]
   visibility = kw_visibility_modifier as visibility_modifier
   attribute_stereotype = "<<" ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / "/" ) ) as stereotype ">>"
-  typechar = %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / ":" / "/" / "+"
-  namechar = %x41-5A / %x61-7A / %x30-39 / "_" / "-" / "/" / "+"
-  attribute_type = [ ":" ] [ ws ] [ attribute_stereotype ] [ ws ] [ quotes as type_literal ] ( 1*typechar ) as type [ quotes ] [ ws ]
+  atomic typechar = %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / ":" / "/" / "+"
+  atomic namechar = %x41-5A / %x61-7A / %x30-39 / "_" / "-" / "/" / "+"
+  attribute_type = [ ":" ] [ attribute_stereotype ] [ quotes as type_literal ] ( 1*typechar ) as type [ quotes ]
   attribute_name = ( 1*namechar ) as name
   attribute_definition_name = ( quotes ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "/" / "+" ) ) as name quotes ) / attribute_name
-  attribute_definition = ( [ visibility ] as visibility [ ws ] attribute_definition_name [ ws ] [ attribute_type ] [ cardinality ] [ class_body ] ) as attributes
+  attribute_definition = ( [ visibility ] as visibility attribute_definition_name [ attribute_type ] [ cardinality ] [ class_body ] ) as attributes
 
-  keyword_type_argument = "type" [ ws ] ( 1*nonspace ) as type [ whitespace ]
-  keyword_cardinality_argument = "cardinality" [ ws ] cardinality_body_definition as cardinality [ whitespace ]
-  keyword_any_argument = [ ws ] ( 1*nonspace ) as name ws [ "=" / ":" ] [ ws ] attribute_value as value [ whitespace ]
-  keyword_values_argument = "values" ws ( ( value_set_body ) as value_set / ( variable ) as value_set_ref ) [ whitespace ]
-  keyword_pattern_argument = ( "pattern" ws "/" ( *( ( "\\" any_char ) / ( !"/" any_char ) ) ) as pattern "/" [ whitespace ] )
+  keyword_type_argument = "type" ( 1*nonspace ) as type [ whitespace ]
+  keyword_cardinality_argument = "cardinality" cardinality_body_definition as cardinality [ whitespace ]
+  keyword_any_argument = ( keyword_any_name ) as name [ "=" / ":" ] attribute_value as value [ whitespace ]
+  atomic keyword_any_name = 1*( !( "{" / "}" ) nonspace )
+  keyword_values_argument = kw_values_sp ( ( value_set_body ) as value_set / ( variable ) as value_set_ref ) [ whitespace ]
+  keyword_pattern_argument = ( kw_pattern_sp "/" ( *( ( "\\" any_char ) / ( !"/" any_char ) ) ) as pattern "/" [ whitespace ] )
   value_set_body = "{" [ whitespace ] ( *( ( ( data_value / variable ) as item ) [ "," ] [ whitespace ] ) ) as items "}"
   keyword_attribute_options = *( keyword_type_argument / keyword_cardinality_argument / keyword_values_argument / keyword_pattern_argument / ( keyword_any_argument ) as properties )
   keyword_attribute_body = "{" [ whitespace ] keyword_attribute_options [ whitespace ] "}"
-  keyword_attribute_definition = ( "attribute" ws attribute_name [ ws ] keyword_attribute_body ) as attributes
+  keyword_attribute_definition = ( kw_attribute_sp attribute_name keyword_attribute_body ) as attributes
 
   # ---- Associations ----
-  owner_cardinality = [ ws ] "[" cardinality_body_definition as owner_end_cardinality "]"
-  owner_attribute_name = "#" [ visibility ] [ ws ] variable as owner_end_attribute_name [ ws ]
-  owner_definition = [ whitespace ] "owner" ws variable as owner_end [ owner_attribute_name ] [ owner_cardinality ]
-  owner_type = [ whitespace ] "owner_type" ws variable as owner_end_type
-  member_cardinality = [ ws ] "[" cardinality_body_definition as member_end_cardinality "]"
-  member_attribute_name = "#" [ visibility ] [ ws ] variable as member_end_attribute_name [ ws ]
-  member_definition = [ whitespace ] "member" ws variable as member_end [ member_attribute_name ] [ member_cardinality ]
-  member_type = [ whitespace ] "member_type" ws variable as member_end_type
+  owner_cardinality = "[" cardinality_body_definition as owner_end_cardinality "]"
+  owner_attribute_name = "#" [ visibility ] variable as owner_end_attribute_name
+  owner_definition = [ whitespace ] kw_owner_sp variable as owner_end [ owner_attribute_name ] [ owner_cardinality ]
+  owner_type = [ whitespace ] kw_owner_type_sp variable as owner_end_type
+  member_cardinality = "[" cardinality_body_definition as member_end_cardinality "]"
+  member_attribute_name = "#" [ visibility ] variable as member_end_attribute_name
+  member_definition = [ whitespace ] kw_member_sp variable as member_end [ member_attribute_name ] [ member_cardinality ]
+  member_type = [ whitespace ] kw_member_type_sp variable as member_end_type
   association_inner_definition = ( owner_type / member_type / owner_definition / member_definition / comment_definition / comment_multiline_definition ) [ whitespace ]
-  association_body = [ ws ] "{" [ whitespace ] ( *( association_inner_definition ) ) as members "}"
-  association_definition = [ whitespace ] "association" ws [ variable as name ] [ ws ] association_body
+  association_body = "{" [ whitespace ] ( *( association_inner_definition ) ) as members "}"
+  association_definition = [ whitespace ] kw_association_sp [ variable as name ] association_body
 
   # ---- Definitions ----
-  class_modifier = [ ( [ whitespace ] ( "abstract" / "interface" ) ) as modifier ws ]
+  class_modifier = [ [ whitespace ] modifier_token ]
+  atomic modifier_token = ( ( "abstract" / "interface" ) as modifier 1*" " )
   # ---- Namespaces (RS 3010 extension: lutaml-model XmlNamespace) ----
-  namespace_uri_line = ( [ ws ] "uri" ws ( quoted_string / ( 1*word ) ) as uri [ whitespace ] )
-  namespace_prefix_line = ( [ ws ] "prefix" ws ( quoted_string / ( 1*word ) ) as prefix [ whitespace ] )
+  namespace_uri_line = ( kw_uri_sp ( quoted_string / ( 1*word ) ) as uri [ whitespace ] )
+  namespace_prefix_line = ( kw_prefix_sp ( quoted_string / ( 1*word ) ) as prefix [ whitespace ] )
   namespace_body = "{" [ whitespace ] ( *( namespace_uri_line / namespace_prefix_line ) ) as members "}"
-  namespace_inline = ( ws ( quoted_string ) as uri [ ws "prefix" ws ( quoted_string / ( 1*word ) ) as prefix ] )
-  namespace_definition = ( [ whitespace ] "namespace" ws ( 1*word ) as name [ ws ] ( namespace_body / namespace_inline ) [ whitespace ] ) as namespaces
+  namespace_inline = ( ( quoted_string ) as uri [ kw_prefix_sp ( quoted_string / ( 1*word ) ) as prefix ] )
+  namespace_definition = ( [ whitespace ] kw_namespace_sp ( 1*word ) as name ( namespace_body / namespace_inline ) [ whitespace ] ) as namespaces
 
   # ---- Serialization mappings (RS 3010 extension: sibling-linked) ----
   serialization_body = "{" [ whitespace ] ( *( serialization_line ) ) as rules "}"
   serialization_line = ( mapping_element_name_line / mapping_element_line / mapping_attribute_line / mapping_content_line / mapping_namespace_line / mapping_mixed_line / legacy_map_line / mapping_map_line / mapping_map_key_line / mapping_map_value_line ) [ whitespace ]
-  legacy_map_line = ( [ ws ] "map" ws dq_string as wire "," ws "to:" ws ( quoted_string / ( 1*word ) ) as to [ whitespace ] ) as legacy_map
-  mapping_element_name_line = ( [ ws ] "element" ws dq_string as element_name [ whitespace ] ) as element_name
-  mapping_element_line = ( [ ws ] "map_element" ws ( element_args ) ) as map_element
-  element_args = ( dq_string as wire [ ws ( 1*word ) as field ] / ( 1*word ) as field )
-  mapping_attribute_line = ( [ ws ] "map_attribute" ws ( attribute_args ) ) as map_attribute
-  attribute_args = ( dq_string as wire [ ws ( 1*word ) as field ] / ( 1*word ) as field )
-  mapping_content_line = ( [ ws ] "map_content" ws ( 1*word ) as field ) as map_content
-  mapping_namespace_line = ( [ ws ] "namespace" ws ( 1*word ) as namespace_ref ) as map_namespace
-  mapping_mixed_line = ( [ ws ] "mixed_content" ) as mixed_content
-  mapping_map_line = ( [ ws ] "map" ws map_args ) as map
-  map_args = ( dq_string as wire ws ( 1*word ) as field / dq_string as wire / ( 1*word ) as field )
-  mapping_map_key_line = ( [ ws ] "map_key" ws "to_instance" ws ( 1*word ) as field ) as map_key
-  mapping_map_value_line = ( [ ws ] "map_value" ws ( "to_instance" / "as_attribute" ) as mode ws ( 1*word ) as field ) as map_value
-  mapping_definition = ( [ whitespace ] "mapping" ws ( 1*word ) as format ws ( 1*word ) as target [ ws ] serialization_body [ whitespace ] ) as serialization_mappings
+  legacy_map_line = ( kw_map_sp dq_string as wire "," "to:" ( quoted_string / ( 1*word ) ) as to [ whitespace ] ) as legacy_map
+  mapping_element_name_line = ( kw_element_sp dq_string as element_name [ whitespace ] ) as element_name
+  mapping_element_line = ( kw_map_element_sp ( element_args ) ) as map_element
+  element_args = ( dq_string as wire [ ( 1*word ) as field ] / ( 1*word ) as field )
+  mapping_attribute_line = ( kw_map_attribute_sp ( attribute_args ) ) as map_attribute
+  attribute_args = ( dq_string as wire [ ( 1*word ) as field ] / ( 1*word ) as field )
+  mapping_content_line = ( kw_map_content_sp ( 1*word ) as field ) as map_content
+  mapping_namespace_line = ( kw_namespace_sp ( 1*word ) as namespace_ref ) as map_namespace
+  mapping_mixed_line = ( "mixed_content" ) as mixed_content
+  mapping_map_line = ( kw_map_sp map_args ) as map
+  map_args = ( dq_string as wire ( 1*word ) as field / dq_string as wire / ( 1*word ) as field )
+  mapping_map_key_line = ( kw_map_key_sp kw_to_instance_sp ( 1*word ) as field ) as map_key
+  mapping_map_value_line = ( kw_map_value_sp map_value_mode ( 1*word ) as field ) as map_value
+  atomic map_value_mode = ( ( "to_instance" / "as_attribute" ) as mode 1*" " )
+  mapping_definition = ( [ whitespace ] kw_mapping_sp ( 1*word ) as format ( 1*word ) as target serialization_body [ whitespace ] ) as serialization_mappings
 
   # ---- Mapping blocks (lutaml-model wire names) ----
   map_name = ( quoted_string / 1*( word / "-" / "." ) )
-  map_line = [ ws ] "map" ws ( map_name ) as wire "," ws "to:" ws ( map_name ) as to [ whitespace ]
-  mapping_body = [ ws ] "{" [ whitespace ] ( *( map_line ) ) as maps "}"
-  class_mapping_section = ( [ whitespace ] "mapping" ws ( 1*word ) as format [ ws ] serialization_body [ whitespace ] ) as serialization_mappings
+  map_line = kw_map_sp ( map_name ) as wire "," "to:" ( map_name ) as to [ whitespace ]
+  mapping_body = "{" [ whitespace ] ( *( map_line ) ) as maps "}"
+  class_mapping_section = ( [ whitespace ] kw_mapping_sp ( 1*word ) as format serialization_body [ whitespace ] ) as serialization_mappings
 
-  derive_definition = ( [ whitespace ] "derive" ws attribute_name [ ws ] ":" [ ws ] [ quotes ] ( 1*typechar ) as type [ quotes ] ) as derived_field [ whitespace ]
-  string_format_item = ( [ ws ] ( "artifact" / "root" ) as key ws ( quoted_string / 1*nonspace ) as value [ whitespace ] )
+  derive_definition = ( [ whitespace ] kw_derive_sp attribute_name ":" [ quotes ] ( 1*typechar ) as type [ quotes ] ) as derived_field [ whitespace ]
+  string_format_item = ( sf_key_token ( quoted_string / 1*nonspace ) as value [ whitespace ] )
+  atomic sf_key_token = ( ( "artifact" / "root" ) as key 1*" " )
   string_format_body = "{" [ whitespace ] ( *( string_format_item ) ) as items [ whitespace ] "}"
-  string_format_definition = ( [ whitespace ] "string_format" ws ( variable ) as format [ ws ] string_format_body ) as string_format
+  string_format_definition = ( [ whitespace ] kw_string_format_sp ( variable ) as format string_format_body ) as string_format
 
-  class_inner_definitions = definition_body / definition_line / class_mapping_section / derive_definition / string_format_definition / attribute_comma_definition / ( !( "attribute" ws ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
+  class_inner_definitions = definition_body / definition_line / class_mapping_section / derive_definition / string_format_definition / attribute_comma_definition / ( !( kw_attribute_sp ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
   class_inner_definition = class_inner_definitions [ whitespace ]
-  class_body = [ ws ] "{" [ whitespace ] ( *( class_inner_definition ) ) as members "}"
-  parent_class = [ ws ] "<" [ ws ] ( class_name_chars ) as parent_class
-  class_definition = class_modifier [ whitespace ] "class" ws class_name as name [ parent_class ] [ ws ] [ attribute_stereotype ] [ class_body ]
+  class_body = "{" [ whitespace ] ( *( class_inner_definition ) ) as members "}"
+  parent_class = "<" ( class_name_chars ) as parent_class
+  class_definition = class_modifier [ whitespace ] kw_class_sp class_name as name [ parent_class ] [ attribute_stereotype ] [ class_body ]
 
   # Balanced-brace definition text: nested "{...}" and "\"-escapes allowed
   definition_content = *( ( "\\" any_char ) / ( "{" definition_content "}" ) / ( !"}" any_char ) )
-  definition_body = [ ws ] "definition" [ whitespace ] "{" ( definition_content ) as definition "}"
-  definition_line = ( [ ws ] "definition" ws ( dq_string / sq_string ) ) as definition [ whitespace ]
+  definition_body = "definition" [ whitespace ] "{" ( definition_content ) as definition "}"
+  definition_line = ( kw_definition_sp ( dq_string / sq_string ) ) as definition [ whitespace ]
 
-  member_field_line = [ ws ] attribute_name [ ws ] ( 1*nonspace ) as member_field_type [ whitespace ]
+  member_field_line = attribute_name ( 1*nonspace ) as member_field_type [ whitespace ]
   member_fields_definition = ( [ whitespace ] "member_fields" [ whitespace ] "{" [ whitespace ] ( *( member_field_line ) ) as member_fields [ whitespace ] "}" ) as member_fields_decl
-  attribute_comma_definition = ( [ whitespace ] "attribute" ws attribute_name "," [ ws ] ( 1*typechar ) as type [ ws ] [ "{" [ whitespace ] keyword_attribute_options [ whitespace ] "}" ] [ whitespace ] ) as attributes
-  enum_member_with_payload = ( [ whitespace ] attribute_name [ ws ] ( class_body / keyword_attribute_body ) ) as attributes
+  attribute_comma_definition = ( [ whitespace ] kw_attribute_sp attribute_name "," ( 1*typechar ) as type [ "{" [ whitespace ] keyword_attribute_options [ whitespace ] "}" ] [ whitespace ] ) as attributes
+  enum_member_with_payload = ( [ whitespace ] attribute_name ( class_body / keyword_attribute_body ) ) as attributes
 
   # ---- Canonical value construct (RS 3001 par. Value / par. Enums) ----
   # `value <name> { block }` is the canonical enum member; the bare
@@ -151,59 +207,59 @@ grammar Lml version "1.0.0" {
   value_name = quoted_string / map_name
   value_inner_definition = ( definition_body / definition_line / instance / attribute_line / comment_definition / comment_multiline_definition ) [ whitespace ]
   value_body = "{" [ whitespace ] ( *( value_inner_definition ) ) as members "}"
-  value_definition = ( [ whitespace ] "value" ws ( value_name ) as value_name [ ws ] [ value_body ] [ whitespace ] ) as value_decl
+  value_definition = ( [ whitespace ] kw_value_sp ( value_name ) as value_name [ value_body ] [ whitespace ] ) as value_decl
 
-  from_table_definition = ( [ whitespace ] "from_table" [ ws ] ( map_name ) as from_table_name [ ws ] [ "{" [ whitespace ] *( "artifact" [ ws ] ( map_name ) as artifact_table [ whitespace ] ) "}" ] [ whitespace ] ) as from_table_decl
+  from_table_definition = ( [ whitespace ] "from_table" ( map_name ) as from_table_name [ "{" [ whitespace ] *( kw_artifact_sp ( map_name ) as artifact_table [ whitespace ] ) "}" ] [ whitespace ] ) as from_table_decl
 
-  enum_values_shorthand = ( [ whitespace ] "values" ws value_set_body [ whitespace ] ) as value_set_decl
+  enum_values_shorthand = ( [ whitespace ] kw_values_sp value_set_body [ whitespace ] ) as value_set_decl
   enum_inner_definitions = definition_body / definition_line / member_fields_definition / from_table_definition / enum_values_shorthand / value_definition / enum_member_with_payload / attribute_comma_definition / attribute_definition / comment_definition / comment_multiline_definition
   enum_inner_definition = enum_inner_definitions [ whitespace ]
-  enum_body = [ ws ] "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
-  enum_definition = [ whitespace ] "enum" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]
-  data_type_body = [ ws ] "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
-  data_type_definition = [ whitespace ] "data_type" ws [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ data_type_body ]
-  primitive_definition = [ whitespace ] "primitive" ws [ quotes ] class_name as name [ quotes ]
+  enum_body = "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
+  enum_definition = [ whitespace ] kw_enum_sp [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]
+  data_type_body = "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
+  data_type_definition = [ whitespace ] kw_data_type_sp [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ data_type_body ]
+  primitive_definition = [ whitespace ] kw_primitive_sp [ quotes ] class_name as name [ quotes ]
 
-  package_body = [ ws ] "{" [ whitespace ] ( *( diagram_inner_definition ) ) as members "}"
-  package_definition = ( [ whitespace ] "package" ws class_name as name [ ws ] package_body [ whitespace ] ) as packages
+  package_body = "{" [ whitespace ] ( *( diagram_inner_definition ) ) as members "}"
+  package_definition = ( [ whitespace ] kw_package_sp class_name as name package_body [ whitespace ] ) as packages
   diagram_inner_definitions = namespace_definition / mapping_definition / package_definition / title_definition / caption_definition / fontname_definition / ( class_definition ) as classes / ( enum_definition ) as enums / ( primitive_definition ) as primitives / ( data_type_definition ) as data_types / ( association_definition ) as associations / comment_definition / comment_multiline_definition
   diagram_inner_definition = diagram_inner_definitions [ whitespace ]
-  diagram_body = [ ws ] "{" [ whitespace ] ( *( diagram_inner_definition ) ) as members "}"
-  diagram_definition = [ whitespace ] "diagram" [ ws ] class_name as name diagram_body [ whitespace ]
+  diagram_body = "{" [ whitespace ] ( *( diagram_inner_definition ) ) as members "}"
+  diagram_definition = [ whitespace ] "diagram" class_name as name diagram_body [ whitespace ]
   diagram_definitions = diagram_definition [ whitespace ]
   model_definitions = ( 1*( diagram_inner_definition ) ) as members
 
   view_only_definitions = ( view_import ) as view_imports / show_directive / hide_directive
   view_inner_definitions = view_only_definitions / diagram_inner_definitions
   view_inner_definition = view_inner_definitions [ whitespace ]
-  view_body = [ ws ] "{" [ whitespace ] ( *( view_inner_definition ) ) as members "}"
-  view_definition = [ whitespace ] "view" [ ws ] class_name as name view_body [ whitespace ]
+  view_body = "{" [ whitespace ] ( *( view_inner_definition ) ) as members "}"
+  view_definition = [ whitespace ] "view" class_name as name view_body [ whitespace ]
   view_definitions = view_definition [ whitespace ]
 
-  title_text = ( %x22 ( 1*( !%x22 any_char ) ) as title %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as title %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "," / "." / ":" / ";" / "(" / ")" / "+" / "'" / "/" ) ) as title
-  title_definition = [ whitespace ] "title" ws title_text
-  caption_text = ( %x22 ( 1*( !%x22 any_char ) ) as caption %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as caption %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "," / "." / ":" / ";" / "(" / ")" / "+" / "'" / "/" ) ) as caption
-  caption_definition = [ whitespace ] "caption" ws caption_text
+  atomic title_text = ( %x22 ( 1*( !%x22 any_char ) ) as title %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as title %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "," / "." / ":" / ";" / "(" / ")" / "+" / "'" / "/" ) ) as title
+  title_definition = [ whitespace ] kw_title_sp title_text
+  atomic caption_text = ( %x22 ( 1*( !%x22 any_char ) ) as caption %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as caption %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "," / "." / ":" / ";" / "(" / ")" / "+" / "'" / "/" ) ) as caption
+  caption_definition = [ whitespace ] kw_caption_sp caption_text
   fontname_text = [ quotes ] ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " ) ) as fontname [ quotes ]
-  fontname_definition = [ whitespace ] "fontname" ws fontname_text
+  fontname_definition = [ whitespace ] kw_fontname_sp fontname_text
 
   # ---- Views ----
   # `import` here carries a required trailing space (word boundary)
-  view_import = [ whitespace ] "import" ws ( dq_path / sq_path ) [ whitespace ]
+  view_import = [ whitespace ] kw_import_sp ( dq_path / sq_path ) [ whitespace ]
   entity_name_atom = ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "." / ":" / "-" ) ) as entity_name
-  entity_name_list = entity_name_atom *( [ ws ] "," [ ws ] entity_name_atom )
-  show_directive = [ whitespace ] "show" ws ( entity_name_list ) as show_list [ whitespace ]
-  hide_directive = [ whitespace ] "hide" ws ( entity_name_list ) as hide_list [ whitespace ]
+  entity_name_list = entity_name_atom *( "," entity_name_atom )
+  show_directive = [ whitespace ] kw_show_sp ( entity_name_list ) as show_list [ whitespace ]
+  hide_directive = [ whitespace ] kw_hide_sp ( entity_name_list ) as hide_list [ whitespace ]
 
   # ---- Requires ----
-  require_stmt = [ whitespace ] "require" ws quoted_string as require [ whitespace ]
+  require_stmt = [ whitespace ] kw_require_sp quoted_string as require [ whitespace ]
   require_block = ( *( require_stmt [ whitespace ] ) ) as requires
 
   # ---- Instances ----
   instance = instance_named / keyword_instance / class_instance
-  instance_named = ( [ whitespace ] "instance" ws quoted_string as name [ ws ] [ ( namespaced_identifier ) as instance_type ] [ ws ] "{" [ whitespace ] ( ( [ ws ] instance ) / attributes ) "}" [ whitespace ] ) as instance
-  isa_definition = [ whitespace ] "isa" ws ( namespaced_identifier ) as isa [ whitespace ]
-  keyword_instance = ( [ whitespace ] "instance" [ ws ( namespaced_identifier ) as instance_type ] [ ws ] "{" [ whitespace ] [ isa_definition ] ( ( [ ws ] instance ) / attributes ) "}" ) as instance [ whitespace ]
+  instance_named = ( [ whitespace ] kw_instance_sp quoted_string as name [ ( namespaced_identifier ) as instance_type ] "{" [ whitespace ] ( ( instance ) / attributes ) "}" [ whitespace ] ) as instance
+  isa_definition = [ whitespace ] kw_isa_sp ( namespaced_identifier ) as isa [ whitespace ]
+  keyword_instance = ( [ whitespace ] "instance" [ ( namespaced_identifier ) as instance_type ] "{" [ whitespace ] [ isa_definition ] ( ( instance ) / attributes ) "}" ) as instance [ whitespace ]
   class_instance = ( variable as instance_type [ whitespace ] quoted_string as name [ whitespace ] [ [ whitespace ] "extends" [ whitespace ] quoted_string as parent [ whitespace ] ] "{" [ whitespace ] [ lml_instance_body ] "}" ) as instance [ whitespace ]
   lml_instance_body = lml_instance_members [ whitespace ]
   instance_template = [ whitespace ] "template" [ whitespace ] "{" [ whitespace ] attributes [ whitespace ] "}"
@@ -212,20 +268,20 @@ grammar Lml version "1.0.0" {
   model_body = diagram_inner_definition
 
   # ---- Data structures ----
-  attribute_value = instance / list / key_value_map / data_value / 1*( !%x0A any_char )
+  attribute_value = instance / list / key_value_map / data_value / 1*( !%x0A %x00-10FFFF )
   list_item = instance / data_value
-  list = "[" [ whitespace ] ( *( list_item [ ws ] [ "," ] [ whitespace ] ) ) as list [ whitespace ] "]"
-  collection = [ whitespace ] "collection" ws quoted_string as name [ ws ] "{" [ whitespace ] [ includes ] [ whitespace ] [ validation ] [ whitespace ] "}" [ whitespace ]
-  includes = [ whitespace ] "includes" [ ws ] ( list ) as includes
-  validation = [ whitespace ] "validation" [ ws ] "{" [ whitespace ] ( *( condition ) ) as validations "}"
-  condition = [ whitespace ] "condition" ws quoted_string as condition [ whitespace ]
-  import = [ whitespace ] "import" [ ws ] "{" [ whitespace ] ( *( import_definition ) ) as imports "}" [ whitespace ]
-  import_definition = ( 1*nonspace ) as format_type [ ws ] quoted_string as file [ whitespace ] "{" [ whitespace ] attributes [ whitespace ] "}" [ whitespace ]
-  instances = [ whitespace ] "instances" [ ws ] [ ( quoted_string / variable ) as name ] [ whitespace ] "{" [ whitespace ] [ instances_body ] "}" [ whitespace ]
+  list = "[" [ whitespace ] ( *( list_item [ "," ] [ whitespace ] ) ) as list [ whitespace ] "]"
+  collection = [ whitespace ] kw_collection_sp quoted_string as name "{" [ whitespace ] [ includes ] [ whitespace ] [ validation ] [ whitespace ] "}" [ whitespace ]
+  includes = [ whitespace ] "includes" ( list ) as includes
+  validation = [ whitespace ] "validation" "{" [ whitespace ] ( *( condition ) ) as validations "}"
+  condition = [ whitespace ] kw_condition_sp quoted_string as condition [ whitespace ]
+  import = [ whitespace ] "import" "{" [ whitespace ] ( *( import_definition ) ) as imports "}" [ whitespace ]
+  import_definition = ( 1*nonspace ) as format_type quoted_string as file [ whitespace ] "{" [ whitespace ] attributes [ whitespace ] "}" [ whitespace ]
+  instances = [ whitespace ] "instances" [ ( quoted_string / variable ) as name ] [ whitespace ] "{" [ whitespace ] [ instances_body ] "}" [ whitespace ]
   instances_body = ( *( instances_member [ whitespace ] ) ) as instances
   instances_member = import / ( collection ) as collections / export / instance
   export = [ whitespace ] "export" [ whitespace ] "{" [ whitespace ] ( *( export_format [ whitespace ] ) ) as exports "}" [ whitespace ]
-  export_format = [ whitespace ] "format" ws variable as format_type [ whitespace ] "{" [ whitespace ] attributes "}" [ whitespace ]
+  export_format = [ whitespace ] kw_format_sp variable as format_type [ whitespace ] "{" [ whitespace ] attributes "}" [ whitespace ]
 
   # ---- Root (RS 3001: a document interleaves declarations) ----
   diagram = [ require_block ] ( *( top_level_definition ) ) as members
