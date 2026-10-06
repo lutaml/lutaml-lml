@@ -1,0 +1,5 @@
+// TODO: attributes <1>
+class Ceramic {
+  // Write docs <2>
+  + glazeType: GlazeType // Glaze type <3>
+}

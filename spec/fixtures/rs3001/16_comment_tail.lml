@@ -1,0 +1,3 @@
+class Studio { // This is a comment
+  attribute location, String
+}
