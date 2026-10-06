@@ -165,6 +165,9 @@ grammar Lml version "1.0.0" {
 
   class_modifier = [ [ whitespace ] modifier_token ]
   atomic modifier_token = ( ( "abstract" / "interface" ) as modifier 1*" " )
+  # RS 3001 element visibility modifier (keyword form, symmetric with
+  # abstract/interface; `package` is the UML "friendly" (~) level).
+  atomic element_visibility = ( ( "public" / "private" / "protected" / "package" ) as visibility 1*" " )
   # ---- Namespaces (RS 3010 extension: lutaml-model XmlNamespace) ----
   namespace_uri_line = ( kw_uri_sp ( quoted_string / ( 1*word ) ) as uri [ whitespace ] )
   namespace_prefix_line = ( kw_prefix_sp ( quoted_string / ( 1*word ) ) as prefix [ whitespace ] )
@@ -207,7 +210,7 @@ grammar Lml version "1.0.0" {
   class_inner_definition = class_inner_definitions [ whitespace ]
   class_body = "{" [ whitespace ] ( *( class_inner_definition ) ) as members "}"
   parent_class = "<" ( class_name_chars ) as parent_class
-  class_definition = class_modifier [ whitespace ] kw_class_sp class_name as name [ parent_class ] [ attribute_stereotype ] [ class_body ]
+  class_definition = [ element_visibility ] class_modifier [ whitespace ] kw_class_sp class_name as name [ parent_class ] [ attribute_stereotype ] [ class_body ]
 
   # Balanced-brace definition text: nested "{...}" and "\"-escapes allowed
   definition_content = *( ( "\\" any_char ) / ( "{" definition_content "}" ) / ( !"}" any_char ) )
@@ -234,14 +237,14 @@ grammar Lml version "1.0.0" {
   enum_inner_definitions = definition_body / definition_line / member_fields_definition / from_table_definition / enum_values_shorthand / value_definition / enum_member_with_payload / attribute_comma_definition / attribute_definition / comment_definition / comment_multiline_definition
   enum_inner_definition = enum_inner_definitions [ whitespace ]
   enum_body = "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
-  enum_definition = [ whitespace ] kw_enum_sp [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]
+  enum_definition = [ whitespace ] [ element_visibility ] kw_enum_sp [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ enum_body ]
   data_type_body = "{" [ whitespace ] ( *( enum_inner_definition ) ) as members "}"
-  data_type_definition = [ whitespace ] kw_data_type_sp [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ data_type_body ]
-  primitive_definition = [ whitespace ] kw_primitive_sp [ quotes ] class_name as name [ quotes ]
+  data_type_definition = [ whitespace ] [ element_visibility ] kw_data_type_sp [ quotes ] class_name as name [ quotes ] [ attribute_stereotype ] [ data_type_body ]
+  primitive_definition = [ whitespace ] [ element_visibility ] kw_primitive_sp [ quotes ] class_name as name [ quotes ]
 
   package_body = "{" [ whitespace ] ( *( diagram_inner_definition ) ) as members "}"
   package_definition = ( [ whitespace ] kw_package_sp class_name as name package_body [ whitespace ] ) as packages
-  diagram_inner_definitions = namespace_definition / mapping_definition / package_definition / title_definition / caption_definition / fontname_definition / ( class_definition ) as classes / ( enum_definition ) as enums / ( primitive_definition ) as primitives / ( data_type_definition ) as data_types / ( association_definition ) as associations / comment_definition / comment_multiline_definition
+  diagram_inner_definitions = namespace_definition / mapping_definition / ( class_definition ) as classes / ( enum_definition ) as enums / ( primitive_definition ) as primitives / ( data_type_definition ) as data_types / package_definition / title_definition / caption_definition / fontname_definition / ( association_definition ) as associations / comment_definition / comment_multiline_definition
   diagram_inner_definition = diagram_inner_definitions [ whitespace ]
   diagram_body = "{" [ whitespace ] ( *( diagram_inner_definition ) ) as members "}"
   diagram_definition = [ whitespace ] "diagram" class_name as name diagram_body [ whitespace ]
