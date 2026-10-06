@@ -1,0 +1,9 @@
+instances Glazes {
+  GlazeFormula "blue_matte" {
+    components = ["silica", "cobalt"]
+  }
+
+  CeramicTile "tile_002" {
+    glaze = ref:(Glazes.blue_matte)
+  }
+}

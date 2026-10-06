@@ -1,0 +1,89 @@
+= lutaml-lml
+
+LutaML Model Language (LML) — a text DSL for describing UML-style
+models and their data instances, parsed into typed domain models and
+rendered as diagrams via GraphViz.
+
+== Status
+
+RS 3001 (LutaML language, `lutaml-lang.adoc`) is the authoritative
+base and is fully implemented: classes, enums, data types, attributes
+(including `values` sets, `pattern`, cardinality, defaults), the
+canonical `value` construct, packages, namespacing, instances and
+instance collections with references, and the validation rules
+(uniqueness, mandatory attributes, type and pattern conformity,
+reference validity and circularity). Every normative example of the
+specification is vendored as a conformance corpus and runs in CI.
+
+RS 3010 (declarations extension, `lml-declarations.adoc`) covers
+serialization mappings (XML elements/attributes/content, key-value
+wire names, namespaces), `isa`, `derive`, `string_format`, enum
+member payloads and `from_table` artifact references.
+
+== Installation
+
+....
+gem install lutaml-lml
+....
+
+== Usage
+
+Parse an LML document:
+
+....
+require "lutaml/lml"
+
+doc = Lutaml::Lml.parse_document(File.new("model.lml"))
+doc.classes.first.attributes.map(&:name)
+....
+
+Validate against the RS 3001 rules:
+
+....
+violations = Lutaml::Lml::Validator.violations(doc)
+....
+
+Compile model definitions into anonymous `Lutaml::Model::Serializable`
+classes and hydrate instance data:
+
+....
+compiler = Lutaml::Lml::ModelCompiler.new
+compiler.compile(File.new("model.lml"))
+klass = compiler.compiled_classes["Ceramic"]
+instance = compiler.hydrate(File.new("data.lml"))
+....
+
+Command line:
+
+....
+lutaml generate model.lml      # diagram via GraphViz
+lutaml validate model.lml      # parse + RS 3001 rule violations
+lutaml compile model.lml       # lutaml-model classes
+....
+
+== Architecture
+
+The language grammar is written in PARG
+(`lib/lutaml/lml/grammar/lml.parg`) and compiled by
+https://github.com/parsanol/parsanol-ruby[parsanol]; the compiled
+artifact is committed for fast cold loads (`rake parg` regenerates it).
+Comments and whitespace are grammar-level skip trivia. Comments are
+consumed between any two tokens; quoted strings never start comments.
+
+Pipeline: preprocessor (include expansion) → PARG parser → transform →
+data processor → document builder → post-parse resolvers (imports,
+views, association labels).
+
+== Development
+
+....
+bundle install
+bundle exec rake spec     # test suite incl. the RS 3001 corpus
+bundle exec rake parg     # regenerate the compiled grammar artifact
+bundle exec rubocop
+....
+
+== Documentation
+
+* RS 3001 — LutaML language: link:../docs/sources/lutaml-lang.adoc[lutaml-lang.adoc]
+* RS 3010 — declarations extension: link:../docs/sources/lml-declarations.adoc[lml-declarations.adoc]
