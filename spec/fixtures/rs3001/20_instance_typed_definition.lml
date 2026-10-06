@@ -1,0 +1,16 @@
+class CeramicTile {
+  attribute dimensions, Float { cardinality 2 }
+  attribute firing_profile, FiringProfile
+  definition {
+    Types of ceramic tiles.
+  }
+}
+
+instance "square" CeramicTile {
+  dimensions = [30.5, 30.5]
+  firing_profile = "high"
+
+  definition {
+    A square ceramic tile used for various applications.
+  }
+}

@@ -108,7 +108,7 @@ grammar Lml version "1.0.0" {
 
   # ---- Attributes ----
   attribute = comment_definition / ( variable as key [ "+" as add ] [ "=" ] attribute_value as value )
-  attributes = ( *( attribute_line / whitespace ) ) as attributes
+  attributes = ( *( definition_body / definition_line / attribute_line / whitespace ) ) as attributes
   attribute_line = attribute [ [ "," ] whitespace ]
   visibility = kw_visibility_modifier as visibility_modifier
   attribute_stereotype = "<<" ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / "/" ) ) as stereotype ">>"

@@ -1,0 +1,13 @@
+instances "Studios" {
+  instance Studio {
+    location = "Paris"
+    potter = "Marie"
+    kiln = "Electric"
+  }
+
+  instance Studio {
+    location = "Berlin"
+    potter = "Hans"
+    kiln = "Gas"
+  }
+}
