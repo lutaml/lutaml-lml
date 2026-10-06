@@ -145,6 +145,24 @@ grammar Lml version "1.0.0" {
   association_definition = [ whitespace ] kw_association_sp [ variable as name ] association_body
 
   # ---- Definitions ----
+  # ---- Operations (class methods) ----
+  # Symbol visibility reuses the attribute prefix (+ - # ~); the
+  # transform maps it to public/private/protected/friendly.
+  operation_definition = [ whitespace ] [ visibility ] ( 1*word ) as name "(" [ ( operation_params ) as owned_parameter ] ")" [ operation_return ] [ operation_body ] [ whitespace ]
+  operation_params = operation_param *( "," [ whitespace ] operation_param )
+  operation_return = ":" ( type_token ) as return_type [ cardinality ]
+  # A parenthesized alternative is not an Entity, so an optional body
+  # of `x as k` around it gets no skip injection - the blank after "="
+  # was unconsumable. Reference a rule instead.
+  operation_param = ( [ ( "in" / "out" / "inout" ) as direction 1*" " ] ( 1*word ) as name [ ":" ] param_type as type [ "=" ] param_default_value as param_default )
+  param_default_value = [ quoted_string / ( 1*word ) / number ]
+  # The attribute pattern: separator as its own optional, value as a
+  # rule sibling. A `x as k` optional body gets no interior skip
+  # injection, so [ ":" type as t ] cannot consume the blank after
+  # the separator.
+  param_type = [ type_token ]
+  operation_body = "{" [ whitespace ] [ ( *( ( 1*word ) as stereotype [ "," ] [ whitespace ] ) ) as stereotype ] [ whitespace ] "}"
+
   class_modifier = [ [ whitespace ] modifier_token ]
   atomic modifier_token = ( ( "abstract" / "interface" ) as modifier 1*" " )
   # ---- Namespaces (RS 3010 extension: lutaml-model XmlNamespace) ----
@@ -185,7 +203,7 @@ grammar Lml version "1.0.0" {
   string_format_body = "{" [ whitespace ] ( *( string_format_item ) ) as items [ whitespace ] "}"
   string_format_definition = ( [ whitespace ] kw_string_format_sp ( variable ) as format string_format_body ) as string_format
 
-  class_inner_definitions = definition_body / definition_line / class_mapping_section / derive_definition / string_format_definition / attribute_comma_definition / ( !( kw_attribute_sp ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
+  class_inner_definitions = definition_body / definition_line / class_mapping_section / derive_definition / string_format_definition / ( operation_definition ) as operations / attribute_comma_definition / ( !( kw_attribute_sp ) attribute_definition ) / keyword_attribute_definition / comment_definition / comment_multiline_definition
   class_inner_definition = class_inner_definitions [ whitespace ]
   class_body = "{" [ whitespace ] ( *( class_inner_definition ) ) as members "}"
   parent_class = "<" ( class_name_chars ) as parent_class
