@@ -119,13 +119,7 @@ module Lutaml
         attr.cardinality && attr.cardinality.min == '1'
       end
 
-      def populated?(instance, attr_name)
-        pair = instance_attribute(instance, attr_name)
-        return false unless pair
 
-        value = pair[1]
-        value.respond_to?(:value) ? !value.to_s.empty? : !value.to_s.empty?
-      end
 
       def type_conformity_violations(instance)
         definition = type_definitions[definition_type(instance)]
@@ -213,12 +207,21 @@ module Lutaml
         literal
       end
 
-      def reference_values(instance)
-        instance_attribute_pairs(instance).filter_map do |name, value|
-          literal = value.respond_to?(:value) ? value.value : value
-          next unless literal.is_a?(Hash) && literal[:reference]
+      def populated?(instance, attr_name)
+        pair = instance_attribute(instance, attr_name)
+        return false unless pair
 
-          [name, literal[:reference]]
+        value = pair[1]
+        literal = value.respond_to?(:value) ? value.value : value
+        !literal.to_s.empty?
+      end
+
+      def reference_values(instance)
+        Array(instance.attributes).filter_map do |attr|
+          ref = attr.reference
+          next unless ref
+
+          [attr.name.to_s, ref.path]
         end
       end
 

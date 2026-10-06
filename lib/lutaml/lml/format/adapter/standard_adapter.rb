@@ -70,6 +70,8 @@ module Lutaml
           end
 
           def format_value(prefix, key, value, indent)
+            return "#{prefix}#{key} = ref:(#{value[:reference]})" if reference_value?(value)
+
             case value
             when Array
               format_array(prefix, key, value, indent)
@@ -84,11 +86,15 @@ module Lutaml
 
           def format_array(prefix, key, items, indent)
             elements = items.map do |item|
-              case item
-              when Hash
-                format_nested_instance(item, indent + 1)
+              if reference_value?(item)
+                "  ref:(#{item[:reference]})"
               else
-                "  #{quote_value(item)}"
+                case item
+                when Hash
+                  format_nested_instance(item, indent + 1)
+                else
+                  "  #{quote_value(item)}"
+                end
               end
             end
 
@@ -109,6 +115,13 @@ module Lutaml
             inner = hash_to_lml_body(hash, indent + 1)
             type_clause = type_name.empty? ? "" : " #{type_name}"
             "#{prefix}instance#{type_clause} {\n#{inner}\n#{prefix}}"
+          end
+
+          # RS 3001 par. Value type: a `reference` map is the wire form of a
+          # reference literal; it emits as `ref:(path)`, never as a nested
+          # instance.
+          def reference_value?(value)
+            value.is_a?(Hash) && value.keys == [:reference]
           end
 
           def quote_value(val)

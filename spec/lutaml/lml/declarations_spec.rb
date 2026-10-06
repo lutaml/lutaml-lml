@@ -255,7 +255,8 @@ RSpec.describe 'LML declarations (isa, defaults, derive, payloads, string_format
       ref_attr = from_ref.instances.instances.first.attributes.find { |a| a.name == 'r' }
       full_attr = from_full.instances.instances.first.attributes.find { |a| a.name == 'r' }
       expect(ref_attr.value.value).to eq(full_attr.value.value)
-      expect(ref_attr.value.to_s).to include('Product.id')
+      expect(ref_attr.reference).to be_a(Lutaml::Lml::Reference)
+      expect(ref_attr.reference.path).to eq('Product.id')
     end
   end
 
