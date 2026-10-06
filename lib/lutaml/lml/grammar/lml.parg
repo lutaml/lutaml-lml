@@ -290,3 +290,16 @@ grammar Lml version "1.0.0" {
 }
 
 entry diagram: diagram
+
+# Compile-time contract tests for the trivia/skip behavior (run by
+# `rake parg` and any in-memory compile; a failure fails the build).
+test diagram {
+  accept "// leading\nclass Ceramic { }\n"
+  accept "class /* inline */ Ceramic { }\n"
+  accept "class Ceramic { } // trailing"
+  accept "instances {\n  P \"p\" {\n    url = \"http://a//b\"\n  }\n}\n"
+  reject "classCeramic Foo { }"
+  reject "abstractclass Ceramic { }"
+  reject "class\tCeramic { }"
+  reject "class Ceramic { /* unterminated"
+}
