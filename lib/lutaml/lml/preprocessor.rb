@@ -21,11 +21,12 @@ module Lutaml
 
       private
 
-      # RS 3001 §Comment: `//` to end of line and `/* ... */` block
-      # comments are stripped quote-aware before include expansion, so
-      # string literals (e.g. URLs) survive intact.
+      # Comments (`//`, `/* */`) are consumed by the grammar's trivia
+      # skip (parsanol-ruby#134); only include directives are expanded
+      # here. Line structure is preserved so parse-error positions
+      # match the source.
       def expand_lines(text, base_dir, chain)
-        text = strip_comments(text)
+        validate_block_comments(text)
         text.split(/\r?\n/)
             .flat_map { |line| expand_line(line, base_dir, chain) }
             .join("\n")
@@ -41,93 +42,57 @@ module Lutaml
       end
 
       def include_path(line, base_dir)
-        match = line.match(/^\s*include\s+(.+)/)
+        match = line.match(/^\s*include\s+(.+)$/)
         return nil unless match
 
-        File.expand_path(match[1].strip, base_dir)
+        File.expand_path(trim_trailing_comment(match[1].strip), base_dir)
+      end
+
+      def trim_trailing_comment(path)
+        path.sub(%r{\s+(//|/\*).*}, '')
       end
 
       def read_included(path)
-        File.read(path, encoding: "UTF-8")
+        File.read(path, encoding: 'UTF-8')
       rescue Errno::ENOENT, Errno::EACCES => e
         raise Error, "cannot read include #{path}: #{e.message}"
       end
 
-      def strip_comments(text)
-        scanner = CommentScanner.new(text)
-        out = +""
-        until scanner.done?
-          scanner.emit(out)
-        end
-        out
-      end
-
-      # Quote-aware scanner removing `//` and `/* */` comments while
-      # preserving string literals and line structure.
-      class CommentScanner
-        def initialize(text)
-          @text = text
-          @pos = 0
-          @quote = nil
-        end
-
-        def done?
-          @pos >= @text.length
-        end
-
-        def emit(out)
-          return emit_quoted(out) if @quote
-          return emit_delimiter(out) if string_delimiter?(@text[@pos])
-          return emit_block_comment(out) if block_comment_start?
-          return skip_line_comment if line_comment_start?
-
-          out << @text[@pos]
-          @pos += 1
-        end
-
-        private
-
-        def string_delimiter?(ch)
-          ch == '"' || ch == "'"
-        end
-
-        def emit_delimiter(out)
-          @quote = @text[@pos]
-          out << @text[@pos]
-          @pos += 1
-        end
-
-        def emit_quoted(out)
-          ch = @text[@pos]
-          out << ch
-          if ch == "\\"
-            out << @text[@pos + 1].to_s
-            @pos += 2
-          else
-            @quote = nil if ch == @quote
-            @pos += 1
+      # Quote-aware scan: a `/*` opened outside a string literal or a
+      # line comment must close before end of input. The grammar's
+      # trivia would otherwise reject the text with an unrelated
+      # expected-token error.
+      def validate_block_comments(text)
+        quote = nil
+        pos = 0
+        open_index = nil
+        while pos < text.length
+          ch = text[pos]
+          if quote
+            if ch == '\\'
+              pos += 2
+              next
+            end
+            quote = nil if ch == quote
+          elsif open_index
+            if text[pos, 2] == '*/'
+              open_index = nil
+              pos += 1
+            end
+          elsif ['"', "'"].include?(ch)
+            quote = ch
+          elsif text[pos, 2] == '//'
+            pos = text.index("\n", pos) || text.length
+            next
+          elsif text[pos, 2] == '/*'
+            open_index = pos
           end
+          pos += 1
         end
+        return unless open_index
 
-        def block_comment_start?
-          @text[@pos, 2] == "/*"
-        end
-
-        def emit_block_comment(out)
-          close = @text.index("*/", @pos + 2)
-          raise Lutaml::Lml::Error, "unterminated block comment" unless close
-
-          out << "\n" * @text[@pos...close].count("\n") << " "
-          @pos = close + 2
-        end
-
-        def line_comment_start?
-          @text[@pos, 2] == "//"
-        end
-
-        def skip_line_comment
-          @pos = @text.index("\n", @pos) || @text.length
-        end
+        line = text[0...open_index].count("\n") + 1
+        raise Error, "unterminated block comment at line #{line}"
       end
     end
   end

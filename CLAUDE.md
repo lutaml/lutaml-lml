@@ -39,7 +39,7 @@ Input → Preprocessor → Parser → Transform → DataProcessor → DocumentBu
 ```
 
 1. **Pipeline** (`pipeline.rb`): Orchestrates the full parse flow. Entry point for all parsing.
-2. **Preprocessor** (`preprocessor.rb`): Strips comments, inlines `include` directives
+2. **Preprocessor** (`preprocessor.rb`): Expands `include` directives, rejects unterminated block comments (`//`/`/* */` are grammar-level skip trivia)
 3. **Parser** (`parser.rb`): Facade over the PARG artifact; `parse` returns the raw parse tree.
 4. **Grammar** (`grammar/lml.parg`): The LML grammar written in PARG (parsanol grammar language), entry `diagram`. `grammar/lml.artifact.json` is its compiled form — regenerate with `rake parg` after any grammar edit; `Grammar.artifact` loads the committed artifact (fast path) and falls back to compiling the text on drift or absence (a sync spec enforces the pair in CI). PEG semantics — ordered choice; alternative order is deliberate and lint-checked.
 5. **Transform** (`transform.rb`): Minimal Parsanol transform (visibility mapping, string cleanup)
@@ -114,6 +114,7 @@ Thor-based CLI at `Cli::LmlCommands` with `generate`, `validate`, and `compile` 
 
 - All internal code uses `autoload` — never `require_relative` or `require` with internal paths
 - The grammar is `grammar/lml.parg` (PARG); edit it there — never rebuild parse trees in Ruby. Capture discipline: parenthesize repetitions before `as` (`( *x ) as k`) or captures bind per-iteration; `[ x as k ]` yields `k: nil` when absent (consumers treat nil ≡ absent); `%x00-10FFFF` is the char-wise `any` (`%x00-FF` is byte-wise and fails on multibyte)
+- Skip trivia (parsanol#134): `skip = trivia` injects optional trivia (blanks/tabs, `//`+newline, `/* */`) before sequence children and rule references. Consequences: token rules (identifier/char/string scans: `word`, `namechar`, `typechar`, `dq_string`, …) MUST be `atomic` or their runs span trivia (`xml Ceramic` becomes one token, `//` inside strings is eaten); a keyword plus its required separator is an `atomic kw_x_sp = "x" 1*" "` rule; optional separation between tokens needs no rule (trivia owns it); newlines stay grammar-visible (`[ whitespace ]` interspersals remain); char-scan repetition bodies use inline literals (`%x00-10FFFF`), not `any_char` refs (a rule-ref child re-enables injection)
 - All models inherit from `Lutaml::Model::Serializable` directly, with flattened attribute definitions
 - Entity classification uses `self.entity_type` on model classes (polymorphic dispatch, not `is_a?`)
 - RS 3001 conformance: the normative examples of lutaml-lang.adoc are vendored as `spec/fixtures/rs3001/*.lml` (`rs3001_corpus_spec`) — every 3001 example must parse and build; serialization mappings (RS 3010 extension) compile into lutaml-model `xml`/`key_value` mappings, with sibling `mapping <format> <class>` canonical and in-class `mapping <format> { }` as the shortcut
