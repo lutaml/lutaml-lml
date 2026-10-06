@@ -16,9 +16,9 @@ RSpec.describe Lutaml::Lml::Transform do
       expect(result).to eq("protected")
     end
 
-    it "converts '~' to 'friendly'" do
+    it "converts '~' to 'package'" do
       result = transform.apply({ visibility_modifier: "~" })
-      expect(result).to eq("friendly")
+      expect(result).to eq("package")
     end
 
     it "converts '+' to 'public'" do
