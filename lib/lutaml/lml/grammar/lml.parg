@@ -80,12 +80,12 @@ grammar Lml version "1.0.0" {
   quotes = %x22 / %x27
 
   # quoted('"', :string) | quoted("'", :string)
-  atomic dq_string = %x22 ( *( !%x22 any_char ) ) as string %x22
-  atomic sq_string = %x27 ( *( !%x27 any_char ) ) as string %x27
+  atomic dq_string = %x22 until "\"" as string %x22
+  atomic sq_string = %x27 until "'" as string %x27
   quoted_string = dq_string / sq_string
   # any_quoted(:path) for view import
-  atomic dq_path = %x22 ( *( !%x22 any_char ) ) as path %x22
-  atomic sq_path = %x27 ( *( !%x27 any_char ) ) as path %x27
+  atomic dq_path = %x22 until "\"" as path %x22
+  atomic sq_path = %x27 until "'" as path %x27
 
   boolean = ( "true" / "false" ) as boolean
   number = ( 1*%x30-39 "." 1*%x30-39 ) as float / ( 1*%x30-39 ) as number
@@ -93,8 +93,8 @@ grammar Lml version "1.0.0" {
   reference = ( "reference:(" / "ref:(" ) ( variable *( "." variable ) ) as reference ")"
   range = ( variable as start ".." variable as end ) as range
   namespaced_identifier = variable *( "::" variable )
-  comment_definition = ( "**" / "#" ) ( *( !newline %x00-10FFFF ) ) as comments
-  comment_multiline_definition = "*|" ( *( !"|*" %x00-10FFFF ) ) as comments [ whitespace ] "|*"
+  comment_definition = ( "**" / "#" ) ( *( !newline ANY ) ) as comments
+  comment_multiline_definition = "*|" until "|*" as comments [ whitespace ] "|*"
 
   class_name_chars = 1*( %x41-5A / %x61-7A / %x30-39 / " " / "_" / "-" / ":" / "." )
   class_name = class_name_chars [ "(" class_name_chars ")" ]
@@ -236,9 +236,9 @@ grammar Lml version "1.0.0" {
   view_definition = [ whitespace ] "view" class_name as name view_body [ whitespace ]
   view_definitions = view_definition [ whitespace ]
 
-  atomic title_text = ( %x22 ( 1*( !%x22 any_char ) ) as title %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as title %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "," / "." / ":" / ";" / "(" / ")" / "+" / "'" / "/" ) ) as title
+  atomic title_text = ( %x22 ( 1*( !%x22 ANY ) ) as title %x22 ) / ( %x27 ( 1*( !%x27 ANY ) ) as title %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "," / "." / ":" / ";" / "(" / ")" / "+" / "'" / "/" ) ) as title
   title_definition = [ whitespace ] kw_title_sp title_text
-  atomic caption_text = ( %x22 ( 1*( !%x22 any_char ) ) as caption %x22 ) / ( %x27 ( 1*( !%x27 any_char ) ) as caption %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "," / "." / ":" / ";" / "(" / ")" / "+" / "'" / "/" ) ) as caption
+  atomic caption_text = ( %x22 ( 1*( !%x22 ANY ) ) as caption %x22 ) / ( %x27 ( 1*( !%x27 ANY ) ) as caption %x27 ) / ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "," / "." / ":" / ";" / "(" / ")" / "+" / "'" / "/" ) ) as caption
   caption_definition = [ whitespace ] kw_caption_sp caption_text
   fontname_text = [ quotes ] ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " ) ) as fontname [ quotes ]
   fontname_definition = [ whitespace ] kw_fontname_sp fontname_text
@@ -268,7 +268,7 @@ grammar Lml version "1.0.0" {
   model_body = diagram_inner_definition
 
   # ---- Data structures ----
-  attribute_value = instance / list / key_value_map / data_value / 1*( !%x0A %x00-10FFFF )
+  attribute_value = instance / list / key_value_map / data_value / 1*( !%x0A ANY )
   list_item = instance / data_value
   list = "[" [ whitespace ] ( *( list_item [ "," ] [ whitespace ] ) ) as list [ whitespace ] "]"
   collection = [ whitespace ] kw_collection_sp quoted_string as name "{" [ whitespace ] [ includes ] [ whitespace ] [ validation ] [ whitespace ] "}" [ whitespace ]
