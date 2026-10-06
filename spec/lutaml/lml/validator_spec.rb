@@ -48,9 +48,11 @@ RSpec.describe Lutaml::Lml::Validator do
           }
         }
       LML
-      expect(violations.map(&:rule)).to eq(['mandatory_attributes'])
-      expect(violations.first.message).to include("'p1'")
-      expect(violations.first.message).to include("'code'")
+      expect(violations.map(&:rule))
+        .to contain_exactly('mandatory_attributes', 'unknown_attributes')
+      mandatory = violations.find { |v| v.rule == 'mandatory_attributes' }
+      expect(mandatory.message).to include("'p1'")
+      expect(mandatory.message).to include("'code'")
     end
 
     it 'accepts a populated mandatory attribute' do
@@ -145,12 +147,89 @@ RSpec.describe Lutaml::Lml::Validator do
   end
 
   describe 'values sets' do
-    it 'checks membership for values-set enums' do
+    it 'accepts membership for values-set attributes' do
       violations = violations_for(<<~LML)
         models M {
           class Tile {
             attribute status, String { values { draft, published } }
           }
+        }
+        instances {
+          Tile "t" {
+            status = "draft"
+          }
+        }
+      LML
+      expect(violations).to be_empty
+    end
+
+    it 'flags a value outside the declared set' do
+      violations = violations_for(<<~LML)
+        models M {
+          class Tile {
+            attribute status, String { values { draft, published } }
+          }
+        }
+        instances {
+          Tile "t" {
+            status = "archived"
+          }
+        }
+      LML
+      expect(violations.map(&:rule)).to eq(['values_set_membership'])
+      expect(violations.first.message).to include('archived')
+    end
+  end
+
+  describe 'unknown instance attributes' do
+    it 'flags attributes absent from the class definition' do
+      violations = violations_for(<<~LML)
+        models M {
+          class Product {
+            attribute code, String
+          }
+        }
+        instances {
+          Product "p1" {
+            code = "A"
+            mystery = "x"
+          }
+        }
+      LML
+      expect(violations.map(&:rule)).to eq(['unknown_attributes'])
+      expect(violations.first.message).to include("'mystery'")
+    end
+  end
+
+  describe 'package-scoped uniqueness' do
+    it 'allows the same name in sibling packages' do
+      violations = violations_for(<<~LML)
+        package Ceramics {
+          class Tile { }
+        }
+        package Textiles {
+          class Tile { }
+        }
+      LML
+      expect(violations).to be_empty
+    end
+
+    it 'flags duplicates within one package' do
+      violations = violations_for(<<~LML)
+        package Ceramics {
+          class Tile { }
+          class Tile { }
+        }
+      LML
+      expect(violations.map(&:rule)).to eq(['unique_names'])
+      expect(violations.first.message).to include("package 'Ceramics'")
+    end
+
+    it 'flags duplicates between a package and the document root' do
+      violations = violations_for(<<~LML)
+        class Tile { }
+        package Ceramics {
+          class Tile { }
         }
       LML
       expect(violations).to be_empty

@@ -34,6 +34,28 @@ module Lutaml
           circular_reference_violations
       end
 
+      # RS 3001 scopes definitions to packages: uniqueness is per scope
+      # (the document root and each package, recursively), not global.
+      def definition_scopes
+        scopes = [[nil, document_definitions]]
+        Array(@document.packages).each { |pkg| collect_package_scopes(pkg, scopes) }
+        scopes
+      end
+
+      def document_definitions
+        [
+          *Array(@document.classes),
+          *Array(@document.enums),
+          *Array(@document.data_types)
+        ]
+      end
+
+      def collect_package_scopes(pkg, scopes, parent = nil)
+        path = parent ? "#{parent}.#{pkg.name}" : pkg.name.to_s
+        scopes << [path, [*Array(pkg.classes), *Array(pkg.enums), *Array(pkg.data_types)]]
+        Array(pkg.packages).each { |nested| collect_package_scopes(nested, scopes, path) }
+      end
+
       private
 
       def all_definitions
@@ -59,14 +81,18 @@ module Lutaml
       end
 
       def unique_name_violations
-        names = all_definitions.map(&:first)
-        names.tally.filter_map do |name, count|
-          next if count == 1
+        definition_scopes.flat_map do |scope, definitions|
+          scope_label = scope ? "package '#{scope}'" : 'the document root'
+          definitions.map { |d| d.name.to_s }
+                     .tally
+                     .filter_map do |name, count|
+            next if count == 1
 
-          Violation.new(
-            rule: 'unique_names',
-            message: "'#{name}' is defined #{count} times"
-          )
+            Violation.new(
+              rule: 'unique_names',
+              message: "'#{name}' is defined #{count} times in #{scope_label}"
+            )
+          end
         end
       end
 
@@ -91,8 +117,47 @@ module Lutaml
         instances.flat_map do |instance|
           mandatory_violations(instance) +
             type_conformity_violations(instance) +
+            values_set_violations(instance) +
+            unknown_attribute_violations(instance) +
             reference_violations(instance)
         end.compact
+      end
+
+      # RS 3001 par. Attribute: a `values` declaration restricts an
+      # attribute to its declared set.
+      def values_set_violations(instance)
+        definition = type_definitions[definition_type(instance)]
+        return [] unless definition.is_a?(UmlClass) || definition.is_a?(DataType)
+
+        instance_attribute_pairs(instance).filter_map do |name, value|
+          attr = Array(definition.attributes).find { |a| a.name.to_s == name }
+          next unless attr && !attr.value_set.empty?
+
+          literal = value.respond_to?(:value) ? value.value : value
+          next if attr.value_set.map(&:to_s).include?(literal.to_s)
+
+          Violation.new(
+            rule: 'values_set_membership',
+            message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
+                     "must be one of #{attr.value_set.inspect}, got #{literal.to_s.inspect}"
+          )
+        end
+      end
+
+      def unknown_attribute_violations(instance)
+        definition = type_definitions[definition_type(instance)]
+        return [] unless definition.is_a?(UmlClass) || definition.is_a?(DataType)
+
+        declared = attribute_names(definition)
+        instance_attribute_pairs(instance)
+          .reject { |name, _value| declared.include?(name) }
+          .map do |name, _value|
+            Violation.new(
+              rule: 'unknown_attributes',
+              message: "instance '#{instance_name(instance)}' (#{definition_type(instance)}): " \
+                       "unknown attribute '#{name}'"
+            )
+          end
       end
 
       def instances
