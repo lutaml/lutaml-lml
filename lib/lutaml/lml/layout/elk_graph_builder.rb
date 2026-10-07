@@ -2,14 +2,14 @@
 
 module Lutaml
   module Layout
-    # Builds an Elkrb::Graph from an LML document: a node per classifier
-    # (name, definition, members), an edge per association and parent.
+    # Builds an Elkrb::Graph: a node per classifier (name, definition,
+    # members); an edge per association and parent specializer.
     class ElkGraphBuilder
       CHAR_WIDTH = 7.2
       LINE_HEIGHT = 16.0
       PADDING = 14.0
       MIN_WIDTH = 120.0
-
+      COLLECTIONS = %i[classes enums primitives data_types].freeze
       def build(document)
         graph = elkrb_graph
         add_entities(graph, document)
@@ -28,18 +28,21 @@ module Lutaml
       end
 
       def entities(document)
-        collect = lambda do |scope|
-          [scope.classes, scope.enums, scope.primitives, scope.data_types]
+        ([document] + Array(document.packages)).flat_map { |scope| scope_entities(scope) }.flatten.compact
+      end
+
+      def scope_entities(scope)
+        COLLECTIONS.filter_map do |collection|
+          next unless scope.respond_to?(collection)
+
+          scope.public_send(collection)
         end
-        top = collect.call(document)
-        nested = Array(document.packages).flat_map { |pkg| collect.call(pkg) }
-        (top.flatten + nested.flatten).compact
       end
 
       def node_for(entity)
         lines = label_lines(entity)
         Elkrb::Graph::Node.new(
-          id: entity_id(entity),
+          id: entity_id_for(entity.name),
           width: node_width(lines),
           height: PADDING + lines.size * LINE_HEIGHT,
           labels: lines.each_with_index.map do |line, i|
@@ -120,9 +123,7 @@ module Lutaml
           member_end_type: assoc.member_end_type.to_s, name: assoc.name }
       end
 
-      def entity_id_for(name)
-        name.to_s.gsub(/[^0-9a-zA-Z_]/, '_')
-      end
+      def entity_id_for(name) = name.to_s.gsub(/[^0-9a-zA-Z_]/, '_')
     end
   end
 end
