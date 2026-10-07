@@ -23,3 +23,9 @@ RSpec.configure do |config|
     metadata[:skip] = "elkrb gem not available" unless (require "elkrb"; true) rescue false
   end
 end
+
+RSpec.configure do |config|
+  config.define_derived_metadata(file_path: %r{svg_conformance_spec}) do |metadata|
+    metadata[:skip] = "svg_conform gem not available" unless (require "svg_conform"; true) rescue false
+  end
+end
