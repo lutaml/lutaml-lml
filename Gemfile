@@ -13,3 +13,5 @@ gem "elkrb", "~> 1.0"
 # Diagram output conformance gate (spec/lutaml/lml/svg_conformance_spec.rb)
 gem "svg_conform"
 gem "nokogiri" # svg_conform resolves its lutaml-model XML adapter through it
+# Output format conversion for the ELK engine (issue #53): SVG -> EMF/PS/EPS
+gem "vectory"

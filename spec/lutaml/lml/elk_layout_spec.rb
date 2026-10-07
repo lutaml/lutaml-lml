@@ -5,6 +5,14 @@ require 'rexml/document'
 require 'stringio'
 
 RSpec.describe 'ELK diagram layout', :skip_unless_elkrb do
+  describe 'output formats' do
+    it 'converts the diagram to PS through vectory' do
+      formatter = Lutaml::Formatter::Elk.new
+      formatter.type = :ps
+      expect(formatter.format(document)).to start_with('%!PS-Adobe')
+    end
+  end
+
   let(:document) do
     Lutaml::Lml.parse_document(StringIO.new(<<~LML))
       class Glaze {
@@ -40,6 +48,11 @@ RSpec.describe 'ELK diagram layout', :skip_unless_elkrb do
     xml = REXML::Document.new(svg)
     expect(xml.get_elements('//rect').size).to eq(2)
     expect(xml.get_elements('//polyline').size).to eq(1)
+  end
+
+  it 'raises on unsupported output types' do
+    formatter = Lutaml::Formatter::Elk.new
+    expect { formatter.type = :png }.to raise_error(ArgumentError, /unsupported output type/)
   end
 
   it 'escapes markup-sensitive label text' do
