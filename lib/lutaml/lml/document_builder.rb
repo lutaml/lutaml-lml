@@ -72,6 +72,16 @@ module Lutaml
       def set_model(model, hash)
         hash = build_members(model, hash)
         set_model_attributes(model, hash)
+        expand_class_specializer(model, hash)
+      end
+
+      # The prefix specializer (`abstract class Foo`) expands to the
+      # canonical `abstract true` declaration (RS 3001 par. Declaration
+      # modifiers); the class-level modifier capture is not a block member.
+      def expand_class_specializer(model, hash)
+        return unless hash[:modifier].to_s == 'abstract' && model.class.attributes.key?(:is_abstract)
+
+        model.is_abstract = true
       end
 
       def set_model_attributes(model, hash)
@@ -293,9 +303,7 @@ module Lutaml
       # generic attribute path).
       def expand_abstract_declaration(model, hash)
         value = hash.delete(:abstract)
-        return unless value && model.class.attributes.key?(:is_abstract)
-
-        model.is_abstract = value.to_s == 'true'
+        model.is_abstract = true if value.to_s == 'true' && model.class.attributes.key?(:is_abstract)
       end
 
       def expand_definition_text(model, hash)

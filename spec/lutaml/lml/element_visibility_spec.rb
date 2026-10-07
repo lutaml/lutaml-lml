@@ -71,6 +71,17 @@ RSpec.describe 'Element visibility modifier' do
       doc = parse("enum Finish {\n  visibility protected\n  matte\n}\n")
       expect(doc.enums.first.visibility).to eq('protected')
     end
+
+    it 'applies to data_type bodies' do
+      doc = parse("data_type MyString {\n  visibility private\n}\n")
+      expect(doc.data_types.first.visibility).to eq('private')
+    end
+
+    it 'expands the abstract prefix to the canonical declaration' do
+      doc = parse("abstract class Base { }\n")
+      expect(doc.classes.first.is_abstract).to be(true)
+      expect(doc.classes.first.modifier).to eq('abstract')
+    end
   end
 
   describe 'package visibility' do
