@@ -4,21 +4,21 @@ require 'spec_helper'
 require 'rexml/document'
 require 'stringio'
 
+TEST_LML = <<~LML
+  class Glaze {
+    attribute color, String
+  }
+  class Tile { }
+  association {
+    owner_type aggregation
+    owner Tile
+    member_type association
+    member Glaze
+  }
+LML
+
 RSpec.describe 'ELK diagram layout', :skip_unless_elkrb do
-  let(:document) do
-    Lutaml::Lml.parse_document(StringIO.new(<<~LML))
-      class Glaze {
-        attribute color, String
-      }
-      class Tile { }
-      association {
-        owner_type aggregation
-        owner Tile
-        member_type association
-        member Glaze
-      }
-    LML
-  end
+  let(:document) { Lutaml::Lml.parse_document(StringIO.new(TEST_LML)) }
 
   let(:svg) { Lutaml::Formatter::Elk.new.format(document) }
 
