@@ -93,10 +93,22 @@ module Lutaml
       def build_members(model, hash)
         members = hash.delete(:members)
         members.to_a.each do |member_hash|
+          record_model_version(model, member_hash)
           add_members(model, member_hash)
           set_model_attributes(model, member_hash)
         end
         hash
+      end
+
+      # A `models <Name> version "x.y.z"` header travels with the block's
+      # member hash; the block itself flattens into the document, so the
+      # version is recorded on the document before the name is dropped.
+      def record_model_version(model, hash)
+        return unless model.class.attributes.key?(:model_versions)
+        return unless hash.key?(:version)
+
+        name = hash[:name].to_s
+        model.model_versions[name] = unquote(hash.delete(:version)).to_s
       end
 
       def apply_attribute(model, key, value)
