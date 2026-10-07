@@ -27,6 +27,8 @@ grammar Lml version "1.0.0" {
   atomic kw_caption_sp = "caption" 1*" "
   atomic kw_class_sp = "class" 1*" "
   atomic kw_visibility_sp = "visibility" 1*" "
+  atomic kw_version_sp = "version" 1*" "
+  version_declaration = kw_version_sp quoted_string as version
   atomic kw_abstract_sp = "abstract" 1*" "
   atomic kw_collection_sp = "collection" 1*" "
   atomic kw_condition_sp = "condition" 1*" "
@@ -292,7 +294,7 @@ grammar Lml version "1.0.0" {
   lml_instance_body = lml_instance_members [ whitespace ]
   instance_template = [ whitespace ] "template" [ whitespace ] "{" [ whitespace ] attributes [ whitespace ] "}"
   lml_instance_members = ( instance_template ) as template / attributes
-  models = [ whitespace ] "models" [ whitespace ] variable as name [ whitespace ] "{" ( *( ( ( string_format_definition ) as default_string_formats ) / model_body ) ) as members "}" [ whitespace ]
+  models = [ whitespace ] "models" [ whitespace ] variable as name [ version_declaration ] [ whitespace ] "{" ( *( ( ( string_format_definition ) as default_string_formats ) / model_body ) ) as members "}" [ whitespace ]
   model_body = diagram_inner_definition
 
   # ---- Data structures ----

@@ -17,6 +17,9 @@ module Lutaml
       attribute :enums, "Lutaml::Lml::Enum", collection: true, default: -> { [] }
       attribute :packages, "Lutaml::Lml::Package", collection: true, default: -> { [] }
       attribute :namespaces, "Lutaml::Lml::Namespace", collection: true, default: -> { [] }
+      # `models <Name> version "x.y.z"` headers: model name -> declared
+      # version (issue #16, the co-release identity line).
+      attribute :model_versions, :hash, default: -> { {} }
       attribute :serialization_mappings, "Lutaml::Lml::SerializationMapping", collection: true, default: -> { [] }
       attribute :primitives, "Lutaml::Lml::PrimitiveType", collection: true, default: -> { [] }
       attribute :associations, "Lutaml::Lml::Association", collection: true, default: -> { [] }
