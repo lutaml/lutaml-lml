@@ -34,14 +34,10 @@ RSpec.describe 'instance hydration semantics (issue #17)' do
     expect(hydrated.inners.first.x).to eq('a')
   end
 
-  # Scalar-nested hydration (single nested instance under a scalar
-  # attribute = the object, not a one-element array) needs the compiler
-  # to surface cardinality on the compiled attribute — tracked on
-  # issue #17 with the map/scale work.
-  xit 'hydrates a scalar attribute with one nested instance as the object' do
+  it 'hydrates a scalar attribute with one nested instance as the object' do
     hydrated = compile_and_hydrate(LAYOUT_LML)
-    expect(hydrated.inner).to be_a(Lutaml::Lml::Inner)
     expect(hydrated.inner.x).to eq('one')
+    expect(hydrated.inner).not_to be_an(Array)
     expect(hydrated.inners).to be_an(Array)
   end
 

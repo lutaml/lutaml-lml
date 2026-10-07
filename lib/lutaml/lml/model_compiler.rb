@@ -198,8 +198,7 @@ module Lutaml
         if nested.any?
           # A scalar attribute with a single nested instance hydrates to
           # the object itself; the declaration is the truth (issue #17).
-          collection = attr_def&.options&.dig(:collection)
-          return hydrate_instance(nested.first) if !collection && nested.one?
+          return hydrate_instance(nested.first) if !attr_def&.collection && nested.one?
 
           nested.map { |i| hydrate_instance(i) }
         elsif value.is_a?(Array)
