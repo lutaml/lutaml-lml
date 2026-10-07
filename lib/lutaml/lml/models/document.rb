@@ -30,6 +30,32 @@ module Lutaml
       attribute :instance, "Lutaml::Lml::Instance"
       attribute :requires, :string, collection: true, default: -> { [] }
       attribute :instances, "Lutaml::Lml::InstanceCollection"
+
+      # Repeated `instances` blocks accumulate (issue #17): instances,
+      # imports, exports and collections concat; a duplicate collection
+      # name is an error (same name is a mistake, distinct names intent).
+      def instances=(collection)
+        collection = Lutaml::Lml::InstanceCollection.new(**collection) if collection.is_a?(Hash)
+        if @instances.nil? || (@instances.instances.empty? && @instances.imports.empty? &&
+            @instances.exports.empty? && @instances.collections.empty?)
+          @instances = collection
+        else
+          merge_instances(collection)
+        end
+      end
+
+      def merge_instances(incoming)
+        names = @instances.collections.map(&:name)
+        incoming.collections.each do |collection|
+          if names.include?(collection.name)
+            raise Lutaml::Lml::Error, "duplicate collection name '#{collection.name}'"
+          end
+        end
+        @instances.instances.concat(incoming.instances)
+        @instances.imports.concat(incoming.imports)
+        @instances.exports.concat(incoming.exports)
+        @instances.collections.concat(incoming.collections)
+      end
       attribute :view_imports, "Lutaml::Lml::ViewImport", collection: true, default: -> { [] }
       attribute :show_filter, "Lutaml::Lml::ViewFilter"
       attribute :hide_filter, "Lutaml::Lml::ViewFilter"

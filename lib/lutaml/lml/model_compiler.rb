@@ -145,6 +145,20 @@ module Lutaml
         klass.new(**attrs)
       end
 
+      # An inline map's cargo is {key_value_map: [{key:, value:}, ...]} with
+      # literal-shaped keys/values ({string: ..}, {number: ..}, {boolean: ..});
+      # materialize it as a plain Hash (issue #17: maps hydrate as data).
+      def hydrate_map_cargo(cargo)
+        cargo[:key_value_map].to_h do |pair|
+          [hydrate_scalar(pair[:key]).to_s, hydrate_scalar(pair[:value])]
+        end
+      end
+
+      def hydrate_scalar(literal)
+        literal = literal.value if literal.respond_to?(:value)
+        literal.is_a?(Hash) ? literal.values.first : literal
+      end
+
       def resolve_instance_type(instance)
         # L6: the explicit isa keyword is the type override; a `type`
         # attribute is ordinary data (pubid's identifier-kind field)
@@ -178,7 +192,15 @@ module Lutaml
       end
 
       def resolve_instance_value(value, nested, attr_def = nil)
+        value = value.value if value.respond_to?(:value)
+        return hydrate_map_cargo(value) if value.is_a?(Hash) && value.key?(:key_value_map)
+
         if nested.any?
+          # A scalar attribute with a single nested instance hydrates to
+          # the object itself; the declaration is the truth (issue #17).
+          collection = attr_def&.options&.dig(:collection)
+          return hydrate_instance(nested.first) if !collection && nested.one?
+
           nested.map { |i| hydrate_instance(i) }
         elsif value.is_a?(Array)
           value
@@ -421,7 +443,7 @@ module Lutaml
       def namespace_class_for(ref)
         return nil if ref.nil?
 
-        require "lutaml/xml/namespace" unless defined?(Lutaml::Xml::Namespace)
+        require 'lutaml/xml/namespace' unless defined?(Lutaml::Xml::Namespace)
 
         ns_class = @namespace_classes[ref]
         return ns_class if ns_class
