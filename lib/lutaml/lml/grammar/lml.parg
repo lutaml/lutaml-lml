@@ -107,7 +107,7 @@ grammar Lml version "1.0.0" {
 
   data_value = boolean / reference / range / number / quoted_string
   key_value_pair = variable as key [ "=" ] data_value as value
-  key_value_map = "{" [ whitespace ] ( *( key_value_pair whitespace ) ) as key_value_map "}"
+  key_value_map = "{" [ whitespace ] ( *( key_value_pair [ whitespace ] ) ) as key_value_map "}"
   kw_visibility_modifier = "+" / "-" / "#" / "~"
 
   # ---- Attributes ----
