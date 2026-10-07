@@ -181,9 +181,7 @@ module Lutaml
         rules = rules.filter_map do |entry|
           next nil unless entry.is_a?(Hash)
 
-          if entry[:wire] && entry[:to]
-            next { kind: 'map', wire: unquote(entry[:wire]), field: unquote(entry[:to]) }
-          end
+          next { kind: 'map', wire: unquote(entry[:wire]), field: unquote(entry[:to]) } if entry[:wire] && entry[:to]
 
           first_key = entry.keys.first
           kind = first_key.to_s
@@ -194,6 +192,7 @@ module Lutaml
 
             term = unquote(body)
             next { kind: kind_n, wire: term, field: term } if %w[element attribute map].include?(kind_n)
+
             if kind_n == 'namespace'
               mapping[:namespace_ref] = term
               next nil
