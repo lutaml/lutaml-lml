@@ -37,7 +37,12 @@ module Lutaml
 
       def initialize(*args)
         super
-        @formatter = ::Lutaml::Formatter::Graphviz.new if defined?(::Lutaml::Formatter::Graphviz)
+        @formatter = case options[:layout]
+                     when 'elk'
+                       ::Lutaml::Formatter::Elk.new
+                     else
+                       ::Lutaml::Formatter::Graphviz.new
+                     end
         @out_object = $stdout
       end
 
@@ -71,6 +76,8 @@ module Lutaml
                            desc: 'Node attributes (key=value,key2=value2)'
       method_option :all, type: :string, aliases: '-a',
                           desc: 'Set attributes for graph, edge, and node'
+      method_option :layout, type: :string, enum: %w[graphviz elk], default: 'graphviz',
+                             desc: 'Layout engine (elk requires the elkrb gem)'
       def generate(*paths)
         assert_input_paths(paths)
 
