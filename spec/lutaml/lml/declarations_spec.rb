@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require 'tempfile'
+require 'parsanol'
 
 RSpec.describe 'LML declarations (isa, defaults, derive, payloads, string_format)' do
   def compile_lml(source)
