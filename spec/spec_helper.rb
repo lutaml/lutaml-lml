@@ -17,3 +17,9 @@ end
 def by_name(entries, name)
   entries.detect { |n| n.name == name }
 end
+
+RSpec.configure do |config|
+  config.define_derived_metadata(file_path: %r{elk_layout_spec}) do |metadata|
+    metadata[:skip] = "elkrb gem not available" unless (require "elkrb"; true) rescue false
+  end
+end
