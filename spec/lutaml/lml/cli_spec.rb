@@ -139,4 +139,57 @@ RSpec.describe Lutaml::Cli::LmlCommands do
       end
     end
   end
+
+  describe "compile --schema" do
+    def run_compile(*args)
+      described_class.start(["compile", *args])
+    end
+
+    it "emits one JSON Schema per compiled model into a directory" do
+      Dir.mktmpdir do |dir|
+        src = File.join(dir, "models.lml")
+        File.write(src, <<~LML)
+          models Widgets {
+            class Widget {
+              attribute name, String
+            }
+            class Gadget {
+              attribute label, String
+            }
+          }
+        LML
+        out = File.join(dir, "schemas")
+        Dir.mkdir(out)
+
+        run_compile(src, "--schema", "json", "--namespace", "CliSchemaA", "-o", out)
+
+        expect(File).to exist(File.join(out, "widget.json"))
+        expect(File).to exist(File.join(out, "gadget.json"))
+        parsed = JSON.parse(File.read(File.join(out, "widget.json")))
+        expect(parsed["$ref"]).to eq("#/$defs/CliSchemaA_Widget")
+        expect(parsed["$defs"]).to have_key("CliSchemaA_Widget")
+      end
+    end
+
+    it "writes a single YAML Schema document to a file" do
+      Dir.mktmpdir do |dir|
+        out = File.join(dir, "kiln.schema.yaml")
+
+        run_compile(fixtures_path("rs3001/14_require_models.lml"),
+                    "--schema", "yaml", "--namespace", "CliSchemaB", "-o", out)
+
+        content = File.read(out)
+        expect(content).to start_with("%YAML 1.1")
+        expect(content).to include("CliSchemaB_Kiln")
+      end
+    end
+
+    it "prints schema documents to stdout when no output path is given" do
+      src = File.join(Dir.mktmpdir, "models.lml")
+      File.write(src, "models C { class Kiln { attribute program, String } }")
+
+      expect { run_compile(src, "--schema", "json", "--namespace", "CliSchemaC") }
+        .to output(%r{#/\$defs/CliSchemaC_Kiln}).to_stdout
+    end
+  end
 end
