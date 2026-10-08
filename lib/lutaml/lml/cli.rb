@@ -228,7 +228,7 @@ module Lutaml
         def write_output(input_path, result)
           target = resolve_output_path(input_path)
           if target.is_a?(Pathname)
-            target.open('w+') { |f| f.write(result) }
+            target.open('wb+') { |f| f.write(result) }
             say "Generated: #{target}", :green
           else
             target.puts(result)

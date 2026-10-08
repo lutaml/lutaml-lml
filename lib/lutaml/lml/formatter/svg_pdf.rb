@@ -36,7 +36,7 @@ module Lutaml
         walk(root, 0.0, 0.0)
         io = StringIO.new
         doc.write(io: io)
-        io.string
+        io.string.b
       end
 
       private
