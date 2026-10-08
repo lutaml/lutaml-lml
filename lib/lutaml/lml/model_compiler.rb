@@ -198,9 +198,9 @@ module Lutaml
         if nested.any?
           # A scalar attribute with a single nested instance hydrates to
           # the object itself; the declaration is the truth (issue #17).
-          return hydrate_instance(nested.first) if !attr_def&.collection && nested.one?
+          return hydrate_typed(nested.first, attr_def) if !attr_def&.collection && nested.one?
 
-          nested.map { |i| hydrate_instance(i) }
+          nested.map { |i| hydrate_typed(i, attr_def) }
         elsif value.is_a?(Array)
           value
         elsif (enum_class = attr_def && enum_class_for(attr_def.type))
@@ -210,6 +210,24 @@ module Lutaml
           enum_class.new(value: value_name, description: description)
         elsif !value.nil?
           value
+        end
+      end
+
+      # An untyped nested instance takes the enclosing attribute's type;
+      # hydrate_as_untyped would otherwise emit a raw hash polluted with
+      # a `_name` key, which also defeats union member key-coverage.
+      def hydrate_typed(instance, attr_def)
+        return hydrate_instance(instance) if instance.isa || !instance.type.to_s.empty?
+
+        type = attr_def&.type
+        return hydrate_instance(instance) unless type.is_a?(Class)
+
+        if type.include?(Lutaml::Model::Serialize)
+          type.new(**extract_instance_attributes(instance, type))
+        elsif type == Lutaml::Model::Type::Union
+          extract_raw_attributes(instance)
+        else
+          hydrate_instance(instance)
         end
       end
 

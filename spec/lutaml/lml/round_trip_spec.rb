@@ -73,7 +73,7 @@ RSpec.describe "Round-trip: class definitions and instances" do
         original = product_cls.new(sku: "ABC-123", price: 29.99, discontinued: false)
         lml_text = original.to_lml
 
-        expect(lml_text).to include("sku = ABC-123")
+        expect(lml_text).to include('sku = "ABC-123"')
         expect(lml_text).to include("price = 29.99")
         expect(lml_text).to include("discontinued = false")
 
