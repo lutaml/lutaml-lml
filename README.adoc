@@ -62,6 +62,7 @@ Command line:
 
 ....
 lutaml generate model.lml      # diagram via GraphViz
+lutaml generate model.lml --layout elk -o diagram.pdf   # in-process ELK layout; PDF via pdfrb (also svg, ps, eps, emf)
 lutaml validate model.lml      # parse + RS 3001 rule violations
 lutaml compile model.lml       # lutaml-model classes
 lutaml compile model.lml --schema json -o schemas/
