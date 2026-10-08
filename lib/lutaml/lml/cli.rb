@@ -115,36 +115,82 @@ module Lutaml
         Parse an LML file containing model definitions and compile them
         into Ruby classes that can be used to instantiate and validate data.
 
-        The compiled classes are anonymous Serializable subclasses registered
-        in the ModelCompiler. With --namespace, classes are also registered
-        as constants in the given module.
+        With --namespace, classes are registered as constants in the given
+        module (created if absent).
+
+        With --schema, emits a JSON Schema or YAML Schema document for every
+        compiled model instead of the compile listing. Schema output requires
+        named classes, so --namespace defaults to LmlGenerated when omitted.
 
         Examples:
           lutaml lml compile models.lml
 
           lutaml lml compile models.lml --namespace MyModels
+
+          lutaml lml compile models.lml --schema json -o schemas/
+
+          lutaml lml compile models.lml --schema yaml -o widget.schema.yaml
       DESC
       method_option :namespace, type: :string, aliases: '-n',
-                             desc: 'Register compiled classes in a module'
+                             desc: 'Register compiled classes in a module (created if absent)'
+      method_option :schema, type: :string, enum: %w[json yaml],
+                             desc: 'Emit JSON Schema or YAML Schema for the compiled models'
+      method_option :output, type: :string, aliases: '-o',
+                             desc: 'Schema output path (file for one model, directory for many)'
       def compile(path)
         raise Thor::Error, "File does not exist: #{path}" unless File.exist?(path)
 
-        ns = options[:namespace] ? resolve_namespace(options[:namespace]) : nil
+        ns = options[:namespace] || ('LmlGenerated' if options[:schema])
         result = Lutaml::Lml::ModelCompiler.new(namespace: ns).compile(File.new(path))
+        return emit_schemas(result) if options[:schema]
 
-        result.each_key do |name|
-          say "  compiled: #{name}", :green
-        end
-        say "\n#{result.size} class(es) compiled", :green
+        report_compilation(result)
       end
 
       no_commands do
-        def resolve_namespace(name)
-          name.split('::').reduce(Object) do |mod, const_name|
-            mod.const_get(const_name)
+        def report_compilation(result)
+          result.each_key do |name|
+            say "  compiled: #{name}", :green
           end
-        rescue NameError
-          raise Thor::Error, "Namespace '#{name}' not found"
+          say "\n#{result.size} class(es) compiled", :green
+        end
+
+        def emit_schemas(result)
+          require 'lutaml/model/schema'
+          generator = "to_#{options[:schema]}"
+          schemas = result.transform_values do |klass|
+            Lutaml::Model::Schema.public_send(generator, klass, pretty: true)
+          end
+          return write_schemas(schemas) if options[:output]
+
+          schemas.each_value { |schema| puts schema }
+        end
+
+        def write_schemas(schemas)
+          target = Pathname.new(options[:output])
+          if schemas.size > 1
+            unless target.directory?
+              raise Thor::Error,
+                    'Output path must be a directory if multiple schemas ' \
+                    'are generated'
+            end
+            write_schema_files(target, schemas)
+          else
+            target.write(schemas.values.first)
+            say "Generated: #{target}", :green
+          end
+        end
+
+        def write_schema_files(dir, schemas)
+          schemas.each do |name, schema|
+            file = dir.join("#{schema_file_stem(name)}.#{options[:schema]}")
+            file.write(schema)
+            say "Generated: #{file}", :green
+          end
+        end
+
+        def schema_file_stem(name)
+          name.split('::').last.gsub(/[^a-zA-Z0-9]+/, '_').downcase
         end
 
         def assert_input_paths(paths)

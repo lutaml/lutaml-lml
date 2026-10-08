@@ -116,6 +116,46 @@ RSpec.describe Lutaml::Lml::ModelCompiler do
       expect(obj.name).to eq("test")
       file.close!
     end
+
+    it "resolves a string namespace into a real module" do
+      ns = "LmlSpecNamespace"
+      file = Tempfile.new(%w[test .lml])
+      file.write("models NS {\n  class Item {\n    attribute name { type String cardinality 1 }\n  }\n}")
+      file.rewind
+
+      described_class.new(namespace: ns).compile(file)
+      expect(Object.const_get(ns)::Item.name).to eq("#{ns}::Item")
+      file.close!
+    end
+
+    it "produces classes that generate JSON and YAML Schema" do
+      require "lutaml/model/schema"
+      file = Tempfile.new(%w[test .lml])
+      file.write(<<~LML)
+        models Schemas {
+          class Widget {
+            attribute name { type String cardinality 1 }
+            attribute color { type Color cardinality 0..1 }
+            attribute parts { type Integer cardinality 0..n }
+          }
+          enum Color {
+            RED
+            GREEN
+          }
+        }
+      LML
+      file.rewind
+
+      result = described_class.new(namespace: "LmlSchemaSpec").compile(file)
+      parsed = JSON.parse(Lutaml::Model::Schema.to_json(result["Widget"]))
+      expect(parsed["$ref"]).to eq("#/$defs/LmlSchemaSpec_Widget")
+      defs = parsed["$defs"]
+      expect(defs["LmlSchemaSpec_Widget"]["properties"]["parts"]["type"]).to eq("array")
+      expect(defs["LmlSchemaSpec_Color"]["properties"]["value"]["enum"]).to eq(%w[RED GREEN])
+
+      expect(Lutaml::Model::Schema.to_yaml(result["Widget"])).to start_with("%YAML 1.1")
+      file.close!
+    end
   end
 
   describe "Lutaml::Lml.compile" do

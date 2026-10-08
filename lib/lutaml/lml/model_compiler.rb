@@ -283,8 +283,9 @@ module Lutaml
         values = extract_enum_values(enum_def)
 
         payload_fields = Array(enum_def.member_fields).map(&:name).map(&:to_s)
+        value_names = values.map { |v| v.name.to_s }
         compiled_klass = Class.new(Lutaml::Model::Serializable) do
-          attribute :value, :string, default: values.first.name
+          attribute :value, :string, values: value_names, default: values.first.name
           attribute :description, :string
           payload_fields.each do |field|
             attribute field.to_sym, :string
@@ -721,7 +722,15 @@ module Lutaml
         @compiled[name] = klass
         return unless @namespace
 
-        @namespace.const_set(name, klass)
+        namespace_module.const_set(name, klass)
+      end
+
+      def namespace_module
+        return @namespace if @namespace.is_a?(Module)
+
+        @namespace_module ||= Object.const_get(@namespace.to_s)
+      rescue NameError
+        @namespace_module = Object.const_set(@namespace.to_s, Module.new)
       end
     end
   end

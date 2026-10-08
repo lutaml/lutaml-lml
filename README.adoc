@@ -43,14 +43,19 @@ Validate against the RS 3001 rules:
 violations = Lutaml::Lml::Validator.violations(doc)
 ....
 
-Compile model definitions into anonymous `Lutaml::Model::Serializable`
-classes and hydrate instance data:
+Compile model definitions into `Lutaml::Model::Serializable` classes and
+hydrate instance data. Pass `namespace:` to register the compiled classes
+as constants (a String namespace is created if absent) — named classes are
+what JSON Schema / YAML Schema generation requires:
 
 ....
-compiler = Lutaml::Lml::ModelCompiler.new
+compiler = Lutaml::Lml::ModelCompiler.new(namespace: "MyModels")
 compiler.compile(File.new("model.lml"))
 klass = compiler.compiled_classes["Ceramic"]
 instance = compiler.hydrate(File.new("data.lml"))
+
+Lutaml::Model::Schema.to_json(klass)   # JSON Schema document
+Lutaml::Model::Schema.to_yaml(klass)   # YAML Schema document
 ....
 
 Command line:
@@ -59,6 +64,8 @@ Command line:
 lutaml generate model.lml      # diagram via GraphViz
 lutaml validate model.lml      # parse + RS 3001 rule violations
 lutaml compile model.lml       # lutaml-model classes
+lutaml compile model.lml --schema json -o schemas/
+lutaml compile model.lml --schema yaml -o ceramic.schema.yaml
 ....
 
 == Architecture
