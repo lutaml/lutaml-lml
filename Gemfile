@@ -15,3 +15,6 @@ gem "svg_conform"
 gem "nokogiri" # svg_conform resolves its lutaml-model XML adapter through it
 # Output format conversion for the ELK engine (issue #53): SVG -> EMF/PS/EPS
 gem "vectory"
+# Direct PDF emission for the ELK engine (issue #53): SVG -> PDF, no
+# external tools (soft dependency: required only for --type pdf)
+gem "pdfrb"

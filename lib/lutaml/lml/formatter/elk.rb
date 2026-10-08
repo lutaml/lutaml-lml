@@ -4,9 +4,10 @@ module Lutaml
   module Formatter
     # ELK-layout diagram formatter: builds an Elkrb::Graph from the
     # document, lays it out in-process (no external tools) and emits SVG,
-    # or converts the SVG to PS/EPS/EMF through vectory.
+    # PS/EPS/EMF through vectory, or PDF through the pdfrb-backed
+    # SvgPdf renderer.
     class Elk
-      VALID_TYPES = %i[svg ps eps emf].freeze
+      VALID_TYPES = %i[svg ps eps emf pdf].freeze
 
       attr_reader :type
 
@@ -31,6 +32,8 @@ module Lutaml
       private
 
       def convert(svg)
+        return SvgPdf.new(svg).render if @type == :pdf
+
         require 'vectory'
         Vectory::Svg.new(svg).public_send(:"to_#{@type}").content
       rescue LoadError
