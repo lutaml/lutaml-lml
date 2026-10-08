@@ -37,7 +37,7 @@ RSpec.describe Lutaml::Formatter::SvgPdf do
     require 'pdfrb'
     Dir.mktmpdir do |dir|
       path = File.join(dir, 'diagram.pdf')
-      File.write(path, pdf)
+      File.binwrite(path, pdf)
       doc = Pdfrb.open(path)
       expect(Pdfrb::Validator.validate(doc)).to be_empty
       expect(doc.catalog.pages.count).to eq(1)
