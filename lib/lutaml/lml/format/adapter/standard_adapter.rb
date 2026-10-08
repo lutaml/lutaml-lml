@@ -127,7 +127,9 @@ module Lutaml
           def quote_value(val)
             return val.to_s if val.is_a?(Numeric) || val.is_a?(TrueClass) || val.is_a?(FalseClass)
             str = val.to_s
-            str.match?(/^[\w-]+$/) ? str : "\"#{str}\""
+            # The grammar's bare word is [A-Za-z0-9_] only; a dash commits
+            # the value parser to `number` and the value fails re-parsing.
+            str.match?(/^\w+$/) ? str : "\"#{str}\""
           end
         end
       end

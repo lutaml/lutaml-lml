@@ -86,6 +86,23 @@ RSpec.describe "LML format adapter" do
       expect(restored.reading).to eq(21.7)
       expect(restored.active).to eq(false)
     end
+
+    # The grammar's bare word is [A-Za-z0-9_]; its value parser commits to
+    # `number` on a leading digit run, so an unquoted "2012-03-15" can
+    # never re-parse. quote_value must quote anything beyond bare words.
+    it "quotes dash-bearing strings so they re-parse" do
+      event_class = Class.new(Lutaml::Model::Serializable) do
+        attribute :date_str, :string
+
+        lml do
+          map :date_str, to: :date_str
+        end
+      end
+
+      lml = event_class.new(date_str: "2012-03-15").to_lml
+      expect(lml).to include('date_str = "2012-03-15"')
+      expect(event_class.from_lml(lml).date_str).to eq("2012-03-15")
+    end
   end
 
   describe "nested round-trip" do
