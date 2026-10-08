@@ -141,7 +141,7 @@ module Lutaml
         raise Thor::Error, "File does not exist: #{path}" unless File.exist?(path)
 
         ns = options[:namespace] || ('LmlGenerated' if options[:schema])
-        result = Lutaml::Lml::ModelCompiler.new(namespace: ns).compile(File.new(path))
+        result = File.open(path) { |file| Lutaml::Lml::ModelCompiler.new(namespace: ns).compile(file) }
         return emit_schemas(result) if options[:schema]
 
         report_compilation(result)
