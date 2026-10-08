@@ -84,6 +84,34 @@ RSpec.describe 'Element visibility modifier' do
     end
   end
 
+  describe 'visibility inside models blocks' do
+    %w[public private protected package].each do |level|
+      it "parses #{level} on a class inside models" do
+        doc = parse("models P {\n  #{level} class C { attribute a, String }\n}\n")
+        expect(doc.classes.first.visibility).to eq(level)
+      end
+    end
+
+    it 'parses all visibility levels on class/enum/data_type inside models' do
+      doc = parse(<<~LML)
+        models P {
+          private class Hidden { }
+          public enum Open { a }
+          protected data_type Safe { }
+        }
+      LML
+      expect(doc.classes.first.visibility).to eq('private')
+      expect(doc.enums.first.visibility).to eq('public')
+      expect(doc.data_types.first.visibility).to eq('protected')
+    end
+
+    it 'combines with abstract modifier inside models' do
+      doc = parse("models P {\n  private abstract class Base { }\n}\n")
+      expect(doc.classes.first.visibility).to eq('private')
+      expect(doc.classes.first.modifier).to eq('abstract')
+    end
+  end
+
   describe 'package visibility' do
     it 'parses visibility on package declarations' do
       doc = parse("private package Ceramics {\n  class Tile { }\n}\n")

@@ -218,7 +218,7 @@ grammar Lml version "1.0.0" {
   class_inner_definition = class_inner_definitions [ whitespace ]
   class_body = "{" [ whitespace ] ( *( class_inner_definition ) ) as members "}"
   parent_class = "<" ( class_name_chars ) as parent_class
-  class_definition = [ element_visibility ] class_modifier [ whitespace ] kw_class_sp class_name as name [ parent_class ] [ attribute_stereotype ] [ class_body ]
+  class_definition = [ whitespace ] [ element_visibility ] [ whitespace ] class_modifier [ whitespace ] kw_class_sp class_name as name [ parent_class ] [ attribute_stereotype ] [ class_body ]
 
   # Balanced-brace definition text: nested "{...}" and "\"-escapes allowed
   definition_content = *( ( "\\" any_char ) / ( "{" definition_content "}" ) / ( !"}" any_char ) )
