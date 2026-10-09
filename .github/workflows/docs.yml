@@ -39,6 +39,11 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          # The repo's Pages site was never enabled, so deploy-pages
+          # failed with Get Pages site failed / Not Found. Let the
+          # action enable Pages itself on first deployment.
+          enablement: true
 
       - name: Build with Jekyll
         working-directory: docs
