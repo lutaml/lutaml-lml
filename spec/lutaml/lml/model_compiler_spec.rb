@@ -117,6 +117,31 @@ RSpec.describe Lutaml::Lml::ModelCompiler do
       file.close!
     end
 
+    it "creates the default namespace nested under Lutaml::Lml" do
+      file = Tempfile.new(%w[test .lml])
+      file.write("models NS {\n  class Item {\n    attribute name { type String cardinality 1 }\n  }\n}")
+      file.rewind
+
+      ns = described_class::DEFAULT_NAMESPACE
+      result = described_class.new(namespace: ns).compile(file)
+      mod = Object.const_get(ns)
+      expect(result["Item"].name).to eq("Lutaml::Lml::Generated::Item")
+      expect(mod.const_defined?(:Item)).to be true
+      file.close!
+    end
+
+    it "creates intermediate modules for a scoped namespace string" do
+      ns = "LmlScopedSpec::Inner"
+      file = Tempfile.new(%w[test .lml])
+      file.write("models NS {\n  class Item {\n    attribute name { type String cardinality 1 }\n  }\n}")
+      file.rewind
+
+      described_class.new(namespace: ns).compile(file)
+      expect(LmlScopedSpec::Inner::Item.name)
+        .to eq("LmlScopedSpec::Inner::Item")
+      file.close!
+    end
+
     it "resolves a string namespace into a real module" do
       ns = "LmlSpecNamespace"
       file = Tempfile.new(%w[test .lml])

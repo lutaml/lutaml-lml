@@ -2,6 +2,7 @@
 
 require "lutaml/model"
 
+# Root namespace for the LutaML libraries.
 module Lutaml
   class Error < StandardError; end
 
@@ -11,6 +12,10 @@ module Lutaml
   autoload :Formatter, "lutaml/lml/formatter"
   autoload :Layout, "lutaml/lml/layout"
 
+  # LML — the LutaML Model Language: parses the text DSL into domain
+  # documents, compiles model definitions into Serializable classes,
+  # and renders diagrams. See the entry-point contract under .parse /
+  # .parse_document below.
   module Lml
     class Error < Lutaml::Error; end
     class ParsingError < Error; end

@@ -18,6 +18,10 @@ module Lutaml
 
       class ValidationError < Error; end
 
+      # The default generated namespace nests under Lutaml::Lml so
+      # compiled constants never collide with top-level constants.
+      DEFAULT_NAMESPACE = 'Lutaml::Lml::Generated'
+
       TYPE_MAP = {
         'String' => :string,
         'string' => :string,
@@ -282,9 +286,14 @@ module Lutaml
       def namespace_module
         return @namespace if @namespace.is_a?(Module)
 
-        @namespace_module ||= Object.const_get(@namespace.to_s)
-      rescue NameError
-        @namespace_module = Object.const_set(@namespace.to_s, Module.new)
+        @namespace_module ||= begin
+          chain = @namespace.to_s.split('::')
+          chain.reduce(Object) do |parent, name|
+            parent.const_get(name)
+          rescue NameError
+            parent.const_set(name, Module.new)
+          end
+        end
       end
     end
   end
