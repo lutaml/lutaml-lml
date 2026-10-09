@@ -20,15 +20,25 @@ module Lutaml
       ModelCompiler.new(namespace: namespace).compile(input)
     end
 
-    # Full entry point: parse, then resolve view imports and enrich
-    # association labels.
+    # Entry-point contract:
+    #
+    #   parse           — Pipeline (preprocess, parse, transform, build)
+    #                     followed by ViewResolution: view-import
+    #                     expansion, show/hide filtering, and
+    #                     association-label enrichment. Use for
+    #                     documents consumed as diagrams or views.
+    #   parse_document  — Pipeline only; the document keeps raw
+    #                     collections and unresolved imports. Use for
+    #                     machine processing (ModelCompiler, Validator)
+    #                     where view semantics do not apply.
+    #
+    # Both return a Lutaml::Lml::Document.
     def self.parse(input)
       source = Source.wrap(input)
       document = Pipeline.call(source)
       ViewResolution.call(document, source.base_dir)
     end
 
-    # Parse only — no import resolution, no label enrichment.
     def self.parse_document(input)
       Pipeline.call(input)
     end

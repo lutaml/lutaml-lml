@@ -33,7 +33,11 @@ Parse an LML document:
 ....
 require "lutaml/lml"
 
+# parse_document: pipeline only — raw collections, unresolved imports.
 doc = Lutaml::Lml.parse_document(File.new("model.lml"))
+# parse: pipeline + view resolution (imports expanded, show/hide
+# filters applied, association labels enriched).
+doc = Lutaml::Lml.parse(File.new("model.lml"))
 doc.classes.first.attributes.map(&:name)
 ....
 
