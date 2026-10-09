@@ -23,13 +23,15 @@ end
 desc 'RuboCop ratchet: files changed vs the base carry no offenses'
 task :rubocop_ratchet do
   base = ENV.fetch('RUBOCOP_RATCHET_BASE', 'origin/main')
-  changed = `git diff --name-only #{base}...HEAD`.split
-                 .select { |f| (f.end_with?('.rb') || f == 'Rakefile') && File.exist?(f) }
+  ruby_files = ->(f) { (f.end_with?('.rb') || f == 'Rakefile') && File.exist?(f) }
+  changed = `git diff --name-only #{base}...HEAD`.split.select(&ruby_files)
   next if changed.empty?
 
   sh "bundle exec rubocop --force-exclusion #{changed.join(' ')}" do |ok, _res|
-    abort "rubocop ratchet failed — new offenses on:
-  #{changed.join("\n  ")}" unless ok
+    unless ok
+      abort "rubocop ratchet failed — new offenses on:
+  #{changed.join("\n  ")}"
+    end
   end
 end
 

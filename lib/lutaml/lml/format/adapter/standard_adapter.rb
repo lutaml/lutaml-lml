@@ -34,38 +34,35 @@ module Lutaml
             "instance #{type_name} {\n#{body}\n}"
           end
 
-          class << self
-            private
+          def self.instance_to_hash(instance)
+            return nil unless instance
 
-            def instance_to_hash(instance)
-              return nil unless instance
+            hash = {}
+            hash[TYPE_KEY] = instance.type if instance.type
 
-              hash = {}
-              hash[TYPE_KEY] = instance.type if instance.type
-
-              instance.each_attribute do |name, value, nested|
-                if nested.any?
-                  hashes = nested.map { |i| instance_to_hash(i) }
-                  hash[name] = nested.one? ? hashes.first : hashes
-                elsif value.is_a?(Array)
-                  hash[name] = value.map { |v| primitive_value(v) }
-                elsif !value.nil?
-                  hash[name] = primitive_value(value)
-                end
+            instance.each_attribute do |name, value, nested|
+              if nested.any?
+                hashes = nested.map { |i| instance_to_hash(i) }
+                hash[name] = nested.one? ? hashes.first : hashes
+              elsif value.is_a?(Array)
+                hash[name] = value.map { |v| primitive_value(v) }
+              elsif !value.nil?
+                hash[name] = primitive_value(value)
               end
-
-              hash.merge!(instance_to_hash(instance.instance)) if instance.instance
-
-              hash
             end
 
-            def primitive_value(val)
-              case val
-              when TrueClass, FalseClass, Integer, Float then val
-              else val.to_s
-              end
+            hash.merge!(instance_to_hash(instance.instance)) if instance.instance
+
+            hash
+          end
+
+          def self.primitive_value(val)
+            case val
+            when TrueClass, FalseClass, Integer, Float then val
+            else val.to_s
             end
           end
+          private_class_method :primitive_value
 
           def hash_to_lml_body(hash, indent = 1)
             lines = []
