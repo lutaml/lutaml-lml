@@ -120,7 +120,7 @@ module Lutaml
 
         With --schema, emits a JSON Schema or YAML Schema document for every
         compiled model instead of the compile listing. Schema output requires
-        named classes, so --namespace defaults to LmlGenerated when omitted.
+        named classes, so --namespace defaults to Lutaml::Lml::Generated when omitted.
 
         Examples:
           lutaml lml compile models.lml
@@ -140,7 +140,7 @@ module Lutaml
       def compile(path)
         raise Thor::Error, "File does not exist: #{path}" unless File.exist?(path)
 
-        ns = options[:namespace] || ('LmlGenerated' if options[:schema])
+        ns = options[:namespace] || (::Lutaml::Lml::ModelCompiler::DEFAULT_NAMESPACE if options[:schema])
         result = File.open(path) { |file| Lutaml::Lml::ModelCompiler.new(namespace: ns).compile(file) }
         return emit_schemas(result) if options[:schema]
 
