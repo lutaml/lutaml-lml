@@ -30,27 +30,21 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
-          bundler-cache: false
 
-      - name: Install dependencies
-        working-directory: docs
+      - name: Install asciidoctor
+        run: gem install asciidoctor --no-document
+
+      # docs/ carries AsciiDoc sources, not a Jekyll site — render
+      # them with asciidoctor and ship the HTML as the Pages
+      # artifact.
+      - name: Render documentation
         run: |
-          bundle install
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          # The repo's Pages site was never enabled, so deploy-pages
-          # failed with Get Pages site failed / Not Found. Let the
-          # action enable Pages itself on first deployment.
-          enablement: true
-
-      - name: Build with Jekyll
-        working-directory: docs
-        run: |
-          bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
-        env:
-          JEKYLL_ENV: production
+          mkdir -p _site
+          asciidoctor docs/lml-models-and-instances-syntax.adoc \
+            -o _site/index.html -a stylesheet=default
+          cp README.adoc _site/
+          asciidoctor _site/README.adoc -o _site/readme.html \
+            -a stylesheet=default
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
