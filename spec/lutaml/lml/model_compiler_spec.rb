@@ -322,5 +322,5 @@ RSpec.describe Lutaml::Lml::ModelCompiler do
       expect(wired.name).to eq("Gizmo")
       file.close!
     end
-end
+  end
 end

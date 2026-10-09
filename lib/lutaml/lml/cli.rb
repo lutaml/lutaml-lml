@@ -30,7 +30,7 @@ module Lutaml
         'exp' => lambda { |path|
           require 'lutaml/express'
           Lutaml::Express::Parsers::Exp.parse(File.new(path))
-        }
+        },
       }.freeze
 
       FORMATTER_ATTR_TARGETS = %i[graph edge node].freeze
@@ -132,7 +132,7 @@ module Lutaml
           lutaml lml compile models.lml --schema yaml -o widget.schema.yaml
       DESC
       method_option :namespace, type: :string, aliases: '-n',
-                             desc: 'Register compiled classes in a module (created if absent)'
+                                desc: 'Register compiled classes in a module (created if absent)'
       method_option :schema, type: :string, enum: %w[json yaml],
                              desc: 'Emit JSON Schema or YAML Schema for the compiled models'
       method_option :output, type: :string, aliases: '-o',

@@ -26,3 +26,7 @@ Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: comma
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
+# LML fixtures are written as single-line DSL strings throughout the
+# corpus; wrapping them would bury the shape they document.
+Layout/LineLength:
+  Enabled: false
