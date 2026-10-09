@@ -11,8 +11,8 @@ RSpec.describe Lutaml::Lml::EntityTypes do
         Lutaml::Lml::UmlClass,
         Lutaml::Lml::Enum,
         Lutaml::Lml::DataType,
-        Lutaml::Lml::PrimitiveType
-      ]
+        Lutaml::Lml::PrimitiveType,
+      ],
     )
   end
 
@@ -21,7 +21,7 @@ RSpec.describe Lutaml::Lml::EntityTypes do
       classes: Lutaml::Lml::UmlClass,
       enums: Lutaml::Lml::Enum,
       data_types: Lutaml::Lml::DataType,
-      primitives: Lutaml::Lml::PrimitiveType
+      primitives: Lutaml::Lml::PrimitiveType,
     )
   end
 

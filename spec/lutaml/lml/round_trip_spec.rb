@@ -37,10 +37,10 @@ RSpec.describe "Round-trip: class definitions and instances" do
       with_lml_file(lml_models) do |f|
         compiled = Lutaml::Lml.compile(f)
         widget_cls = compiled["Widget"]
-        obj = widget_cls.new(name: "Gear", weight: 3.14, tags: ["metal", "heavy"])
+        obj = widget_cls.new(name: "Gear", weight: 3.14, tags: %w[metal heavy])
         expect(obj.name).to eq("Gear")
         expect(obj.weight).to eq(3.14)
-        expect(obj.tags).to eq(["metal", "heavy"])
+        expect(obj.tags).to eq(%w[metal heavy])
       end
     end
 
@@ -104,8 +104,8 @@ RSpec.describe "Round-trip: class definitions and instances" do
         end
       end
 
-      { "bare words stay bare": %w[gear ABC123 v2_1 x42],
-        "non-word values are quoted and re-parsed":
+      { 'bare words stay bare': %w[gear ABC123 v2_1 x42],
+        'non-word values are quoted and re-parsed':
           ["ABC-123", "2012-03-15", "has space", "it's", 'he said "hi"'] }.each do |label, values|
         it "round-trips #{label}" do
           values.each { |v| expect(round_trip(v)).to eq(v) }
@@ -216,7 +216,7 @@ RSpec.describe "Round-trip: class definitions and instances" do
         doc = Lutaml::Lml.parse_document(f)
         inst = doc.instance
         items = inst.attributes.find { |a| a.name == "items" }
-        expect(items.value).to eq(["verify", "validate", "report"])
+        expect(items.value).to eq(%w[verify validate report])
       end
     end
 
@@ -439,7 +439,7 @@ RSpec.describe "Round-trip: class definitions and instances" do
         title: "T",
         classes: [Lutaml::Lml::UmlClass.new(name: "Foo", definition: "a \\{ b \\}")],
         show_filter: Lutaml::Lml::ViewFilter.new(entity_names: ["Foo"]),
-        view_imports: [Lutaml::Lml::ViewImport.new(path: "m.lutaml")]
+        view_imports: [Lutaml::Lml::ViewImport.new(path: "m.lutaml")],
       )
 
       restored = Lutaml::Lml::Document.from_yaml(doc.to_yaml)

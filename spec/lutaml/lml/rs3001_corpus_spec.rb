@@ -11,7 +11,7 @@ RSpec.describe 'RS 3001 conformance corpus' do
   # Vacuity guard: this glob once resolved to a nonexistent directory and
   # the suite silently ran zero corpus examples. Every vendored fixture
   # must be covered.
-  corpus = Dir.glob(File.expand_path('../../fixtures/rs3001/*.lml', __dir__)).sort
+  corpus = Dir.glob(File.expand_path('../../fixtures/rs3001/*.lml', __dir__))
   it 'covers the full vendored corpus' do
     expect(corpus.size).to be > 20
   end
