@@ -8,7 +8,15 @@ require 'tempfile'
 # parse and build a document. Constructs from the extension track
 # (serialization mapping blocks) are intentionally absent here.
 RSpec.describe 'RS 3001 conformance corpus' do
-  Dir.glob(File.expand_path('../../fixtures/rs3001/*.lml', __dir__)).sort.each do |path|
+  # Vacuity guard: this glob once resolved to a nonexistent directory and
+  # the suite silently ran zero corpus examples. Every vendored fixture
+  # must be covered.
+  corpus = Dir.glob(File.expand_path('../../fixtures/rs3001/*.lml', __dir__)).sort
+  it 'covers the full vendored corpus' do
+    expect(corpus.size).to be > 20
+  end
+
+  corpus.each do |path|
     name = File.basename(path)
 
     it "parses and builds #{name}" do

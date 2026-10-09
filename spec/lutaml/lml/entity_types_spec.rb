@@ -33,7 +33,7 @@ RSpec.describe Lutaml::Lml::EntityTypes do
   it 'keeps every entity_type symbol a Document collection reader' do
     doc = Lutaml::Lml::Document.new
     described_class.symbols.each do |symbol|
-      expect { doc.public_send(symbol) }.not_to raise_error(NoMethodError)
+      expect { doc.public_send(symbol) }.not_to raise_error
     end
   end
 

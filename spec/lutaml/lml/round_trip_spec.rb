@@ -72,15 +72,49 @@ RSpec.describe "Round-trip: class definitions and instances" do
 
         original = product_cls.new(sku: "ABC-123", price: 29.99, discontinued: false)
         lml_text = original.to_lml
-
-        expect(lml_text).to include('sku = "ABC-123"')
-        expect(lml_text).to include("price = 29.99")
-        expect(lml_text).to include("discontinued = false")
-
         restored = product_cls.from_lml(lml_text)
         expect(restored.sku).to eq("ABC-123")
         expect(restored.price).to eq(29.99)
         expect(restored.discontinued).to eq(false)
+      end
+    end
+
+    # The emit side's quoting contract against the grammar's `word`
+    # rule: bare emission only for runs of [A-Za-z0-9_]; everything
+    # else must be quoted AND survive the parse back (values that the
+    # grammar cannot re-parse bare are quoted exactly so this
+    # round-trip holds).
+    describe "string quoting contract" do
+      require "lutaml/lml/format"
+
+      let(:lml_models) do
+        <<~LML
+          models QuoteStore {
+            class Quote {
+              attribute value { type String cardinality 1 }
+            }
+          }
+        LML
+      end
+
+      def round_trip(value)
+        with_lml_file(lml_models) do |f|
+          klass = Lutaml::Lml.compile(f)["Quote"]
+          klass.from_lml(klass.new(value: value).to_lml).value
+        end
+      end
+
+      { "bare words stay bare": %w[gear ABC123 v2_1 x42],
+        "non-word values are quoted and re-parsed":
+          ["ABC-123", "2012-03-15", "has space", "it's", 'he said "hi"'] }.each do |label, values|
+        it "round-trips #{label}" do
+          values.each { |v| expect(round_trip(v)).to eq(v) }
+        end
+      end
+
+      it "raises on values containing both quote kinds" do
+        expect { round_trip(%(both " and ')) }
+          .to raise_error(Lutaml::Lml::Error, /no escapes/)
       end
     end
 

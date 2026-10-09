@@ -140,6 +140,24 @@ RSpec.describe Lutaml::Cli::LmlCommands do
     end
   end
 
+  describe "generate binary output through the CLI file path" do
+    it "writes a PDF that re-parses through the CLI write path" do
+      Dir.mktmpdir do |dir|
+        src = File.join(dir, "models.lml")
+        File.write(src, "models C { class Kiln { attribute program, String } }")
+        out = File.join(dir, "kiln.pdf")
+
+        described_class.start(
+          ["generate", src, "--layout", "elk", "-t", "pdf", "-o", out],
+        )
+
+        expect(File.binread(out)).to start_with("%PDF-1.")
+        require "pdfrb"
+        expect(Pdfrb::Validator.validate(Pdfrb.open(out))).to be_empty
+      end
+    end
+  end
+
   describe "compile --schema" do
     def run_compile(*args)
       described_class.start(["compile", *args])
