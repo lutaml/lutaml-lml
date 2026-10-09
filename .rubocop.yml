@@ -1,0 +1,28 @@
+# Policy: Metrics cops are disabled for the current codebase (declared
+# reality — the corpus predates gating); the Rakefile's rubocop_ratchet
+# task gates NEW offenses on files changed by a PR. Everything else runs
+# with defaults.
+AllCops:
+  TargetRubyVersion: 3.0
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - 'lib/lutaml/lml/grammar/lml.artifact.json'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+
+Metrics:
+  Enabled: false
+
+# The corpus mixes single- and double-quoted strings; unifying is churn
+# without value. Multiline trailing commas match this org's spec style.
+Style/StringLiterals:
+  Enabled: false
+Style/StringLiteralsInInterpolation:
+  Enabled: false
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
