@@ -157,13 +157,26 @@ module Lutaml
 
         def emit_schemas(result)
           require 'lutaml/model/schema'
-          generator = "to_#{options[:schema]}"
-          schemas = result.transform_values do |klass|
-            Lutaml::Model::Schema.public_send(generator, klass, pretty: true)
-          end
-          return write_schemas(schemas) if options[:output]
+          if options[:output] && Pathname.new(options[:output]).directory?
+            generator = "to_#{options[:schema]}"
+            schemas = result.transform_values do |klass|
+              Lutaml::Model::Schema.public_send(generator, klass, pretty: true)
+            end
+            write_schemas(schemas)
+          else
+            # One multi-root document covers every compiled model; each
+            # root stays addressable under $defs by class name.
+            schema = generate_multi_root_schema(result)
+            return puts schema unless options[:output]
 
-          schemas.each_value { |schema| puts schema }
+            File.write(options[:output], schema)
+            say "Generated: #{options[:output]}", :green
+          end
+        end
+
+        def generate_multi_root_schema(result)
+          klass = options[:schema] == 'yaml' ? Lutaml::Model::Schema::YamlSchema : Lutaml::Model::Schema::JsonSchema
+          klass.generate_many(result.values, pretty: true)
         end
 
         def write_schemas(schemas)

@@ -202,12 +202,31 @@ RSpec.describe Lutaml::Cli::LmlCommands do
       end
     end
 
+    it "emits one multi-root document for all models when -o is a file" do
+      Dir.mktmpdir do |dir|
+        src = File.join(dir, "models.lml")
+        File.write(src, <<~LML)
+          models Widgets {
+            class Widget { attribute name, String }
+            class Gadget { attribute label, String }
+          }
+        LML
+        out = File.join(dir, "widgets.schema.json")
+
+        run_compile = -> { described_class.start(["compile", src, "--schema", "json", "--namespace", "CliSchemaD", "-o", out]) }
+        expect { run_compile.call }.not_to raise_error
+        parsed = JSON.parse(File.read(out))
+        expect(parsed).not_to have_key("$ref")
+        expect(parsed["$defs"]).to include("CliSchemaD_Widget", "CliSchemaD_Gadget")
+      end
+    end
+
     it "prints schema documents to stdout when no output path is given" do
       src = File.join(Dir.mktmpdir, "models.lml")
       File.write(src, "models C { class Kiln { attribute program, String } }")
 
       expect { run_compile(src, "--schema", "json", "--namespace", "CliSchemaC") }
-        .to output(%r{#/\$defs/CliSchemaC_Kiln}).to_stdout
+        .to output(/CliSchemaC_Kiln/).to_stdout
     end
   end
 end
