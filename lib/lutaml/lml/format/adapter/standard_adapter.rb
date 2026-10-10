@@ -138,15 +138,12 @@ module Lutaml
             str = val.to_s
             return str if str.match?(BARE_WORD)
 
-            # The grammar has no escape sequences: dq_string runs to the
-            # first unescaped ", sq_string to the first '. Pick a quote
-            # character the value does not contain so the emit re-parses.
-            return "\"#{str}\"" unless str.include?('"')
-            return "'#{str}'" unless str.include?("'")
-
-            raise Lutaml::Lml::Error,
-                  "cannot emit #{str.inspect}: the LML string syntax has no " \
-                  "escapes and the value contains both quote kinds"
+            # RS 3001 §String values: escape backslash and double quote;
+            # every value is representable in double quotes.
+            # gsub replacement strings re-interpret backslash pairs, so
+            # the backslash doubling uses the block form.
+            escaped = str.gsub('\\') { |bs| bs + bs }.gsub('"') { |q| '\\' + q }
+            "\"#{escaped}\""
           end
         end
       end

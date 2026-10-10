@@ -1,0 +1,17 @@
+// 3001 §String values: the two escapes in both quote kinds; empty is
+// present, null is a value
+models Glaze {
+  class Glaze {
+    attribute name, String
+    attribute description, String
+    attribute note, String
+    attribute retired, String
+  }
+}
+
+instance "Glaze" {
+  name = "Raku \"kiln\" fired"
+  description = 'say "hi" and \'bye\''
+  note = ""
+  retired = null
+}

@@ -83,9 +83,12 @@ grammar Lml version "1.0.0" {
   # match['"\'']
   quotes = %x22 / %x27
 
-  # quoted('"', :string) | quoted("'", :string)
-  atomic dq_string = %x22 until "\"" as string %x22
-  atomic sq_string = %x27 until "'" as string %x27
+  # RS 3001 §String values: exactly two escape sequences, \" and \\,
+  # strict in both quote kinds; a backslash before anything else is not
+  # a string. atomic keeps the scan verbatim (skip trivia must not eat
+  # interior runs).
+  atomic dq_string = %x22 ( *( ( %x5C %x22 ) / ( %x5C %x5C ) / ( !( %x22 / %x5C ) %x00-10FFFF ) ) ) as string %x22
+  atomic sq_string = %x27 ( *( ( %x5C %x27 ) / ( %x5C %x5C ) / ( !( %x27 / %x5C ) %x00-10FFFF ) ) ) as string %x27
   quoted_string = dq_string / sq_string
   # any_quoted(:path) for view import
   atomic dq_path = %x22 until "\"" as path %x22
