@@ -14,7 +14,8 @@ module Lutaml
         'Integer' => /\A-?\d+\z/,
         'Number' => /\A-?\d+\z/,
         'Float' => /\A-?\d+\.\d+\z/,
-        'Boolean' => /\A(true|false)\z/
+        'Boolean' => /\A(true|false)\z/,
+        'Null' => /\Anull\z/
       }.freeze
 
       COLLECTION_KEYS = %i[properties attributes instances].freeze

@@ -27,6 +27,34 @@ def compile_and_hydrate(lml)
   compiler.hydrate(source)
 end
 
+# RS 3001 §String values / §Instance: an explicit null assignment
+# denotes the null value; an unassigned optional attribute is absent;
+# both hydrate to nil, and a present empty string stays empty.
+RSpec.describe "null and absence semantics" do
+  it "hydrates explicit null, absent, and present-empty distinctly" do
+    require "lutaml/lml/format"
+    compiled = Lutaml::Lml.compile(StringIO.new(<<~LML))
+      models NullSemantics {
+        class Fields {
+          attribute null_note { type String cardinality 0..1 }
+          attribute empty_note { type String cardinality 0..1 }
+          attribute absent_note { type String cardinality 0..1 }
+        }
+      }
+    LML
+    klass = compiled["Fields"]
+    inst = klass.from_lml(<<~LML)
+      instance Data {
+        null_note = null
+        empty_note = ""
+      }
+    LML
+    expect(inst.null_note).to be_nil
+    expect(inst.empty_note).to eq("")
+    expect(inst.absent_note).to be_nil
+  end
+end
+
 RSpec.describe 'instance hydration semantics (issue #17)' do
   it 'hydrates nested instances under collection attributes as arrays' do
     hydrated = compile_and_hydrate(LAYOUT_LML)

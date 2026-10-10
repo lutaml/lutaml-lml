@@ -4,13 +4,14 @@ module Lutaml
   module Lml
     class DataProcessor
       module ValueProcessing
-        VALUE_TYPE_KEYS = %i[instance list string boolean key_value_map number float condition require].freeze
+        VALUE_TYPE_KEYS = %i[instance list string boolean null key_value_map number float condition require].freeze
 
         VALUE_TYPE_HANDLERS = {
           instance: :handle_instance_value,
           list: :handle_list_value,
           string: :handle_string_value,
           boolean: :handle_boolean_value,
+          null: :handle_null_value,
           key_value_map: :handle_key_value_map,
           number: :handle_number_value,
           float: :handle_float_value,
@@ -48,6 +49,10 @@ module Lutaml
 
         def handle_boolean_value(_key, value)
           ['Boolean', value[:boolean] == 'true']
+        end
+
+        def handle_null_value(_key, _value)
+          ['Null', nil]
         end
 
         def handle_key_value_map(_key, value)
