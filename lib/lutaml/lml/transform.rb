@@ -35,11 +35,38 @@ module Lutaml
         body.gsub(/\\(["'\\])/) { Regexp.last_match(1) }
       end
 
-      # Global scalar normalizer: applied to every leaf in the parse
-      # tree (names may legally contain trailing spaces via
-      # class_name_chars). Binding is named :value to make the breadth
-      # explicit — it is not tied to any one grammar rule.
-      rule(simple(:value)) { value.nil? ? value : value.to_s.strip }
+      # Global scalar normalizer: every leaf becomes a string (or stays
+      # nil). No stripping — name and type tokens are interior-bounded
+      # in the grammar (class_run/type_run/quoted_name_run), so quoted
+      # string values keep their padding verbatim (RS 3001 §String
+      # values).
+      rule(simple(:value)) { value.nil? ? value : value.to_s }
+
+      # Block captures (definition bodies, block comments) read their
+      # surrounding layout as content — a block's first line break and
+      # closing indentation are layout, not prose. parsanol only fires
+      # hash-keyed rules at selected tree positions, so the strip is a
+      # post-pass walk, not a rule.
+      BLOCK_KEYS = %i[definition comments].freeze
+
+      def apply(tree, context = nil)
+        strip_block_layout(super)
+      end
+
+      def strip_block_layout(node)
+        case node
+        when Hash
+          node.each_with_object({}) do |(key, value), result|
+            result[key] = if BLOCK_KEYS.include?(key) && value.is_a?(String)
+                            value.strip
+                          else
+                            strip_block_layout(value)
+                          end
+          end
+        when Array then node.map { |item| strip_block_layout(item) }
+        else node
+        end
+      end
     end
   end
 end

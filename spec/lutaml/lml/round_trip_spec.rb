@@ -108,7 +108,9 @@ RSpec.describe "Round-trip: class definitions and instances" do
         'non-word values are quoted and re-parsed':
           ["ABC-123", "2012-03-15", "has space", "it's", 'he said "hi"', ""],
         'escaped values round-trip':
-          ['Raku "kiln" fired', %(both " and '), "C:\\Users\\marie", "say \"hi\" and 'bye'"] }.each do |label, values|
+          ['Raku "kiln" fired', %(both " and '), "C:\\Users\\marie", "say \"hi\" and 'bye'"],
+        'quoted padding is content':
+          [" padded ", "left ", " right", "   "] }.each do |label, values|
         it "round-trips #{label}" do
           values.each { |v| expect(round_trip(v)).to eq(v) }
         end

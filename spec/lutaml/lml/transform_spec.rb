@@ -28,9 +28,9 @@ RSpec.describe Lutaml::Lml::Transform do
   end
 
   describe "simple member rule" do
-    it "strips whitespace from every scalar leaf in the tree" do
+    it "leaves scalar leaves verbatim" do
       result = transform.apply({ outer: "  hello  " })
-      expect(result[:outer]).to eq("hello")
+      expect(result[:outer]).to eq("  hello  ")
     end
   end
 end
