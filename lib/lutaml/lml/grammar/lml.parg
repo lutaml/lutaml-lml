@@ -104,7 +104,17 @@ grammar Lml version "1.0.0" {
   comment_definition = ( "**" / "#" ) ( *( !newline ANY ) ) as comments
   comment_multiline_definition = "*|" until "|*" as comments [ whitespace ] "|*"
 
-  class_name_chars = 1*( %x41-5A / %x61-7A / %x30-39 / " " / "_" / "-" / ":" / "." )
+  # Spaces are interior-only in name and type tokens: a run may be
+  # followed by space-then-run, never a trailing space. The trailing
+  # separator is left for skip trivia, so captures need no post-strip
+  # and quoted string values keep their padding verbatim (RS 3001
+  # §String values).
+  # Atomic composite: the interior %x20 must match verbatim — skip
+  # trivia injects before sequence children and would otherwise eat the
+  # space before the grammar's own literal can (the type_token
+  # precedent).
+  atomic class_run = 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / ":" / "." )
+  atomic class_name_chars = class_run *( %x20 class_run )
   class_name = class_name_chars [ "(" class_name_chars ")" ]
   cardinality_body_definition = cardchar as min [ ".." [ cardchar as max ] ]
   cardinality = "[" cardinality_body_definition as cardinality "]"
@@ -120,12 +130,14 @@ grammar Lml version "1.0.0" {
   attribute_line = attribute [ [ "," ] whitespace ]
   visibility = kw_visibility_modifier as visibility_modifier
   attribute_stereotype = "<<" ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / "/" ) ) as stereotype ">>"
-  atomic type_token = 1*( !( "//" / "/*" ) typechar )
-  atomic typechar = %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / ":" / "/" / "+"
+  atomic type_run = 1*( !( "//" / "/*" ) ( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / ":" / "/" / "+" ) )
+  atomic type_token = type_run *( %x20 type_run )
   atomic namechar = %x41-5A / %x61-7A / %x30-39 / "_" / "-" / "/" / "+"
   attribute_type = [ ":" ] [ attribute_stereotype ] [ quotes as type_literal ] ( type_token ) as type [ quotes ]
   attribute_name = ( 1*namechar ) as name
-  attribute_definition_name = ( quotes ( 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / " " / "/" / "+" ) ) as name quotes ) / attribute_name
+  atomic quoted_name_run = 1*( %x41-5A / %x61-7A / %x30-39 / "_" / "-" / "/" / "+" )
+  atomic quoted_name_body = quoted_name_run *( %x20 quoted_name_run )
+  attribute_definition_name = ( quotes ( quoted_name_body ) as name quotes ) / attribute_name
   attribute_definition = ( [ visibility ] as visibility attribute_definition_name [ attribute_type ] [ cardinality ] [ class_body ] ) as attributes
 
   keyword_type_argument = "type" ( 1*nonspace ) as type [ whitespace ]
