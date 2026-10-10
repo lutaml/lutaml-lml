@@ -106,19 +106,12 @@ RSpec.describe "Round-trip: class definitions and instances" do
 
       { 'bare words stay bare': %w[gear ABC123 v2_1 x42],
         'non-word values are quoted and re-parsed':
-          ["ABC-123", "2012-03-15", "has space", "it's", 'he said "hi"'] }.each do |label, values|
+          ["ABC-123", "2012-03-15", "has space", "it's", 'he said "hi"', ""],
+        'escaped values round-trip':
+          ['Raku "kiln" fired', %(both " and '), "C:\\Users\\marie", "say \"hi\" and 'bye'"] }.each do |label, values|
         it "round-trips #{label}" do
           values.each { |v| expect(round_trip(v)).to eq(v) }
         end
-      end
-
-      it "round-trips a present empty string" do
-        expect(round_trip("")).to eq("")
-      end
-
-      it "raises on values containing both quote kinds" do
-        expect { round_trip(%(both " and ')) }
-          .to raise_error(Lutaml::Lml::Error, /no escapes/)
       end
     end
 
