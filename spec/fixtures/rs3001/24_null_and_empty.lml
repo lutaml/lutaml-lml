@@ -1,0 +1,13 @@
+// 3001 §String values: null literal and present-empty strings; an
+// unassigned optional attribute is absent
+models NullStore {
+  class Tracked {
+    attribute note, String
+    attribute absent, String
+  }
+}
+
+instance Tracked {
+  note = ""
+  absent = null
+}
