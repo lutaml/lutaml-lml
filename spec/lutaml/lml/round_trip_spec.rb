@@ -112,6 +112,10 @@ RSpec.describe "Round-trip: class definitions and instances" do
         end
       end
 
+      it "round-trips a present empty string" do
+        expect(round_trip("")).to eq("")
+      end
+
       it "raises on values containing both quote kinds" do
         expect { round_trip(%(both " and ')) }
           .to raise_error(Lutaml::Lml::Error, /no escapes/)
