@@ -50,6 +50,24 @@ RSpec.describe "LML format adapter" do
       expect(lml).to start_with("instance ")
     end
 
+    # Keys are `variable`s in the grammar: bare words emit unquoted,
+    # anything else must be quoted to re-parse (issue #78).
+    it "quotes non-word attribute keys so they re-parse" do
+      data = {
+        "name" => "Top",
+        "data" => { "  company name/address" => "Germany / DEU", "" => "Mr Stephan" }
+      }
+      lml = Lutaml::Lml::Format::Adapter::StandardAdapter.new(data).to_lml
+      expect(lml).to include('"  company name/address" = "Germany / DEU"')
+      expect(lml).to include('"" = "Mr Stephan"')
+
+      reparsed = Lutaml::Lml.parse_document(lml)
+      outer = reparsed.instance.each_attribute.find { |n, _| n == "data" }
+      names = []
+      outer[2].first.each_attribute { |k, _| names << k }
+      expect(names).to eq(["  company name/address", ""])
+    end
+
     it "quotes strings with special characters" do
       obj = model_class.new(name: "Hello World", age: 1, active: false)
       lml = obj.to_lml

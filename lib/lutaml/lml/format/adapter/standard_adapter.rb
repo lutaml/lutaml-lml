@@ -77,7 +77,13 @@ module Lutaml
             lines.join("\n")
           end
 
+          def format_key(key)
+            key = key.to_s
+            key.match?(BARE_WORD) ? key : "\"#{key}\""
+          end
+
           def format_value(prefix, key, value, indent)
+            key = format_key(key)
             return "#{prefix}#{key} = ref:(#{value[:reference]})" if reference_value?(value)
 
             case value
