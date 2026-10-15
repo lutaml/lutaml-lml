@@ -155,4 +155,22 @@ RSpec.describe 'instance hydration semantics (issue #17)' do
     scalar = compiler.hydrate(StringIO.new("instance Holder {\n  mixed = shallow\n}\n"))
     expect(scalar.mixed).to eq('shallow')
   end
+
+  # Quoted attribute keys arrive from the grammar as {string: ...} capture
+  # nodes (issue #78); they must be unwrapped, not stringified.
+  it 'preserves quoted attribute keys verbatim, padding and emptiness included' do
+    doc = Lutaml::Lml.parse_document(StringIO.new(<<~LML))
+      instance R {
+        data = instance {
+          "  company name/address" = "Germany / DEU"
+          "" = "Mr Stephan"
+        }
+      }
+    LML
+    data = doc.instance.each_attribute.find { |n, _| n == 'data' }
+    entry = data[2].first
+    names = []
+    entry.each_attribute { |name, _| names << name }
+    expect(names).to eq(['  company name/address', ''])
+  end
 end
