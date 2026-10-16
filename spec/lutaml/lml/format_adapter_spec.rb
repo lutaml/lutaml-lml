@@ -5,9 +5,7 @@ require "lutaml/lml/format"
 
 RSpec.describe "LML format adapter" do
   before(:all) do
-    unless Lutaml::Model::FormatRegistry.registered?(:lml)
-      require "lutaml/lml/format"
-    end
+    require "lutaml/lml/format" unless Lutaml::Model::FormatRegistry.registered?(:lml)
   end
 
   let(:model_class) do
@@ -55,7 +53,7 @@ RSpec.describe "LML format adapter" do
     it "quotes non-word attribute keys so they re-parse" do
       data = {
         "name" => "Top",
-        "data" => { "  company name/address" => "Germany / DEU", "" => "Mr Stephan" }
+        "data" => { "  company name/address" => "Germany / DEU", "" => "Mr Stephan" },
       }
       lml = Lutaml::Lml::Format::Adapter::StandardAdapter.new(data).to_lml
       expect(lml).to include('"  company name/address" = "Germany / DEU"')
@@ -66,6 +64,17 @@ RSpec.describe "LML format adapter" do
       names = []
       outer[2].first.each_attribute { |k, _| names << k }
       expect(names).to eq(["  company name/address", ""])
+    end
+
+    # Keys escape like values: a key containing a quote or backslash
+    # must emit a form that re-parses to the same key (issue #78).
+    it "escapes quotes and backslashes inside attribute keys" do
+      data = { %(bo"th) => "x", "C:\\Users" => "y" }
+      lml = Lutaml::Lml::Format::Adapter::StandardAdapter.new(data).to_lml
+      reparsed = Lutaml::Lml.parse_document(lml)
+      keys = []
+      reparsed.instance.each_attribute { |k, _| keys << k }
+      expect(keys).to contain_exactly(%(bo"th), "C:\\Users")
     end
 
     it "quotes strings with special characters" do
@@ -130,8 +139,8 @@ RSpec.describe "LML format adapter" do
         "__type__" => "OuterType",
         "inner" => {
           "__type__" => "InnerType",
-          "value" => "hello"
-        }
+          "value" => "hello",
+        },
       }
       adapter = Lutaml::Lml::Format::Adapter::StandardAdapter.new(data)
       lml = adapter.to_lml
@@ -145,8 +154,8 @@ RSpec.describe "LML format adapter" do
         "__type__" => "Container",
         "items" => [
           { "__type__" => "Item", "name" => "first" },
-          { "__type__" => "Item", "name" => "second" }
-        ]
+          { "__type__" => "Item", "name" => "second" },
+        ],
       }
       adapter = Lutaml::Lml::Format::Adapter::StandardAdapter.new(data)
       lml = adapter.to_lml
@@ -174,7 +183,7 @@ RSpec.describe "LML format adapter" do
     it "handles nested instances without __type__" do
       data = {
         "name" => "Top",
-        "nested" => { "key" => "value" }
+        "nested" => { "key" => "value" },
       }
       adapter = Lutaml::Lml::Format::Adapter::StandardAdapter.new(data)
       lml = adapter.to_lml
@@ -203,7 +212,7 @@ RSpec.describe "LML format adapter" do
 
       original = person_cls.new(
         name: "Alice",
-        address: address_cls.new(street: "Main", city: "NYC")
+        address: address_cls.new(street: "Main", city: "NYC"),
       )
       restored = person_cls.from_lml(original.to_lml)
       expect(restored.name).to eq("Alice")
@@ -234,8 +243,8 @@ RSpec.describe "LML format adapter" do
         id: "ORD-1",
         items: [
           item_cls.new(sku: "A1", qty: 3),
-          item_cls.new(sku: "B2", qty: 1)
-        ]
+          item_cls.new(sku: "B2", qty: 1),
+        ],
       )
       restored = order_cls.from_lml(original.to_lml)
       expect(restored.id).to eq("ORD-1")

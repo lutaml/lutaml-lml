@@ -3,6 +3,9 @@
 module Lutaml
   module Lml
     class DataProcessor
+      # Normalizes attribute entries from the parse tree: merges
+      # comma-form groups, extracts names/types/values, and applies the
+      # nested attribute/property structure.
       module AttributeProcessing
         EXCLUDED_PASS_THROUGH_KEYS = %i[key value comments add attributes properties type_literal].freeze
 
@@ -57,7 +60,11 @@ module Lutaml
         end
 
         def merge_collection_value(existing, value)
-          current = existing.is_a?(Array) ? existing : (existing ? [existing] : [])
+          current = if existing.is_a?(Array)
+                      existing
+                    else
+                      (existing ? [existing] : [])
+                    end
           current + (value.is_a?(Array) ? value : [value])
         end
 

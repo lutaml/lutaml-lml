@@ -65,6 +65,10 @@ module Lutaml
       # Depth-first walk applying cumulative translate(x,y).
       def walk(node, dx, dy)
         node.children.each do |child|
+          # Whitespace between elements arrives as text nodes under
+          # some moxml adapters; only elements carry geometry.
+          next unless child.element?
+
           cdx, cdy = translate_of(child)
           case child.name
           when 'g'

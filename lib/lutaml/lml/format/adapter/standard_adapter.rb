@@ -79,7 +79,12 @@ module Lutaml
 
           def format_key(key)
             key = key.to_s
-            key.match?(BARE_WORD) ? key : "\"#{key}\""
+            return key if key.match?(BARE_WORD)
+
+            # Same escaping as quote_value: a key may contain any
+            # character, and the emitted form must re-parse (issue #78).
+            escaped = key.gsub('\\') { |bs| bs * 2 }.gsub('"') { |q| "\\#{q}" }
+            "\"#{escaped}\""
           end
 
           def format_value(prefix, key, value, indent)
@@ -148,7 +153,7 @@ module Lutaml
             # every value is representable in double quotes.
             # gsub replacement strings re-interpret backslash pairs, so
             # the backslash doubling uses the block form.
-            escaped = str.gsub('\\') { |bs| bs + bs }.gsub('"') { |q| '\\' + q }
+            escaped = str.gsub('\\') { |bs| bs * 2 }.gsub('"') { |q| "\\#{q}" }
             "\"#{escaped}\""
           end
         end
