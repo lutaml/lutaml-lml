@@ -38,7 +38,14 @@ module Lutaml
           if member.key?(:definition)
             (inner[:attributes] ||= []) << { name: 'description', type: unwrap_string(member[:definition]) }
           elsif member.key?(:instance)
-            (inner[:instances] ||= []).concat(Array(member[:instance]))
+            # The bare `instance { ... }` capture is the instance-body
+            # hash; it must go through instance processing so its
+            # members become attribute entries, not raw pairs.
+            bodies = member[:instance].is_a?(Hash) ? [member[:instance]] : Array(member[:instance])
+            bodies.each do |body|
+              entry = body.is_a?(Hash) ? process_instance(body) : body
+              (inner[:instances] ||= []) << entry
+            end
           elsif member.key?(:attributes)
             (inner[:properties] ||= []) << member[:attributes]
           elsif member.key?(:key)

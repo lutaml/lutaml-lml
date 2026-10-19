@@ -158,7 +158,19 @@ module Lutaml
       # the same member shape the bare-identifier shortcut produces.
       def expand_value_declaration(model, hash)
         decl = hash.delete(:value_decl) or return
-        apply_attribute(model, :attributes, decl.fetch(:attributes))
+        inner = decl.fetch(:attributes)
+
+        # Route the value block's members onto the entry: descriptions
+        # and payload pairs ride the nested attributes, instance bodies
+        # become the entry's instances (RS 3001 §Enums values carrying
+        # instances).
+        entry = { name: inner[:name] }
+        entry[:attributes] = inner[:attributes] if inner[:attributes]
+        entry[:properties] = Array(inner[:properties]).flat_map do |pair|
+          pair.is_a?(Hash) ? [pair] : Array(pair)
+        end if inner[:properties]
+        entry[:instances] = inner[:instances] if inner[:instances]
+        apply_attribute(model, :attributes, entry)
       end
 
       # Namespace declaration bodies arrive as keyword-line members
