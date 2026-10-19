@@ -27,10 +27,13 @@ RSpec.describe 'LML declarations (isa, defaults, derive, payloads, string_format
     PARG
     document = Parsanol::PARG::Parser.new(source).parse
     envelope = Parsanol::PARG::Compiler.compile(document).envelope
-    file = Tempfile.new(%w[code .artifact.json])
-    file.write(JSON.generate(envelope.respond_to?(:to_h) ? envelope.to_h : envelope))
-    file.flush
-    file.path
+    # A Tempfile is GC-unlinked when the object goes out of scope, so
+    # the path must outlive the helper: a real directory file keeps the
+    # artifact alive for the suite's duration.
+    dir = Dir.mktmpdir('code-artifact')
+    path = File.join(dir, 'code.artifact.json')
+    File.write(path, JSON.generate(envelope.respond_to?(:to_h) ? envelope.to_h : envelope))
+    path
   end
 
   describe 'isa instance-type override (L6)' do
