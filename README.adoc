@@ -47,6 +47,28 @@ Validate against the RS 3001 rules:
 violations = Lutaml::Lml::Validator.violations(doc)
 ....
 
+== Value semantics
+
+String values are quoted (double or single) with exactly two escape
+sequences — `\"` and `\\` — strict in both quote kinds; a backslash
+before anything else does not form a string. Quoted content is
+verbatim: padding, embedded quotes, and backslashes survive
+parse/emit round-trips (the emitter escapes values and attribute
+keys; attribute keys may be quoted whenever they are not bare words).
+
+`null` is a value: an explicit `null` assignment denotes the null
+value, an unassigned optional attribute is absent, and the empty
+string `""` is a present, zero-length value — the three are distinct.
+
+....
+instance R {
+  name = "Raku \"kiln\" fired"        // escapes
+  note = ""                            // present, empty
+  retired = null                       // null value
+  // an attribute simply not assigned here is absent
+}
+....
+
 Compile model definitions into `Lutaml::Model::Serializable` classes and
 hydrate instance data. Pass `namespace:` to register the compiled classes
 as constants (a String namespace is created if absent) — named classes are
