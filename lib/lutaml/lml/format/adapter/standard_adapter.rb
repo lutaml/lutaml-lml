@@ -83,7 +83,9 @@ module Lutaml
               format_array(prefix, key, value, indent)
             when Hash
               format_nested(prefix, key, value, indent)
-            when TrueClass, FalseClass, Integer, Float
+            when Float
+              "#{prefix}#{key} = #{number_scalar(value)}"
+            when TrueClass, FalseClass, Integer
               "#{prefix}#{key} = #{value}"
             else
               "#{prefix}#{key} = #{quote_value(value)}"
@@ -131,11 +133,27 @@ module Lutaml
           end
 
           def quote_value(val)
+            return number_scalar(val) if val.is_a?(Float)
             return val.to_s if val.is_a?(Numeric) || val.is_a?(TrueClass) || val.is_a?(FalseClass)
 
             # RS 3001 §String values: escape backslash and double quote;
-            # every value is representable in double quotes.
-            quote_scalar(val)
+            # every value is representable in double quotes. A bare word
+            # is only safe when the parser reads it back as the same
+            # string — `null`, booleans, and digit-leading tokens are
+            # data literals (and digit-led words do not re-parse).
+            str = val.to_s
+            return str if safe_bare_string?(str)
+
+            quote_always(str)
+          end
+
+          private
+
+          def safe_bare_string?(str)
+            return false unless str.match?(Lutaml::Lml::Quoting::BARE_WORD)
+            return false if str.match?(/\A(?:true|false|null)\z/)
+
+            !str.match?(/\A\d/)
           end
         end
       end

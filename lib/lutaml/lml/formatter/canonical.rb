@@ -560,7 +560,8 @@ module Lutaml
         value = unwrap(value)
         case value
         when nil then 'null'
-        when true, false, Integer, Float then value.to_s
+        when Float then number_scalar(value)
+        when true, false, Integer then value.to_s
         when String then quote_always(value)
         when Array
           "[#{value.map { |item| render_data_value(item) }.join(', ')}]"

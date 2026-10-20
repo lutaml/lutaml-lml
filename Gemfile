@@ -7,6 +7,10 @@ gemspec
 gem "rspec"
 gem "rubocop"
 gem "rake"
+# Property-based generation for the round-trip laws. 2.x is the last
+# series that installs on the gem's supported Ruby floor (3.0 requires
+# Ruby 3.3).
+gem "rantly", "~> 2.0"
 # ELK layout for the `--layout elk` diagram engine (soft dependency:
 # the gemspec does not require it; Formatter::Elk guides installation)
 gem "elkrb", "~> 1.0"
