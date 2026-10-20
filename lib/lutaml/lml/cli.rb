@@ -2,6 +2,7 @@
 
 require 'thor'
 require 'pathname'
+require 'json'
 require 'lutaml/lml'
 
 module Lutaml
@@ -103,11 +104,13 @@ module Lutaml
       DESC
       method_option :input_format, type: :string, aliases: '-i',
                                    desc: 'Input format (lutaml, yaml, exp)'
+      method_option :format, type: :string, enum: %w[text json], default: 'text',
+                             desc: 'Report format: text (default) or json'
       def validate(*paths)
         assert_input_paths(paths)
         @input_format = options[:input_format] || DEFAULT_INPUT_FORMAT
-        errors = paths.map { |p| validate_single_file(p) }.compact
-        report_validation(errors)
+        diagnostics = paths.flat_map { |path| validate_single_file(path) }
+        report_validation(diagnostics)
       end
 
       desc 'format [PATHS]', 'Render LML files in canonical form'
@@ -353,32 +356,61 @@ module Lutaml
 
         def validate_single_file(path_string)
           input_path = Pathname.new(path_string)
-          return report_file_error(input_path, 'File does not exist') unless input_path.exist?
+          return [missing_file_diagnostic(input_path)] unless input_path.exist?
 
           document = parse_document(input_path)
-          violations = Lutaml::Lml::Validator.violations(document)
-          if violations.any?
-            report_file_error(input_path, violations_message(violations))
-          else
+          diagnostics = Lutaml::Lml::Validator.diagnostics(document)
+          if diagnostics.any?
+            diagnostics.each { |diagnostic| say "✗ #{diagnostic}", :red } if text_output?
+          elsif text_output?
             say "✓ #{input_path}", :green
-            nil
           end
+          diagnostics
+        rescue Thor::Error => e
+          [contract_diagnostic('contract/LML-C02', e.message, input_path)]
+        rescue Lutaml::Lml::Error => e
+          [error_diagnostic(e, input_path)]
         rescue StandardError => e
-          report_file_error(input_path, e.message)
+          [contract_diagnostic('contract/LML-C03', e.message, input_path)]
         end
 
-        def violations_message(violations)
-          violations.map { |v| "[#{v.rule}] #{v.message}" }.join('; ')
+        def missing_file_diagnostic(input_path)
+          contract_diagnostic('contract/LML-C01', 'File does not exist', input_path)
         end
 
-        def report_file_error(input_path, message)
-          say "✗ #{input_path}: #{message}", :red
-          "#{input_path}: #{message}"
+        def contract_diagnostic(code, message, input_path)
+          diagnostic = Diagnostic.build(code, message: message, file: input_path.to_s)
+          say "✗ #{diagnostic}", :red if text_output?
+          diagnostic
         end
 
-        def report_validation(errors)
-          if errors.any?
-            say "\nValidation failed with #{errors.size} error(s)", :red
+        def error_diagnostic(error, input_path)
+          diagnostic = error.diagnostic
+          return diagnostic if diagnostic && diagnostic.file
+
+          Diagnostic.build(
+            (diagnostic&.code || 'parse/LML-001'),
+            message: diagnostic&.message || error.message.lines.first.to_s.strip,
+            file: input_path.to_s,
+            line: diagnostic&.line,
+            column: diagnostic&.column,
+            length: diagnostic&.length
+          )
+        end
+
+        def text_output?
+          options[:format] != 'json'
+        end
+
+        def report_validation(diagnostics)
+          if options[:format] == 'json'
+            puts JSON.pretty_generate(diagnostics.map(&:to_hash))
+            exit 1 if diagnostics.any?
+            return
+          end
+
+          if diagnostics.any?
+            say "\nValidation failed with #{diagnostics.size} error(s)", :red
             exit 1
           else
             say "\nAll files valid!", :green

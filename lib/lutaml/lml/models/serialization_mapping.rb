@@ -6,6 +6,8 @@ module Lutaml
     # its class and linked by target name —
     #   mapping xml Ceramic { element "ceramic" … }
     class SerializationMapping < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       attribute :format, :string
       attribute :target, :string
       attribute :element_name, :string

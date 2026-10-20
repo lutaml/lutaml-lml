@@ -3,6 +3,8 @@
 module Lutaml
   module Lml
     class Instance < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       attribute :name, :string
       attribute :type, :string
       attribute :isa, :string

@@ -44,8 +44,43 @@ doc.classes.first.attributes.map(&:name)
 Validate against the RS 3001 rules:
 
 ....
-violations = Lutaml::Lml::Validator.violations(doc)
+violations = Lutaml::Lml::Validator.diagnostics(doc)
+violations.each { |diagnostic| puts diagnostic }
+# 1:7: [validation/LML-V01] 'Tile' is defined 2 times in the document root
+#   remedy: Rename or remove the duplicate definition.
 ....
+
+== Diagnostics
+
+Parse, validation, hydration, and contract failures are
+`Lutaml::Lml::Diagnostic` records: `code`, `severity`, `file`, `line`,
+`column`, `length`, `message`, and `remedy`. Parse failures raise an
+error carrying the record (`error.diagnostic`); validation returns them
+from `Lutaml::Lml::Validator.diagnostics`. `lutaml validate --format
+json` emits the diagnostic array machine-readably.
+
+[cols="1,2,2",options="header"]
+|===
+|Code |Meaning |Remedy
+
+|`parse/LML-001` |Syntax error |Fix the syntax at the reported position.
+|`parse/LML-002` |Unterminated block comment |Terminate the block comment with `*/`.
+|`parse/LML-003` |Include could not be read or is circular |Check the include path and the included file.
+|`validation/LML-V01` |Duplicate definition in a scope |Rename or remove the duplicate definition.
+|`validation/LML-V02` |Duplicate attribute in a definition |Rename or remove the duplicate attribute.
+|`validation/LML-V03` |Mandatory attribute not populated |Populate the mandatory attribute on the instance.
+|`validation/LML-V04` |Value does not match the declared primitive type |Use a value matching the declared primitive type.
+|`validation/LML-V05` |Value outside the declared value set |Use one of the values declared for the attribute.
+|`validation/LML-V06` |Instance attribute is not declared |Declare the attribute or remove it from the instance.
+|`validation/LML-V07` |Reference does not resolve |Point the reference at an existing instance or attribute.
+|`validation/LML-V08` |Circular reference |Break the reference cycle.
+|`validation/LML-V09` |Value does not match the attribute pattern |Use a value matching the attribute pattern.
+|`validation/LML-V10` |Attribute pattern does not compile |Fix the attribute pattern so that it compiles.
+|`hydration/LML-H01` |Instance data could not be hydrated |Check the instance data against the compiled model.
+|`contract/LML-C01` |Input file not found |Check the path of the input file.
+|`contract/LML-C02` |Unsupported input format |Use one of the supported input formats.
+|`contract/LML-C03` |Input file could not be read or parsed in its format |Check the input file and its format.
+|===
 
 == Value semantics
 

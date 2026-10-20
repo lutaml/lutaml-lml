@@ -3,6 +3,8 @@
 module Lutaml
   module Lml
     class Value < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       attribute :name, :string
       attribute :id, :string
       attribute :type, :string

@@ -19,6 +19,8 @@ module Lutaml
         operation: ::Lutaml::Lml::Operation,
         constraint: ::Lutaml::Lml::Constraint,
         value: ::Lutaml::Lml::Value,
+        instance: ::Lutaml::Lml::Instance,
+        instance_collection: ::Lutaml::Lml::InstanceCollection,
         view_import: ::Lutaml::Lml::ViewImport,
         view_filter: ::Lutaml::Lml::ViewFilter,
         mapping: ::Lutaml::Lml::Mapping,
@@ -39,6 +41,7 @@ module Lutaml
         document package class enum data_type diagram view_import view_filter
         attribute association operation constraint value cardinality mapping
         string_format derived_field namespace serialization_mapping
+        instance instance_collection
       ].freeze
 
       MEMBER_KEY_MAP = {
@@ -56,7 +59,8 @@ module Lutaml
         mappings: :mapping,
         member_fields: :member_field,
         namespaces: :namespace,
-        serialization_mappings: :serialization_mapping
+        serialization_mappings: :serialization_mapping,
+        instances: :instance
       }.freeze
 
       FACTORY_KEYS.each do |key|
@@ -71,6 +75,7 @@ module Lutaml
 
       def set_model(model, hash)
         hash = build_members(model, hash)
+        apply_collection_members(model, hash)
         set_model_attributes(model, hash)
         expand_class_specializer(model, hash)
       end
@@ -86,8 +91,19 @@ module Lutaml
 
       def set_model_attributes(model, hash)
         hash.each do |key, value|
+          if key == :position
+            attach_position(model, value)
+            next
+          end
+
           apply_attribute(model, key, value)
         end
+      end
+
+      def attach_position(model, value)
+        return unless model.is_a?(Positioned) && value.is_a?(Hash)
+
+        model.source_position = SourcePosition.new(**value)
       end
 
       def build_members(model, hash)
@@ -133,15 +149,28 @@ module Lutaml
         normalize_serialization_mapping(hash)
         expand_instances_collection_name(hash)
         expand_nested_members(model, hash)
+        apply_collection_members(model, hash)
+
+        remap_filter_keys(hash, model)
+      end
+
+      # Builds collection-shaped keys through the registry rather than
+      # letting lutaml-model cast raw hashes, so nested entities keep
+      # their non-serialized source metadata (positions).
+      def apply_collection_members(model, hash)
+        if model.is_a?(Document) && hash.key?(:instances)
+          model.instances = build(:instance_collection, hash.delete(:instances))
+        end
+
         MEMBER_KEY_MAP.each do |plural_key, singular_key|
           data = hash.delete(plural_key)
           next if data.nil?
 
-          member = build(singular_key, data)
-          ensure_collection(model, plural_key) << member
+          entries = data.is_a?(Array) ? data : [data]
+          entries.each do |entry|
+            ensure_collection(model, plural_key) << build(singular_key, entry)
+          end
         end
-
-        remap_filter_keys(hash, model)
       end
 
       # RS 3001 §Enums: an enum-level `values { v1, v2 }` shorthand

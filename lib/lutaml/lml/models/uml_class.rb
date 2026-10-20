@@ -3,6 +3,8 @@
 module Lutaml
   module Lml
     class UmlClass < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       # From TopElement. TextType unescapes \{ \} and normalizes lines
       # on every assignment (builder, yaml, direct).
       attribute :name, :string

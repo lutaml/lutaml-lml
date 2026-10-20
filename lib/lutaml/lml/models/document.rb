@@ -3,6 +3,8 @@
 module Lutaml
   module Lml
     class Document < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       # Core attributes
       attribute :name, :string
       attribute :title, :string

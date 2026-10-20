@@ -17,9 +17,18 @@ module Lutaml
   # and renders diagrams. See the entry-point contract under .parse /
   # .parse_document below.
   module Lml
-    class Error < Lutaml::Error; end
+    class Error < Lutaml::Error
+      # Structured record for the failure, when one could be built.
+      attr_reader :diagnostic
+
+      def initialize(message = nil, diagnostic: nil)
+        @diagnostic = diagnostic
+        super(message)
+      end
+    end
     class ParsingError < Error; end
     class ImportError < Error; end
+    class HydrationError < Error; end
 
     def self.compile(input, namespace: nil)
       ModelCompiler.new(namespace: namespace).compile(input)
@@ -67,6 +76,9 @@ module Lutaml
     autoload :YamlParser, "lutaml/lml/yaml_parser"
     autoload :HasAttributes, "lutaml/lml/has_attributes"
     autoload :Quoting, "lutaml/lml/quoting"
+    autoload :Diagnostic, "lutaml/lml/diagnostic"
+    autoload :SourcePosition, "lutaml/lml/source_position"
+    autoload :Positioned, "lutaml/lml/positioned"
     autoload :VERSION, "lutaml/lml/version"
 
     # Type classes (Lutaml::Model::Type::Value subclasses, not models)

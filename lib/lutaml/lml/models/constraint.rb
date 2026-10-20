@@ -3,6 +3,8 @@
 module Lutaml
   module Lml
     class Constraint < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       # From TopElement
       attribute :name, :string
       attribute :definition, Lutaml::Lml::Types::TextType
