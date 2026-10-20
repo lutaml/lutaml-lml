@@ -1,0 +1,55 @@
+name: HEAD verification
+
+on:
+  schedule:
+    - cron: '23 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  head:
+    name: ${{ matrix.dependency }} HEAD
+    runs-on: ubuntu-latest
+    # Rollout discipline: allow-failure until green for seven
+    # consecutive days; then drop this key and mark the job required.
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dependency: lutaml-model
+            repository: lutaml/lutaml-model
+            env_name: LML_LUTAML_MODEL_HEAD
+          - dependency: parsanol
+            repository: parsanol/parsanol-ruby
+            env_name: LML_PARSANOL_HEAD
+          - dependency: moxml
+            repository: lutaml/moxml
+            env_name: LML_MOXML_HEAD
+    steps:
+      - name: Checkout lutaml-lml
+        uses: actions/checkout@v4
+
+      - name: Checkout dependency at HEAD
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repository }}
+          path: .deps/${{ matrix.dependency }}
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+
+      # The Gemfile reads the LML_*_HEAD variable and points that
+      # dependency at the checkout instead of the released gem.
+      - name: Run the suite against HEAD
+        env:
+          LML_HEAD_ENV: ${{ matrix.env_name }}
+          LML_HEAD_DEP: ${{ matrix.dependency }}
+        run: |
+          export "${LML_HEAD_ENV}=${PWD}/.deps/${LML_HEAD_DEP}"
+          bundle install
+          bundle exec rspec
