@@ -36,7 +36,7 @@ RSpec.describe "language version negotiation" do
 
   it "warns, with a position, when the document declares a newer version" do
     diagnostics = Lutaml::Lml::Validator.diagnostics(
-      parse("lml \"9.9\"\nclass A { }\n")
+      parse("lml \"9.9\"\nclass A { }\n"),
     )
 
     expect(diagnostics.map(&:code)).to eq(["contract/LML-C06"])
@@ -48,7 +48,7 @@ RSpec.describe "language version negotiation" do
 
   it "does not warn for the supported version" do
     diagnostics = Lutaml::Lml::Validator.diagnostics(
-      parse("lml \"#{Lutaml::Lml::Grammar.version}\"\nclass A { }\n")
+      parse("lml \"#{Lutaml::Lml::Grammar.version}\"\nclass A { }\n"),
     )
 
     expect(diagnostics).to be_empty
@@ -90,7 +90,7 @@ RSpec.describe "language version negotiation" do
         expect(status).to eq(0)
         expect(JSON.parse(output).first).to include(
           "code" => "contract/LML-C06",
-          "severity" => "warning"
+          "severity" => "warning",
         )
       end
     end
