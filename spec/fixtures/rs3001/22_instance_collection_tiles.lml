@@ -1,11 +1,13 @@
-instances "Tiles" {
-  instance "square" CeramicTile {
+instances Tiles {
+  CeramicTile "square" {
     dimensions = [30.5, 30.5]
+
     firing_profile = "high"
   }
 
-  instance "circle" CeramicTile {
+  CeramicTile "circle" {
     dimensions = [20.5, 20.5]
+
     firing_profile = "medium"
   }
 }

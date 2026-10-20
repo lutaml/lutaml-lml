@@ -1,13 +1,17 @@
 class CeramicTile {
-  attribute dimensions, Float { cardinality 2 }
-  attribute firing_profile, FiringProfile
-  definition {
-    Types of ceramic tiles.
+  definition "Types of ceramic tiles."
+
+  attribute dimensions {
+    type Float
+    cardinality 2
   }
+
+  attribute firing_profile, FiringProfile
 }
 
-instance "square" CeramicTile {
+CeramicTile "square" {
   dimensions = [30.5, 30.5]
+
   firing_profile = "high"
 
   definition {

@@ -6,5 +6,6 @@ module Lutaml
     autoload :Graphviz, "lutaml/lml/formatter/graphviz"
     autoload :Elk, "lutaml/lml/formatter/elk"
     autoload :SvgPdf, "lutaml/lml/formatter/svg_pdf"
+    autoload :Canonical, "lutaml/lml/formatter/canonical"
   end
 end

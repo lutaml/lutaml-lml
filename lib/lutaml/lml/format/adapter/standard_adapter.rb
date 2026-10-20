@@ -10,14 +10,7 @@ module Lutaml
         class StandardAdapter < Document
           TYPE_KEY = "__type__"
 
-          # The grammar's `word` rule is [A-Za-z0-9_] only (lml.parg) and
-          # `variable = quoted_string / 1*word` — a bare value is a run of
-          # word characters and nothing else. Anything else (a dash, a
-          # space, a digit-leading date...) commits the value parser to
-          # `number` or fails re-parsing, so it must be emitted quoted.
-          # This predicate is the single source of truth for the emit
-          # side; the parse side is pinned by the grammar itself.
-          BARE_WORD = /\A\w+\z/
+          include Lutaml::Lml::Quoting
 
           def self.parse(data, _options = {})
             return data if data.is_a?(Hash)
@@ -78,13 +71,7 @@ module Lutaml
           end
 
           def format_key(key)
-            key = key.to_s
-            return key if key.match?(BARE_WORD)
-
-            # Same escaping as quote_value: a key may contain any
-            # character, and the emitted form must re-parse (issue #78).
-            escaped = key.gsub('\\') { |bs| bs * 2 }.gsub('"') { |q| "\\#{q}" }
-            "\"#{escaped}\""
+            quote_scalar(key)
           end
 
           def format_value(prefix, key, value, indent)
@@ -146,15 +133,9 @@ module Lutaml
           def quote_value(val)
             return val.to_s if val.is_a?(Numeric) || val.is_a?(TrueClass) || val.is_a?(FalseClass)
 
-            str = val.to_s
-            return str if str.match?(BARE_WORD)
-
             # RS 3001 §String values: escape backslash and double quote;
             # every value is representable in double quotes.
-            # gsub replacement strings re-interpret backslash pairs, so
-            # the backslash doubling uses the block form.
-            escaped = str.gsub('\\') { |bs| bs * 2 }.gsub('"') { |q| "\\#{q}" }
-            "\"#{escaped}\""
+            quote_scalar(val)
           end
         end
       end

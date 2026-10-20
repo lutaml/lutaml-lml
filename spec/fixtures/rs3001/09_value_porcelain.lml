@@ -1,7 +1,6 @@
-// 3001 §Value: canonical value construct
 models M {
   enum Finish {
-    value "Porcelain" {
+    value Porcelain {
       definition "Ceramic material made from kaolin clay"
     }
   }
