@@ -202,6 +202,7 @@ RSpec.describe "LML round-trip properties" do
     model.concat(generated_mappings(counts[4]))
 
     source = +""
+    source << "lml \"1.0\"\n\n" if numbers[9].even?
     source << "require \"gen.lml\"\n\n" if numbers[8].even?
     source << wrap_models(seed, model) unless model.empty?
     source << generated_instances(counts[5], counts[6])
