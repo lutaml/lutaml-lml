@@ -3,4 +3,9 @@
 
 require "lutaml/lml"
 
+# JSON-RPC framing is byte-oriented; text-mode newline translation would
+# turn \r\n into \r\r\n and break Content-Length.
+$stdin.binmode
+$stdout.binmode
+
 exit Lutaml::Lml::Lsp::Server.new.run
