@@ -6,6 +6,11 @@ module Lutaml
     class Document < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 
+      # Non-serialized navigation index (definitions and uses).
+      def symbols
+        @symbols ||= SymbolIndex.new(self)
+      end
+
       # Core attributes
       attribute :name, :string
       attribute :title, :string

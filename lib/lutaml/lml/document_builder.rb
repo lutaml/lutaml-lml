@@ -194,6 +194,7 @@ module Lutaml
         # become the entry's instances (RS 3001 §Enums values carrying
         # instances).
         entry = { name: inner[:name] }
+        entry[:position] = inner[:position] if inner[:position]
         entry[:attributes] = inner[:attributes] if inner[:attributes]
         if inner[:properties]
           entry[:properties] = Array(inner[:properties]).flat_map do |pair|
@@ -201,7 +202,7 @@ module Lutaml
           end
         end
         entry[:instances] = inner[:instances] if inner[:instances]
-        apply_attribute(model, :attributes, entry)
+        append_collection(model, :attributes, build(:attribute, entry))
       end
 
       # Namespace declaration bodies arrive as keyword-line members

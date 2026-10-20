@@ -65,7 +65,8 @@ module Lutaml
         when Hash
           return unless processed.is_a?(Hash)
 
-          slice = capture_slice(raw[:name]) || capture_slice(raw[:key])
+          slice = capture_slice(raw[:name]) || capture_slice(raw[:key]) ||
+                  capture_slice(raw[:value_name])
           processed[:position] = position_hash(slice) if slice
 
           raw.each_key do |key|

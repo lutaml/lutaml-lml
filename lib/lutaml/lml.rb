@@ -75,6 +75,8 @@ module Lutaml
     autoload :EntityTypes, "lutaml/lml/entity_types"
     autoload :AssociationLabelResolver, "lutaml/lml/association_label_resolver"
     autoload :Executor, "lutaml/lml/executor"
+    autoload :Lsp, "lutaml/lml/lsp"
+    autoload :SymbolIndex, "lutaml/lml/symbol_index"
     autoload :YamlParser, "lutaml/lml/yaml_parser"
     autoload :HasAttributes, "lutaml/lml/has_attributes"
     autoload :Quoting, "lutaml/lml/quoting"
