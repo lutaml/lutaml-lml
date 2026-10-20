@@ -42,7 +42,10 @@ module Lutaml
       end
 
       def include_path(line, base_dir)
-        match = line.match(/^\s*include\s+(.+)$/)
+        # Linear-time match: `\S.*` cannot overlap the leading `[ \t]+`,
+        # so a line of spaces after `include` fails in O(n) rather than
+        # backtracking quadratically (CodeQL ReDoS).
+        match = line.match(/\A[ \t]*include[ \t]+(\S.*)\z/)
         return nil unless match
 
         File.expand_path(trim_trailing_comment(match[1].strip), base_dir)
