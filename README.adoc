@@ -134,6 +134,24 @@ lutaml compile model.lml --schema json -o schemas/
 lutaml compile model.lml --schema yaml -o ceramic.schema.yaml
 ....
 
+== Editor support (LSP)
+
+The gem ships `lutaml-lml-lsp`, a Language Server Protocol server over
+stdin/stdout:
+
+....
+lutaml-lml-lsp
+....
+
+It provides push and pull diagnostics (`Lutaml::Lml::Diagnostic`
+records), document symbols (packages, classes, enums, attributes,
+instances, values), go-to-definition and find-references (types,
+values-set references, `ref:(path)` targets), hover (type, cardinality,
+default, pattern, definitions, and the null/empty/absence note),
+completion (keywords read from the compiled grammar artifact plus model
+names), and canonical formatting through the formatter. Unparseable
+documents publish a parse diagnostic and leave the server running.
+
 == Architecture
 
 The language grammar is written in PARG

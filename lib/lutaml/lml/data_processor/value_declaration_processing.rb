@@ -13,6 +13,7 @@ module Lutaml
         # member payload properties.
         def process_value_declaration(decl)
           inner = { name: unwrap_string(decl[:value_name]) }
+          inner[:position] = decl[:position] if decl[:position]
           Array(decl[:members]).each do |member|
             normalize_value_member(inner, member)
           end
