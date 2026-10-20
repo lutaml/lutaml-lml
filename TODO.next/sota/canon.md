@@ -33,19 +33,22 @@ form.
      `definition "..."`; multiline prose renders the block form with the
      body indented one level and layout edges stripped (the transform's
      BLOCK_KEYS semantics).
-   - COMMENTS. Line comments render `// body` above their member in
-     stored order. The document model stores comments as strings;
-     block-comment identity is not preserved — canonical renders all
-     comments as line comments (lossy for comment KIND, never for
-     content; recorded as a known canonicalization property).
+   - COMMENTS. The document model stores only the comments the grammar
+     retains (`**` single-line and `*|...|*` block); `//` and `/* */`
+     are lexical trivia and never reach the model, so canonicalization
+     drops them. Stored comments render above their member in stored
+     order — single-line as `** body`, multiline as `*|body|*`, the two
+     forms the grammar reads back, which is what lets the idempotence
+     law hold. Kind is normalized; content is preserved.
    - NULL/ABSENT. Definitions: nil optional members are omitted
      entirely (canonical records intent by absence; `null` appears only
-     in instance data per the value semantics). Instances: the instance
-     emitter policy stands — nil scalars omitted, explicit semantics
-     otherwise unchanged.
-2. Implement `Lutaml::Lml::Formatter::Canonical` emitting from the
-   document model (parse -> canonical text; never source-preserving —
-   the canonical form is defined, not reconstructed).
+     in instance data per the value semantics). Instances: an attribute
+     entry that is present with a nil value renders `null`; an
+     attribute that is absent is omitted — the value semantics of
+     RS 3001 hold in canonical output.
+2. Implement `Lutaml::Formatter::Canonical` (the formatter namespace)
+   emitting from the document model (parse -> canonical text; never
+   source-preserving — the canonical form is defined, not reconstructed).
 3. CLI: `lutaml format model.lml [--check]`. `--check` exits 1 with a
    diff when the file is not canonical; without it, rewrite.
 4. Idempotence law: format(format(x)) == format(x) for every corpus
