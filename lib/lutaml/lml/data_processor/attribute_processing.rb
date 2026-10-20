@@ -120,9 +120,11 @@ module Lutaml
         end
 
         # `default: "Clear"` uses the colon separator (RS 3001 §Attribute);
-        # the colon lands in the captured name and must not.
+        # the colon lands in the captured name and must not. A quoted key
+        # is verbatim, so a trailing colon there is content.
         def strip_argument_colon(name)
-          name = name[:string] if name.is_a?(Hash) && name.key?(:string)
+          return name[:string] if name.is_a?(Hash) && name.key?(:string)
+
           name.to_s.sub(/:\z/, "")
         end
       end

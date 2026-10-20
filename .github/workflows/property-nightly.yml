@@ -1,0 +1,32 @@
+name: Property laws (nightly)
+
+on:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  properties:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      # Full-depth run with a fresh seed stream. The PR job runs the
+      # same laws at reduced count/depth; a failure here prints the seed
+      # and Rantly's shrunk case in the job log.
+      - name: Run generative laws
+        env:
+          LML_PROPERTY_COUNT: '500'
+          LML_PROPERTY_DEPTH: '4'
+          LML_PROPERTY_SEED: ${{ github.run_id }}
+        run: bundle exec rspec spec/lutaml/lml/property_laws_spec.rb

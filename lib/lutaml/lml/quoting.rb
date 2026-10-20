@@ -30,6 +30,31 @@ module Lutaml
         escaped = scalar.to_s.gsub('\\') { |bs| bs * 2 }.gsub('"') { |q| "\\#{q}" }
         "\"#{escaped}\""
       end
+
+      # Float#to_s may use exponent notation, for which the language has
+      # no literal. Expand it to a plain decimal that parses back to the
+      # same Float.
+      #
+      # @param number [Numeric]
+      # @return [String] the emitted form
+      def number_scalar(number)
+        text = number.to_s
+        match = text.match(/\A(-?)(\d+)(?:\.(\d+))?[eE]([+-]?\d+)\z/)
+        return text unless match
+
+        integer = match[2]
+        digits = integer + match[3].to_s
+        point = integer.length + match[4].to_i
+        plain =
+          if point <= 0
+            "0.#{'0' * -point}#{digits}"
+          elsif point >= digits.length
+            "#{digits}#{'0' * (point - digits.length)}.0"
+          else
+            "#{digits[0...point]}.#{digits[point..]}"
+          end
+        "#{match[1]}#{plain}"
+      end
     end
   end
 end

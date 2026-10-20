@@ -96,7 +96,7 @@ grammar Lml version "1.0.0" {
 
   boolean = ( "true" / "false" ) as boolean
   null_literal = "null" as null
-  number = ( 1*%x30-39 "." 1*%x30-39 ) as float / ( 1*%x30-39 ) as number
+  number = ( [ "-" ] 1*%x30-39 "." 1*%x30-39 ) as float / ( [ "-" ] 1*%x30-39 ) as number
   variable = quoted_string / 1*word
   reference = ( "reference:(" / "ref:(" ) ( variable *( "." variable ) ) as reference ")"
   range = ( variable as start ".." variable as end ) as range
@@ -343,6 +343,7 @@ test diagram {
   accept "// leading\nclass Ceramic { }\n"
   accept "class /* inline */ Ceramic { }\n"
   accept "models M {\n}\n"
+  accept "instance X {\n  a = -42\n}\n"
   accept "models M { }"
   accept "class Ceramic { } // trailing"
   accept "instances {\n  P \"p\" {\n    url = \"http://a//b\"\n  }\n}\n"
