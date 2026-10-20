@@ -151,7 +151,8 @@ module Lutaml
       def class_header(klass)
         text = "#{declaration_visibility(klass.visibility)}#{class_modifier(klass)}"
         text += "class #{klass.name}"
-        text += " < #{klass.type}" if klass.type.to_s != ''
+        parent = klass.parent_class.to_s.empty? ? klass.type : klass.parent_class
+        text += " < #{parent}" if parent.to_s != ''
         text + stereotype_suffix(klass.stereotype)
       end
 
@@ -189,11 +190,12 @@ module Lutaml
       end
 
       def render_enum_member(value)
+        return render_attribute(value) if attribute_member?(value)
+
         description = Array(value.attributes).find { |attribute| attribute.name == 'description' }
         properties = Array(value.properties)
         instances = Array(value.instances)
-        payload = definition_present?(value.definition) || description ||
-                  properties.any? || instances.any?
+        payload = description || properties.any? || instances.any?
 
         unless payload
           line("value #{quote_scalar(value.name)}")
@@ -201,13 +203,26 @@ module Lutaml
         end
 
         render_block("value #{quote_scalar(value.name)}") do
-          member { render_definition(value.definition) } if definition_present?(value.definition)
           member { render_definition(description.type) } if description
           properties.each do |property|
             member { line("#{property.name} = #{render_data_value(unwrap(property.value))}") }
           end
           instances.each { |instance| member { render_instance(instance) } }
         end
+      end
+
+      # A member carrying the attribute shape (type, visibility, direct
+      # definition, cardinality, options) came from a bare attribute
+      # declaration, not from the `value` construct. Rendering it as a
+      # `value` block would move a direct definition into the nested
+      # description payload and change the model.
+      def attribute_member?(value)
+        value.type.to_s != '' ||
+          !public_visibility?(value.visibility) ||
+          definition_present?(value.definition) ||
+          value.cardinality || Array(value.value_set).any? ||
+          value.pattern || value.default ||
+          Array(value.stereotype).any? || value.literal
       end
 
       def render_data_type(data_type)
@@ -288,7 +303,7 @@ module Lutaml
         if terse_attribute?(attribute)
           line("attribute #{attribute.name}, #{attribute.type}")
         elsif naked_attribute?(attribute)
-          line("#{visibility_symbol(attribute.visibility)}#{attribute.name}")
+          line("#{visibility_symbol(attribute.visibility)}#{attribute_name_text(attribute.name)}")
         elsif bare_attribute?(attribute)
           render_bare_attribute(attribute)
         else
@@ -298,12 +313,14 @@ module Lutaml
 
       def terse_attribute?(attribute)
         public_visibility?(attribute.visibility) &&
+          bare_name?(attribute.name) &&
           attribute.type.to_s != '' &&
           attribute_cardinality(attribute).nil? &&
           Array(attribute.value_set).empty? &&
           Array(attribute.properties).empty? &&
           attribute.pattern.nil? && attribute.default.nil? &&
-          Array(attribute.stereotype).empty? && !attribute.literal
+          Array(attribute.stereotype).empty? && !attribute.literal &&
+          !definition_present?(attribute.definition)
       end
 
       def naked_attribute?(attribute)
@@ -319,12 +336,13 @@ module Lutaml
 
       def bare_attribute?(attribute)
         !public_visibility?(attribute.visibility) ||
+          !bare_name?(attribute.name) ||
           Array(attribute.stereotype).any? || attribute.literal ||
           definition_present?(attribute.definition)
       end
 
       def render_bare_attribute(attribute)
-        header = "#{visibility_symbol(attribute.visibility)}#{attribute.name}"
+        header = "#{visibility_symbol(attribute.visibility)}#{attribute_name_text(attribute.name)}"
         type = attribute_type_text(attribute)
         header += ": #{type}" if type != ''
         cardinality = attribute_cardinality(attribute)
@@ -337,6 +355,14 @@ module Lutaml
         end
       end
 
+      def bare_name?(name)
+        name.to_s.match?(%r{\A[A-Za-z0-9_/+]+\z})
+      end
+
+      def attribute_name_text(name)
+        bare_name?(name) ? name.to_s : quote_always(name)
+      end
+
       def attribute_type_text(attribute)
         return '' if attribute.type.to_s.empty?
 
@@ -346,7 +372,7 @@ module Lutaml
       end
 
       def render_attribute_block(attribute)
-        render_block("attribute #{attribute.name}") do
+        render_block("attribute #{attribute_name_text(attribute.name)}") do
           line("type #{attribute.type}") if attribute.type.to_s != ''
           cardinality = attribute_cardinality(attribute)
           line("cardinality #{cardinality}") if cardinality
@@ -434,7 +460,7 @@ module Lutaml
       end
 
       def render_collection_decl(collection)
-        render_block("collection #{quote_scalar(collection.name)}") do
+        render_block("collection #{quote_always(collection.name)}") do
           if Array(collection.includes).any?
             values = collection.includes.map { |value| quote_always(value) }.join(', ')
             member { line("includes [#{values}]") }
@@ -474,7 +500,7 @@ module Lutaml
           else
             "#{instance.type} #{quote_always(instance.name)}"
           end
-        label += " extends #{quote_scalar(instance.parent)}" if instance.parent.to_s != ''
+        label += " extends #{quote_always(instance.parent)}" if instance.parent.to_s != ''
         label
       end
 
@@ -484,21 +510,36 @@ module Lutaml
           return
         end
 
+        # `# text` inside an instance body parses as an attribute named
+        # Comment with no type. Emitting it as a normal assignment would
+        # reintroduce a String type on the next parse.
+        if attribute.name == 'Comment' && attribute.type.to_s.empty?
+          line("# #{unwrap(attribute.value)}")
+          return
+        end
+
         if Array(attribute.instances).any?
           render_instance_values(attribute)
         else
-          line("#{quote_scalar(attribute.name)} = #{render_data_value(unwrap(attribute.value))}")
+          line("#{assignment_prefix(attribute)}#{render_data_value(unwrap(attribute.value))}")
         end
+      end
+
+      # `name += value` extends an inherited value; the grammar stores
+      # that as the `extended` flag.
+      def assignment_prefix(attribute)
+        marker = attribute.extended ? '+' : ''
+        "#{quote_scalar(attribute.name)} #{marker}= "
       end
 
       def render_instance_values(attribute)
         values = Array(attribute.instances)
         if values.one?
-          render_instance(values.first, prefix: "#{quote_scalar(attribute.name)} = ")
+          render_instance(values.first, assignment_prefix(attribute))
           return
         end
 
-        line("#{quote_scalar(attribute.name)} = [")
+        line("#{assignment_prefix(attribute)}[")
         @level += 1
         values.each { |instance| render_instance(instance) }
         @level -= 1

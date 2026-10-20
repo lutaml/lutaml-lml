@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Lutaml
+  # Output formatters: diagram renderers and the canonical LML emitter.
   module Formatter
     autoload :Base, "lutaml/lml/formatter/base"
     autoload :Graphviz, "lutaml/lml/formatter/graphviz"

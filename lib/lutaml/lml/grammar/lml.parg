@@ -310,7 +310,7 @@ grammar Lml version "1.0.0" {
   lml_instance_body = lml_instance_members [ whitespace ]
   instance_template = [ whitespace ] "template" [ whitespace ] "{" [ whitespace ] attributes [ whitespace ] "}"
   lml_instance_members = ( instance_template ) as template / attributes
-  models = [ whitespace ] "models" [ whitespace ] variable as name [ version_declaration ] [ whitespace ] "{" ( *( ( ( string_format_definition ) as default_string_formats ) / model_body ) ) as members "}" [ whitespace ]
+  models = [ whitespace ] "models" [ whitespace ] variable as name [ version_declaration ] [ whitespace ] "{" [ whitespace ] ( *( ( ( string_format_definition ) as default_string_formats ) / model_body ) ) as members "}" [ whitespace ]
   model_body = diagram_inner_definition
 
   # ---- Data structures ----
@@ -342,6 +342,8 @@ entry diagram: diagram
 test diagram {
   accept "// leading\nclass Ceramic { }\n"
   accept "class /* inline */ Ceramic { }\n"
+  accept "models M {\n}\n"
+  accept "models M { }"
   accept "class Ceramic { } // trailing"
   accept "instances {\n  P \"p\" {\n    url = \"http://a//b\"\n  }\n}\n"
   reject "classCeramic Foo { }"

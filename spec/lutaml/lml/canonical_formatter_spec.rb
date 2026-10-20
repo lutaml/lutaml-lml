@@ -214,6 +214,64 @@ RSpec.describe Lutaml::Formatter::Canonical do
     end
   end
 
+  describe "model shapes preserved" do
+    def expect_laws(source)
+      once = canonical(source)
+
+      expect(canonical(once)).to eq(once)
+      expect(model(once)).to eq(model(source))
+      once
+    end
+
+    it "keeps an attribute definition in the bare form" do
+      output = expect_laws('class A { x: String { definition "d" } }')
+
+      expect(output).to include("  x: String {\n    definition \"d\"\n  }")
+    end
+
+    it "quotes non-word attribute names in both the naked and typed forms" do
+      naked = expect_laws('class A { "art code" { definition "d" } }')
+      typed = expect_laws('class A { "CCT Number": String }')
+
+      expect(naked).to include('"art code" {')
+      expect(typed).to include('"CCT Number": String')
+    end
+
+    it "renders a parent class from parent_class" do
+      expect(expect_laws("class A < Array { }")).to include("class A < Array {")
+    end
+
+    it "keeps direct enum member definitions direct" do
+      output = expect_laws('enum E { warning { definition "w" } }')
+
+      expect(output).to include("  warning {\n    definition \"w\"\n  }")
+    end
+
+    it "renders typed enum members as attributes" do
+      output = expect_laws("enum E { addressClassProfile: CharacterString }")
+
+      expect(output).to include("attribute addressClassProfile, CharacterString")
+    end
+
+    it "renders extended assignments with +=" do
+      output = expect_laws('instance P { a += "x" }')
+
+      expect(output).to include('a += "x"')
+    end
+
+    it "quotes collection names" do
+      output = expect_laws('instances { collection "C" { } }')
+
+      expect(output).to include('collection "C" {')
+    end
+
+    it "renders a comment-attribute of an instance as a comment" do
+      output = expect_laws("instance X {\n  # note here\n  a = \"b\"\n}")
+
+      expect(output).to include("# note here")
+    end
+  end
+
   describe "instance collections" do
     it "renders collections, references, and null distinctly" do
       source = <<~LML
