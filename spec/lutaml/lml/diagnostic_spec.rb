@@ -98,7 +98,7 @@ RSpec.describe Lutaml::Lml::Diagnostic do
 
     it "reports a missing include at the include line" do
       Dir.mktmpdir do |dir|
-        path = write(dir, "main.lml", "class A { }\ninclude \"missing.lml\"\n")
+        path = write(dir, "main.lml", "class A { }\ninclude missing.lml\n")
 
         expect { parse_file(path) }.to raise_error(Lutaml::Lml::Error) do |error|
           expect(error.diagnostic.code).to eq('parse/LML-003')

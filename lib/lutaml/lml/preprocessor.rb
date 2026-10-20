@@ -70,7 +70,7 @@ module Lutaml
 
       def read_included(path, file_path, line_number)
         File.read(path, encoding: 'UTF-8')
-      rescue Errno::ENOENT, Errno::EACCES => e
+      rescue SystemCallError => e
         raise Error.new(
           "cannot read include #{path}: #{e.message}",
           diagnostic: Diagnostic.build(
