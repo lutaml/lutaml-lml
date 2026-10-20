@@ -311,7 +311,7 @@ grammar Lml version "1.0.0" {
   instance_named = ( [ whitespace ] kw_instance_sp quoted_string as name [ ( namespaced_identifier ) as instance_type ] "{" [ whitespace ] ( ( instance ) / attributes ) "}" [ whitespace ] ) as instance
   isa_definition = [ whitespace ] kw_isa_sp ( namespaced_identifier ) as isa [ whitespace ]
   keyword_instance = ( [ whitespace ] "instance" [ ( namespaced_identifier ) as instance_type ] "{" [ whitespace ] [ isa_definition ] ( ( instance ) / attributes ) "}" ) as instance [ whitespace ]
-  class_instance = ( variable as instance_type [ whitespace ] quoted_string as name [ whitespace ] [ [ whitespace ] "extends" [ whitespace ] quoted_string as parent [ whitespace ] ] "{" [ whitespace ] [ lml_instance_body ] "}" ) as instance [ whitespace ]
+  class_instance = ( [ whitespace ] variable as instance_type [ whitespace ] quoted_string as name [ whitespace ] [ [ whitespace ] "extends" [ whitespace ] quoted_string as parent [ whitespace ] ] "{" [ whitespace ] [ lml_instance_body ] "}" ) as instance [ whitespace ]
   lml_instance_body = lml_instance_members [ whitespace ]
   instance_template = [ whitespace ] "template" [ whitespace ] "{" [ whitespace ] attributes [ whitespace ] "}"
   lml_instance_members = ( instance_template ) as template / attributes
@@ -348,6 +348,7 @@ test diagram {
   accept "// leading\nclass Ceramic { }\n"
   accept "class /* inline */ Ceramic { }\n"
   accept "lml \"1.0\"\nclass A { }\n"
+  accept "lml \"1.0\"\n\nThing \"t0\" { }\n"
   reject "lml 1.0\nclass A { }\n"
   accept "models M {\n}\n"
   accept "instance X {\n  a = -42\n}\n"

@@ -2,6 +2,8 @@
 
 module Lutaml
   module Lml
+    # Post-transform normalization: turns parse captures into the flat
+    # member hashes the document builder consumes.
     class DataProcessor
       autoload :ValueProcessing, "lutaml/lml/data_processor/value_processing"
       autoload :AttributeProcessing, "lutaml/lml/data_processor/attribute_processing"
@@ -25,7 +27,7 @@ module Lutaml
         attributes: :process_attributes,
         value_decl: :process_value_declaration,
         show_list: :process_show_list,
-        hide_list: :process_hide_list
+        hide_list: :process_hide_list,
       }.freeze
 
       def self.process(obj)
