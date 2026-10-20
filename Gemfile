@@ -4,6 +4,18 @@ source "https://rubygems.org"
 
 gemspec
 
+# Dependency HEAD verification (TODO.next/sota/contract.md): a checkout
+# path overrides the released gem so the scheduled job can run the suite
+# against upstream main without changing the gemspec.
+{
+  "LML_LUTAML_MODEL_HEAD" => "lutaml-model",
+  "LML_PARSANOL_HEAD" => "parsanol",
+  "LML_MOXML_HEAD" => "moxml",
+}.each do |env, gem_name|
+  path = ENV[env]
+  gem gem_name, path: path if path && !path.empty?
+end
+
 gem "rspec"
 gem "rubocop"
 gem "rake"

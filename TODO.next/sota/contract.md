@@ -19,3 +19,20 @@ continuously, tighten floors on evidence.
    outcome — the floor history that #80 established by accident.
 Acceptance: scheduled runs exist and report; the log has its first entry;
 no future dependency breakage ships in a release.
+
+## Verification log
+
+Run with the Gemfile path override (the same mechanism the scheduled
+workflow uses):
+
+| Date | Dependency | Commit | Outcome |
+| --- | --- | --- | --- |
+| 2026-10-20 | lutaml-model | `0697ecf` | green (816 examples) |
+| 2026-10-20 | parsanol | `4152e11` | red: `dsl_spec.rb:268` expects the deepest failure at line 25 char 32; HEAD reports the top-level sequence failure at line 1 char 1 |
+| 2026-10-20 | moxml | `59c20d0` | green (816 examples) |
+
+The parsanol HEAD finding is an error-reporting change, not a parse
+failure: broken input still raises `ParsingError`, but the position no
+longer points at the deepest failure. Record it upstream (parsanol) with
+this repro before changing the suite or pinning a floor.
+
