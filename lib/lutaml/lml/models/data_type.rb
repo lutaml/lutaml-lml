@@ -3,6 +3,8 @@
 module Lutaml
   module Lml
     class DataType < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       # From TopElement
       attribute :name, :string
       attribute :wire_mappings, "Lutaml::Lml::Mapping", collection: true, default: -> { [] }

@@ -8,7 +8,20 @@ module Lutaml
     # matching declared types) and reference validity (ref: paths resolve
     # to instances and are acyclic).
     class Validator
-      Violation = Struct.new(:rule, :message, keyword_init: true)
+      Violation = Struct.new(:rule, :message, :position, keyword_init: true)
+
+      RULE_CODES = {
+        'unique_names' => 'validation/LML-V01',
+        'unique_attribute_names' => 'validation/LML-V02',
+        'mandatory_attributes' => 'validation/LML-V03',
+        'type_conformity' => 'validation/LML-V04',
+        'values_set_membership' => 'validation/LML-V05',
+        'unknown_attributes' => 'validation/LML-V06',
+        'reference_validity' => 'validation/LML-V07',
+        'reference_circularity' => 'validation/LML-V08',
+        'pattern_conformity' => 'validation/LML-V09',
+        'pattern_compiles' => 'validation/LML-V10'
+      }.freeze
 
       PRIMITIVE_CONFORMITY = {
         'Integer' => /\A-?\d+\z/,
@@ -24,8 +37,28 @@ module Lutaml
         new(document).violations
       end
 
+      # The structured form of the same rules: one Diagnostic per
+      # violation, with its code and the source position of the
+      # offending member when the parser retained one.
+      def self.diagnostics(document)
+        new(document).diagnostics
+      end
+
       def initialize(document)
         @document = document
+      end
+
+      def diagnostics
+        violations.map do |violation|
+          Diagnostic.build(
+            RULE_CODES.fetch(violation.rule),
+            message: violation.message,
+            file: @document.source_path,
+            line: violation.position&.line,
+            column: violation.position&.column,
+            length: violation.position&.length
+          )
+        end
       end
 
       def violations
@@ -91,7 +124,8 @@ module Lutaml
 
             Violation.new(
               rule: 'unique_names',
-              message: "'#{name}' is defined #{count} times in #{scope_label}"
+              message: "'#{name}' is defined #{count} times in #{scope_label}",
+              position: definitions.find { |definition| definition.name.to_s == name }&.source_position
             )
           end
         end
@@ -105,7 +139,8 @@ module Lutaml
 
           Violation.new(
             rule: 'unique_attribute_names',
-            message: "#{name}: duplicate attribute(s) #{dupes.inspect}"
+            message: "#{name}: duplicate attribute(s) #{dupes.inspect}",
+            position: definition.source_position
           )
         end
       end
@@ -114,11 +149,58 @@ module Lutaml
         Array(definition.attributes).map(&:name).map(&:to_s)
       end
 
+      def entry_position(instance, name)
+        entry = Array(instance.attributes).find { |attribute| attribute.name.to_s == name }
+        entry&.source_position || instance.source_position
+      end
+
+      # RS 3001 par. Attribute: a `pattern` declaration constrains
+      # string values; a pattern that does not compile is itself a
+      # definition error.
+      def pattern_violations(instance)
+        definition = type_definitions[definition_type(instance)]
+        return [] unless definition.is_a?(UmlClass) || definition.is_a?(DataType)
+
+        instance_attribute_pairs(instance).filter_map do |name, value|
+          attr = Array(definition.attributes).find { |a| a.name.to_s == name }
+          next unless attr&.pattern
+
+          regexp = compile_pattern(attr.pattern)
+          next invalid_pattern_violation(definition_type(instance), name, attr) unless regexp
+
+          literal = value.respond_to?(:value) ? value.value : value
+          next unless literal.is_a?(String)
+          next if regexp.match?(literal)
+
+          Violation.new(
+            rule: 'pattern_conformity',
+            message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
+                     "does not match #{attr.pattern.inspect}, got #{literal.inspect}",
+            position: entry_position(instance, name)
+          )
+        end
+      end
+
+      def compile_pattern(pattern)
+        Regexp.new(pattern)
+      rescue RegexpError
+        nil
+      end
+
+      def invalid_pattern_violation(type, name, attr)
+        Violation.new(
+          rule: 'pattern_compiles',
+          message: "#{type}: attribute '#{name}' has an invalid pattern #{attr.pattern.inspect}",
+          position: attr.source_position
+        )
+      end
+
       def instance_violations
         instances.flat_map do |instance|
           mandatory_violations(instance) +
             type_conformity_violations(instance) +
             values_set_violations(instance) +
+            pattern_violations(instance) +
             unknown_attribute_violations(instance) +
             reference_violations(instance)
         end.compact
@@ -140,7 +222,8 @@ module Lutaml
           Violation.new(
             rule: 'values_set_membership',
             message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
-                     "must be one of #{attr.value_set.inspect}, got #{literal.to_s.inspect}"
+                     "must be one of #{attr.value_set.inspect}, got #{literal.to_s.inspect}",
+            position: entry_position(instance, name)
           )
         end
       end
@@ -156,7 +239,8 @@ module Lutaml
             Violation.new(
               rule: 'unknown_attributes',
               message: "instance '#{instance_name(instance)}' (#{definition_type(instance)}): " \
-                       "unknown attribute '#{name}'"
+                       "unknown attribute '#{name}'",
+              position: entry_position(instance, name)
             )
           end
       end
@@ -176,7 +260,8 @@ module Lutaml
           Violation.new(
             rule: 'mandatory_attributes',
             message: "instance '#{instance_name(instance)}' (#{definition_type(instance)}): " \
-                     "mandatory attribute '#{attr.name}' is not populated"
+                     "mandatory attribute '#{attr.name}' is not populated",
+            position: instance.source_position
           )
         end
       end
@@ -207,7 +292,8 @@ module Lutaml
         Violation.new(
           rule: 'type_conformity',
           message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
-                   "expects #{attr.type}, got #{value.to_s.inspect}"
+                   "expects #{attr.type}, got #{value.to_s.inspect}",
+          position: entry_position(instance, name)
         )
       end
 
@@ -218,7 +304,8 @@ module Lutaml
             next Violation.new(
               rule: 'reference_validity',
               message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
-                       "references unknown path '#{path}'"
+                       "references unknown path '#{path}'",
+              position: entry_position(instance, name)
             )
           end
 
@@ -241,7 +328,7 @@ module Lutaml
         @collection_names ||= [@document.instances&.name].compact
       end
 
-      def attribute_violation(instance, _name, path, target)
+      def attribute_violation(instance, name, path, target)
         segment = path.to_s.split('.')[1]
         target_instance = instances.find { |i| instance_name(i) == target }
         return if segment.nil? || target_instance.nil? ||
@@ -250,7 +337,8 @@ module Lutaml
         Violation.new(
           rule: 'reference_validity',
           message: "instance '#{instance_name(instance)}': reference '#{path}' " \
-                   "does not resolve (no attribute '#{segment}' on '#{target}')"
+                   "does not resolve (no attribute '#{segment}' on '#{target}')",
+          position: entry_position(instance, name)
         )
       end
 
@@ -306,7 +394,8 @@ module Lutaml
         cycles.map do |cycle|
           Violation.new(
             rule: 'reference_circularity',
-            message: "circular reference: #{cycle.join(' -> ')}"
+            message: "circular reference: #{cycle.join(' -> ')}",
+            position: instances.find { |instance| instance_name(instance) == cycle.first }&.source_position
           )
         end
       end

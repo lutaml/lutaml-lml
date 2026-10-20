@@ -73,6 +73,17 @@ module Lutaml
         return {} unless doc.instance
 
         hydrate_instance(doc.instance)
+      rescue Lutaml::Lml::Error
+        raise
+      rescue StandardError => e
+        raise HydrationError.new(
+          "hydration failed: #{e.message}",
+          diagnostic: Diagnostic.build(
+            'hydration/LML-H01',
+            message: e.message,
+            file: input.is_a?(Document) ? input.source_path : nil
+          )
+        )
       end
 
       def compiled_classes

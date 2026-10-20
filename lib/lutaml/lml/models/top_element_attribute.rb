@@ -3,6 +3,8 @@
 module Lutaml
   module Lml
     class TopElementAttribute < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       # Core attributes
       attribute :name, :string
       attribute :visibility, :string, default: "public"

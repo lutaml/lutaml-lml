@@ -18,7 +18,7 @@ module Lutaml
       end
 
       def call
-        expand_lines(@input_file.read, @input_file.base_dir, [])
+        expand_lines(@input_file.read, @input_file.base_dir, [], @input_file.path)
       end
 
       private
@@ -27,20 +27,31 @@ module Lutaml
       # skip (parsanol-ruby#134); only include directives are expanded
       # here. Line structure is preserved so parse-error positions
       # match the source.
-      def expand_lines(text, base_dir, chain)
-        validate_block_comments(text)
+      def expand_lines(text, base_dir, chain, file_path)
+        validate_block_comments(text, file_path)
         text.split(/\r?\n/)
-            .flat_map { |line| expand_line(line, base_dir, chain) }
+            .each_with_index
+            .flat_map { |line, index| expand_line(line, base_dir, chain, file_path, index + 1) }
             .join("\n")
       end
 
-      def expand_line(line, base_dir, chain)
+      def expand_line(line, base_dir, chain, file_path, line_number)
         path = include_path(line, base_dir)
         return [line] unless path
 
-        raise Error, "circular include detected: #{path}" if chain.include?(path)
+        if chain.include?(path)
+          raise Error.new(
+            "circular include detected: #{path}",
+            diagnostic: Diagnostic.build(
+              'parse/LML-003',
+              message: "circular include detected: #{path}",
+              file: file_path, line: line_number, column: 1
+            )
+          )
+        end
 
-        expand_lines(read_included(path), File.dirname(path), chain + [path])
+        expand_lines(read_included(path, file_path, line_number),
+                     File.dirname(path), chain + [path], path)
       end
 
       def include_path(line, base_dir)
@@ -57,17 +68,24 @@ module Lutaml
         path.sub(%r{\s+(//|/\*).*}, '')
       end
 
-      def read_included(path)
+      def read_included(path, file_path, line_number)
         File.read(path, encoding: 'UTF-8')
       rescue Errno::ENOENT, Errno::EACCES => e
-        raise Error, "cannot read include #{path}: #{e.message}"
+        raise Error.new(
+          "cannot read include #{path}: #{e.message}",
+          diagnostic: Diagnostic.build(
+            'parse/LML-003',
+            message: "cannot read include: #{path}",
+            file: file_path, line: line_number, column: 1
+          )
+        )
       end
 
       # Quote-aware scan: a `/*` opened outside a string literal or a
       # line comment must close before end of input. The grammar's
       # trivia would otherwise reject the text with an unrelated
       # expected-token error.
-      def validate_block_comments(text)
+      def validate_block_comments(text, file_path)
         quote = nil
         pos = 0
         open_index = nil
@@ -97,7 +115,15 @@ module Lutaml
         return unless open_index
 
         line = text[0...open_index].count("\n") + 1
-        raise Error, "unterminated block comment at line #{line}"
+        column = open_index - (text.rindex("\n", open_index) || -1)
+        raise Error.new(
+          "unterminated block comment at line #{line}",
+          diagnostic: Diagnostic.build(
+            'parse/LML-002',
+            message: 'unterminated block comment',
+            file: file_path, line: line, column: column
+          )
+        )
       end
     end
   end

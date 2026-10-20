@@ -6,6 +6,8 @@ module Lutaml
     # The compiler generates the corresponding Lutaml::Model::XmlNamespace
     # subclass for the compiled model namespace.
     class Namespace < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       attribute :name, :string
       attribute :uri, :string
       attribute :prefix, :string

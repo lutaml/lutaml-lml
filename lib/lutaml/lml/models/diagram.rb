@@ -3,6 +3,8 @@
 module Lutaml
   module Lml
     class Diagram < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       attribute :name, :string
       attribute :definition, Lutaml::Lml::Types::TextType
       attribute :keyword, :string

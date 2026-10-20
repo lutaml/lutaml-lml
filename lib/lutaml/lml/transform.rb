@@ -50,7 +50,51 @@ module Lutaml
       BLOCK_KEYS = %i[definition comments].freeze
 
       def apply(tree, context = nil)
-        strip_block_layout(super)
+        processed = super
+        attach_positions(tree, processed)
+        strip_block_layout(processed)
+      end
+
+      # Retains the source position of name/key captures as a :position
+      # hash beside the transformed value. The document builder moves it
+      # onto the model as non-serialized metadata (see Positioned).
+      def attach_positions(raw, processed)
+        case raw
+        when Hash
+          return unless processed.is_a?(Hash)
+
+          slice = capture_slice(raw[:name]) || capture_slice(raw[:key])
+          processed[:position] = position_hash(slice) if slice
+
+          raw.each_key do |key|
+            attach_positions(raw[key], processed[key]) if processed.key?(key)
+          end
+        when Array
+          return unless processed.is_a?(Array)
+
+          raw.each_with_index do |item, index|
+            attach_positions(item, processed[index]) if index < processed.length
+          end
+        end
+      end
+
+      # A name capture is either a bare token (a Slice) or a quoted
+      # string (a hash holding the inner Slice).
+      def capture_slice(node)
+        return node if node.is_a?(Parsanol::Slice)
+        return node[:string] if node.is_a?(Hash) && node[:string].is_a?(Parsanol::Slice)
+
+        nil
+      end
+
+      def position_hash(slice)
+        line, column = slice.line_and_column
+        {
+          line: line,
+          column: column,
+          offset: slice.offset,
+          length: slice.content.to_s.bytesize
+        }
       end
 
       def strip_block_layout(node)

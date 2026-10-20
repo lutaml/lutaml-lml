@@ -3,6 +3,8 @@
 module Lutaml
   module Lml
     class PrimitiveType < Lutaml::Model::Serializable
+      include Lutaml::Lml::Positioned
+
       # Primitives in LML are name-only entities, but the formatter
       # accesses the same attributes as DataType via format_class.
       attribute :name, :string
