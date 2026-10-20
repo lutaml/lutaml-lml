@@ -66,6 +66,7 @@ module Lutaml
     autoload :Executor, "lutaml/lml/executor"
     autoload :YamlParser, "lutaml/lml/yaml_parser"
     autoload :HasAttributes, "lutaml/lml/has_attributes"
+    autoload :Quoting, "lutaml/lml/quoting"
     autoload :VERSION, "lutaml/lml/version"
 
     # Type classes (Lutaml::Model::Type::Value subclasses, not models)

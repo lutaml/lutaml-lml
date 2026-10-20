@@ -1,4 +1,3 @@
-// 3001 §Reuse: external file inclusion + models block
 models Ceramics {
   class Kiln {
     attribute program, String

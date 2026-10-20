@@ -110,6 +110,31 @@ module Lutaml
         report_validation(errors)
       end
 
+      desc 'format [PATHS]', 'Render LML files in canonical form'
+      long_desc <<-DESC
+        Rewrite LML files into the RS 3001 canonical form (deterministic
+        member order, two-space layout, canonical attribute forms and
+        quoting).
+
+        With --check, files are not modified: each non-canonical file is
+        reported with a diff and the command exits 1.
+
+        Examples:
+          lutaml lml format model.lml
+
+          lutaml lml format model.lml --check
+      DESC
+      method_option :check, type: :boolean, default: false,
+                            desc: 'Report non-canonical files instead of rewriting them'
+      def format(*paths)
+        assert_input_paths(paths)
+
+        noncanonical = paths.reject { |path| file_canonical?(path) }
+        return if noncanonical.empty?
+
+        exit 1
+      end
+
       desc 'compile PATH', 'Compile LML model definitions into Ruby classes'
       long_desc <<-DESC
         Parse an LML file containing model definitions and compile them
@@ -204,6 +229,84 @@ module Lutaml
 
         def schema_file_stem(name)
           name.split('::').last.gsub(/[^a-zA-Z0-9]+/, '_').downcase
+        end
+
+        def file_canonical?(path)
+          input = Pathname.new(path)
+          raise Thor::Error, "File does not exist: #{path}" unless input.exist?
+
+          source = input.read
+          canonical = canonical_source(source)
+          return true if source == canonical
+
+          if options[:check]
+            say diff_source(source, canonical, path)
+            say "#{path} is not canonical", :red
+            false
+          else
+            input.write(canonical)
+            say "Formatted: #{path}", :green
+            true
+          end
+        end
+
+        def canonical_source(source)
+          document = Lutaml::Lml.parse_document(source)
+          ::Lutaml::Formatter::Canonical.new(document).render
+        end
+
+        def diff_source(source, canonical, path)
+          old_lines = source.lines.map(&:chomp)
+          new_lines = canonical.lines.map(&:chomp)
+          out = ["--- #{path}", "+++ #{path} (canonical)"]
+          out.concat(diff_lines(old_lines, new_lines))
+          out.join("\n")
+        end
+
+        def diff_lines(old_lines, new_lines)
+          return ['(diff omitted: file too large)'] if old_lines.length * new_lines.length > 4_000_000
+
+          table = Array.new(old_lines.length + 1) do
+            Array.new(new_lines.length + 1, 0)
+          end
+          (old_lines.length - 1).downto(0) do |i|
+            (new_lines.length - 1).downto(0) do |j|
+              table[i][j] = if old_lines[i] == new_lines[j]
+                              table[i + 1][j + 1] + 1
+                            else
+                              [table[i + 1][j], table[i][j + 1]].max
+                            end
+            end
+          end
+          walk_diff(old_lines, new_lines, table)
+        end
+
+        def walk_diff(old_lines, new_lines, table)
+          result = []
+          i = 0
+          j = 0
+          while i < old_lines.length && j < new_lines.length
+            if old_lines[i] == new_lines[j]
+              result << "  #{old_lines[i]}"
+              i += 1
+              j += 1
+            elsif table[i + 1][j] >= table[i][j + 1]
+              result << "- #{old_lines[i]}"
+              i += 1
+            else
+              result << "+ #{new_lines[j]}"
+              j += 1
+            end
+          end
+          while i < old_lines.length
+            result << "- #{old_lines[i]}"
+            i += 1
+          end
+          while j < new_lines.length
+            result << "+ #{new_lines[j]}"
+            j += 1
+          end
+          result
         end
 
         def assert_input_paths(paths)

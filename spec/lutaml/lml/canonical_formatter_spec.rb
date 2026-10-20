@@ -1,0 +1,304 @@
+# frozen_string_literal: true
+
+require "spec_helper"
+require "tmpdir"
+require "lutaml/lml/cli"
+
+RSpec.describe Lutaml::Formatter::Canonical do
+  # Explicitly-assigned defaults that mean the same thing as absent
+  # (the parser records `+x` as visibility public, for instance).
+  def default_values
+    {
+      "visibility" => "public",
+      "literal" => false,
+      "is_derived" => false,
+      "is_static" => false,
+      "is_read_only" => false,
+      "is_abstract" => false,
+    }
+  end
+
+  def parse(source)
+    Lutaml::Lml.parse_document(source)
+  end
+
+  def canonical(source)
+    described_class.new(parse(source)).render
+  end
+
+  # Model comparison for the semantic law: default-valued keys are
+  # equated with absence, the cardinality default [0..1] is equated
+  # with an omitted cardinality, and the unbounded token * with n.
+  def normalize(node)
+    case node
+    when Hash
+      node.each_with_object({}) do |(key, value), result|
+        next if default_values.key?(key) && default_values[key] == value
+
+        if key == "cardinality" && value.is_a?(Hash)
+          next if value["min"] == "0" && value["max"] == "1"
+
+          result[key] = value.merge("max" => unbounded(value["max"]))
+          next
+        end
+
+        result[key] = normalize(value)
+      end
+    when Array
+      node.map { |item| normalize(item) }
+    else
+      node
+    end
+  end
+
+  def unbounded(max)
+    max == "*" ? "n" : max
+  end
+
+  def model(source)
+    normalize(parse(source).to_hash)
+  end
+
+  describe "corpus laws" do
+    Dir[fixtures_path("rs3001/*.lml")].each do |path|
+      it "canonicalizes #{File.basename(path)} idempotently and preserves the model" do
+        source = File.read(path)
+        once = canonical(source)
+
+        expect(canonical(once)).to eq(once)
+        expect(model(once)).to eq(model(source))
+      end
+    end
+
+    it "keeps the vendored corpus canonical", :aggregate_failures do
+      Dir[fixtures_path("rs3001/*.lml")].each do |path|
+        source = File.read(path)
+
+        expect(canonical(source)).to eq(source), "#{path} is not canonical"
+      end
+    end
+  end
+
+  describe "member order and layout" do
+    it "renders fixed groups with declaration order inside a group" do
+      source = <<~LML
+        instances Z { }
+        class B { }
+        enum E { }
+        class A { }
+      LML
+
+      expect(canonical(source)).to eq(<<~LML)
+        class B {
+        }
+
+        class A {
+        }
+
+        enum E {
+        }
+
+        instances Z {
+        }
+      LML
+    end
+
+    it "packs the models wrapper and ends with one newline" do
+      source = "models M { class A { attribute x, String } }"
+
+      expect(canonical(source)).to eq(<<~LML)
+        models M {
+          class A {
+            attribute x, String
+          }
+        }
+      LML
+    end
+
+    it "emits no blank first or last body line" do
+      expect(canonical("class A { }")).to eq("class A {\n}\n")
+    end
+  end
+
+  describe "attribute forms" do
+    it "uses the terse comma form for name and type only" do
+      expect(canonical("class A { attribute x, String }"))
+        .to include("attribute x, String")
+    end
+
+    it "uses the block form for cardinality and options" do
+      source = <<~LML
+        class A {
+          attribute x, String {
+            cardinality 0..n
+            values { a, b }
+            pattern /\\d+/
+          }
+        }
+      LML
+
+      expect(canonical(source)).to eq(<<~LML)
+        class A {
+          attribute x {
+            type String
+            cardinality 0..n
+            values { a, b }
+            pattern /\\d+/
+          }
+        }
+      LML
+    end
+
+    it "omits the default cardinality [0..1]" do
+      expect(canonical("class A { attribute x, String { cardinality 0..1 } }"))
+        .to include("attribute x, String")
+    end
+
+    it "renders visibility as a symbol prefix only when non-public" do
+      source = "class A { -x: String [0..1] }"
+
+      expect(canonical(source)).to include("-x: String")
+      expect(canonical("class A { attribute x, String }"))
+        .not_to include("+x")
+    end
+
+    it "renders definitions in the line or block form" do
+      line = canonical('class A { definition "one line" }')
+      block = canonical("class A { definition { one\ntwo } }")
+
+      expect(line).to include('definition "one line"')
+      expect(block).to include("  definition {\n    one\n    two\n  }")
+    end
+  end
+
+  describe "quoting and value semantics" do
+    it "quotes non-word values and escapes quotes and backslashes" do
+      source = 'instance R { name = "Raku \"kiln\" fired" note = "" retired = null }'
+
+      expect(canonical(source)).to eq(<<~LML)
+        instance R {
+          name = "Raku \\"kiln\\" fired"
+
+          note = ""
+
+          retired = null
+        }
+      LML
+    end
+
+    it "keeps bare-word instance names quoted" do
+      expect(canonical('instance "paris" Studio { }'))
+        .to include('Studio "paris"')
+    end
+  end
+
+  describe "comments" do
+    it "preserves comment content and canonicalizes the kind" do
+      source = <<~LML
+        ** top
+        *|multi
+        line|*
+        class A {
+          ** inner
+        }
+      LML
+
+      once = canonical(source)
+      parsed = parse(once)
+
+      expect(parsed.comments).to eq(%W[top multi\nline])
+      expect(parsed.classes.first.comments).to eq(["inner"])
+      expect(canonical(once)).to eq(once)
+      expect(once).to include("** top")
+      expect(once).to include("*|multi\nline|*")
+    end
+  end
+
+  describe "instance collections" do
+    it "renders collections, references, and null distinctly" do
+      source = <<~LML
+        instances Glazes {
+          GlazeFormula "blue_matte" {
+            components = ["silica", "cobalt"]
+            retired = null
+          }
+
+          CeramicTile "tile_002" {
+            glaze = ref:(Glazes.blue_matte)
+          }
+        }
+      LML
+
+      expect(canonical(source)).to eq(<<~LML)
+        instances Glazes {
+          GlazeFormula "blue_matte" {
+            components = ["silica", "cobalt"]
+
+            retired = null
+          }
+
+          CeramicTile "tile_002" {
+            glaze = ref:(Glazes.blue_matte)
+          }
+        }
+      LML
+    end
+  end
+end
+
+RSpec.describe "lutaml format" do
+  let(:noncanonical) { "class B { }\nclass A { }\n" }
+
+  def run(*args)
+    Lutaml::Cli::LmlCommands.start(args)
+  end
+
+  it "rewrites a file into canonical form" do
+    Dir.mktmpdir do |dir|
+      path = File.join(dir, "model.lml")
+      File.write(path, noncanonical)
+
+      run("format", path)
+
+      expect(File.read(path)).to eq(<<~LML)
+        class B {
+        }
+
+        class A {
+        }
+      LML
+    end
+  end
+
+  it "reports a non-canonical file with a diff and exits 1 under --check" do
+    Dir.mktmpdir do |dir|
+      path = File.join(dir, "model.lml")
+      File.write(path, noncanonical)
+
+      output = StringIO.new
+      original = $stdout
+      $stdout = output
+      begin
+        expect { run("format", path, "--check") }.to raise_error(SystemExit) do |error|
+          expect(error.status).to eq(1)
+        end
+      ensure
+        $stdout = original
+      end
+
+      expect(output.string).to include("--- #{path}", "+++ #{path} (canonical)")
+      expect(output.string).to include("#{path} is not canonical")
+      expect(File.read(path)).to eq(noncanonical)
+    end
+  end
+
+  it "exits zero under --check when the file is already canonical" do
+    Dir.mktmpdir do |dir|
+      path = File.join(dir, "model.lml")
+      File.write(path, noncanonical)
+      run("format", path)
+
+      expect { run("format", path, "--check") }.not_to raise_error
+    end
+  end
+end

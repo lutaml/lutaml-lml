@@ -1,9 +1,18 @@
-// 3001 §Package: package with enums and classes (also §Attribute comma form, cardinality, enum values shorthand)
 package Ceramics {
-  enum FiringProfile { values { "low", "medium", "high" } }
-
   class CeramicTile {
-    attribute dimensions, float { cardinality 2 }  // [length, width]
+    attribute dimensions {
+      type float
+      cardinality 2
+    }
+
     attribute firing_profile, FiringProfile
+  }
+
+  enum FiringProfile {
+    value low
+
+    value medium
+
+    value high
   }
 }
