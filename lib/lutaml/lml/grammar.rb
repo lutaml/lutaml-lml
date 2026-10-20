@@ -20,6 +20,19 @@ module Lutaml
       GRAMMAR_PATH = File.expand_path('grammar/lml.parg', __dir__)
       ARTIFACT_PATH = File.expand_path('grammar/lml.artifact.json', __dir__)
 
+      # The language version this build implements, read from the
+      # compiled artifact (falling back to the grammar text when the
+      # artifact is absent). Version negotiation compares document
+      # prologues against it.
+      def self.version
+        @version ||= begin
+          envelope = JSON.parse(File.read(ARTIFACT_PATH, encoding: 'UTF-8'))
+          envelope['version'].to_s
+        rescue StandardError
+          File.read(GRAMMAR_PATH, encoding: 'UTF-8')[/grammar \w+ version "([^"]+)"/, 1] || '0.0.0'
+        end
+      end
+
       def self.artifact
         @artifact ||= load_artifact || compile_artifact
       end

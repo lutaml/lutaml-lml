@@ -86,6 +86,10 @@ module Lutaml
           severity: 'error',
           remedy: 'Check the imported view path and the imported files.',
         },
+        'contract/LML-C06' => {
+          severity: 'warning',
+          remedy: 'Use a supported language version or upgrade lutaml-lml.',
+        },
       }.freeze
 
       attribute :code, :string
