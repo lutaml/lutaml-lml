@@ -4,11 +4,13 @@ require 'parsanol'
 
 module Lutaml
   module Lml
+    # Converts the raw parsanol tree into the processed hash, retaining
+    # source positions as non-serialized metadata.
     class Transform < Parsanol::Transform
       VISIBILITY_MAP = {
         '-' => 'private',
         '#' => 'protected',
-        '~' => 'package'
+        '~' => 'package',
       }.freeze
 
       rule(visibility_modifier: simple(:visibility_value)) do
@@ -93,7 +95,7 @@ module Lutaml
           line: line,
           column: column,
           offset: slice.offset,
-          length: slice.content.to_s.bytesize
+          length: slice.content.to_s.bytesize,
         }
       end
 

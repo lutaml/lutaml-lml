@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # A relationship between two class ends.
     class Association < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 

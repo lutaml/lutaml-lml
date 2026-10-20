@@ -2,6 +2,8 @@
 
 module Lutaml
   module Lml
+    # Builds domain model objects from processed parse hashes, applying
+    # source positions as non-serialized metadata.
     class DocumentBuilder
       # Default registry: builder keys → LML model classes.
       # Callers needing a different mapping can pass their own registry
@@ -28,7 +30,7 @@ module Lutaml
         derived_field: ::Lutaml::Lml::DerivedField,
         member_field: ::Lutaml::Lml::MemberField,
         namespace: ::Lutaml::Lml::Namespace,
-        serialization_mapping: ::Lutaml::Lml::SerializationMapping
+        serialization_mapping: ::Lutaml::Lml::SerializationMapping,
       }.freeze
 
       attr_reader :registry
@@ -60,7 +62,7 @@ module Lutaml
         member_fields: :member_field,
         namespaces: :namespace,
         serialization_mappings: :serialization_mapping,
-        instances: :instance
+        instances: :instance,
       }.freeze
 
       FACTORY_KEYS.each do |key|
@@ -158,9 +160,7 @@ module Lutaml
       # letting lutaml-model cast raw hashes, so nested entities keep
       # their non-serialized source metadata (positions).
       def apply_collection_members(model, hash)
-        if model.is_a?(Document) && hash.key?(:instances)
-          model.instances = build(:instance_collection, hash.delete(:instances))
-        end
+        model.instances = build(:instance_collection, hash.delete(:instances)) if model.is_a?(Document) && hash.key?(:instances)
 
         MEMBER_KEY_MAP.each do |plural_key, singular_key|
           data = hash.delete(plural_key)
@@ -195,9 +195,11 @@ module Lutaml
         # instances).
         entry = { name: inner[:name] }
         entry[:attributes] = inner[:attributes] if inner[:attributes]
-        entry[:properties] = Array(inner[:properties]).flat_map do |pair|
-          pair.is_a?(Hash) ? [pair] : Array(pair)
-        end if inner[:properties]
+        if inner[:properties]
+          entry[:properties] = Array(inner[:properties]).flat_map do |pair|
+            pair.is_a?(Hash) ? [pair] : Array(pair)
+          end
+        end
         entry[:instances] = inner[:instances] if inner[:instances]
         apply_attribute(model, :attributes, entry)
       end
@@ -322,22 +324,22 @@ module Lutaml
         end
       end
 
-      def normalize_operation_hash(op)
-        op = op.dup
-        if (vis = op.delete(:visibility_modifier))
-          op[:visibility] = Transform::VISIBILITY_MAP.fetch(vis.to_s, 'public')
+      def normalize_operation_hash(operation)
+        operation = operation.dup
+        if (vis = operation.delete(:visibility_modifier))
+          operation[:visibility] = Transform::VISIBILITY_MAP.fetch(vis.to_s, 'public')
         end
-        stereo = op[:stereotype]
+        stereo = operation[:stereotype]
         if stereo
           items = stereo.is_a?(Array) ? stereo : [stereo]
-          op[:stereotype] = items.map { |x| x.is_a?(Hash) ? x[:stereotype].to_s : x.to_s }
+          operation[:stereotype] = items.map { |x| x.is_a?(Hash) ? x[:stereotype].to_s : x.to_s }
         end
-        params = op[:owned_parameter]
+        params = operation[:owned_parameter]
         if params
           list = params.is_a?(Array) ? params : [params]
-          op[:owned_parameter] = list.map { |param| normalize_operation_param(param) }
+          operation[:owned_parameter] = list.map { |param| normalize_operation_param(param) }
         end
-        op
+        operation
       end
 
       def normalize_operation_param(param)
@@ -435,8 +437,8 @@ module Lutaml
       end
 
       def build_string_format(section)
-        items = section[:items].to_a.each_with_object({}) do |item, acc|
-          acc[item[:key].to_sym] = unquote(item[:value])
+        items = section[:items].to_a.to_h do |item|
+          [item[:key].to_sym, unquote(item[:value])]
         end
         build(:string_format,
               format: unquote(section[:format]),

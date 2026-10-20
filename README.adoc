@@ -80,6 +80,8 @@ json` emits the diagnostic array machine-readably.
 |`contract/LML-C01` |Input file not found |Check the path of the input file.
 |`contract/LML-C02` |Unsupported input format |Use one of the supported input formats.
 |`contract/LML-C03` |Input file could not be read or parsed in its format |Check the input file and its format.
+|`contract/LML-C04` |Invalid cardinality token while compiling |Use a cardinality token such as `1`, `0..1`, or `0..n`.
+|`contract/LML-C05` |View import could not be resolved |Check the imported view path and the imported files.
 |===
 
 == Value semantics

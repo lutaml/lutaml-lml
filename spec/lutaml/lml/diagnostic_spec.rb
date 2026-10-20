@@ -42,7 +42,7 @@ RSpec.describe Lutaml::Lml::Diagnostic do
     it "renders path, position, code, message, and remedy" do
       diagnostic = described_class.build(
         'validation/LML-V01', message: "'Tile' is defined twice",
-        file: 'model.lml', line: 3, column: 7
+                              file: 'model.lml', line: 3, column: 7
       )
 
       expect(diagnostic.to_s).to eq(<<~TEXT.chomp)
@@ -195,8 +195,8 @@ RSpec.describe Lutaml::Lml::Diagnostic do
             "severity" => "error",
             "file" => path,
             "line" => 1,
-            "column" => 7
-          )
+            "column" => 7,
+          ),
         )
       end
     end

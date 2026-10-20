@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # A named constraint on a class.
     class Constraint < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 

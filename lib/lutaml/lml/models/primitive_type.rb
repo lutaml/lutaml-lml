@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # A primitive type declaration.
     class PrimitiveType < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 
@@ -14,11 +15,11 @@ module Lutaml
       attribute :visibility, :string, default: "public"
       attribute :is_abstract, :boolean, default: false
       attribute :attributes, "Lutaml::Lml::TopElementAttribute", collection: true,
-                                                                   default: -> { [] }
+                                                                 default: -> { [] }
       attribute :operations, "Lutaml::Lml::Operation", collection: true,
-                                                         default: -> { [] }
+                                                       default: -> { [] }
       attribute :associations, "Lutaml::Lml::Association", collection: true,
-                                                             default: -> { [] }
+                                                           default: -> { [] }
 
       def self.entity_type
         :primitives

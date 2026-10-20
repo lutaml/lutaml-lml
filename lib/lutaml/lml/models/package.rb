@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # A package grouping model definitions.
     class Package < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 

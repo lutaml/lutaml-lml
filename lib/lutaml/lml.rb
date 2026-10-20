@@ -17,6 +17,7 @@ module Lutaml
   # and renders diagrams. See the entry-point contract under .parse /
   # .parse_document below.
   module Lml
+    # Base error for LML failures; carries an optional Diagnostic.
     class Error < Lutaml::Error
       # Structured record for the failure, when one could be built.
       attr_reader :diagnostic
@@ -26,6 +27,7 @@ module Lutaml
         super(message)
       end
     end
+
     class ParsingError < Error; end
     class ImportError < Error; end
     class HydrationError < Error; end

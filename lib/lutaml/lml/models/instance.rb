@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # An instance with attribute assignments.
     class Instance < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 

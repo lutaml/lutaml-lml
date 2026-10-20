@@ -39,7 +39,7 @@ module Lutaml
           message: error.message.lines.first.to_s.strip,
           file: @input.path,
           line: line,
-          column: column
+          column: column,
         )
       end
 
@@ -50,9 +50,7 @@ module Lutaml
       def failure_message(error)
         detail = error.message.lines.first.to_s.strip
         line, column = failure_location(error)
-        location = if line && !detail.match?(/at line \d+ char \d+/)
-                     " at line #{line} char #{column}."
-                   end
+        location = (" at line #{line} char #{column}." if line && !detail.match?(/at line \d+ char \d+/))
         "#{detail}#{location}\ncause: #{error.parse_failure_cause&.ascii_tree}"
       end
 
