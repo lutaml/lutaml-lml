@@ -361,7 +361,12 @@ module Lutaml
           document = parse_document(input_path)
           diagnostics = Lutaml::Lml::Validator.diagnostics(document)
           if diagnostics.any?
-            diagnostics.each { |diagnostic| say "✗ #{diagnostic}", :red } if text_output?
+            if text_output?
+              diagnostics.each do |diagnostic|
+                say diagnostic_line(diagnostic),
+                    (diagnostic.severity == 'warning' ? :yellow : :red)
+              end
+            end
           elsif text_output?
             say "✓ #{input_path}", :green
           end
@@ -402,16 +407,24 @@ module Lutaml
           options[:format] != 'json'
         end
 
+        def diagnostic_line(diagnostic)
+          marker = diagnostic.severity == 'warning' ? '⚠' : '✗'
+          "#{marker} #{diagnostic}"
+        end
+
         def report_validation(diagnostics)
+          errors = diagnostics.count { |diagnostic| diagnostic.severity != 'warning' }
           if options[:format] == 'json'
             puts JSON.pretty_generate(diagnostics.map(&:to_hash))
-            exit 1 if diagnostics.any?
+            exit 1 if errors.positive?
             return
           end
 
-          if diagnostics.any?
-            say "\nValidation failed with #{diagnostics.size} error(s)", :red
+          if errors.positive?
+            say "\nValidation failed with #{errors} error(s)", :red
             exit 1
+          elsif diagnostics.any?
+            say "\nAll files valid (#{diagnostics.size} warning(s))", :yellow
           else
             say "\nAll files valid!", :green
           end

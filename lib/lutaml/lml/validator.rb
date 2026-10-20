@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rubygems/version"
+
 module Lutaml
   module Lml
     # RS 3001 §Validation rules evaluated over a parsed document:
@@ -49,7 +51,7 @@ module Lutaml
       end
 
       def diagnostics
-        violations.map do |violation|
+        version_diagnostics + violations.map do |violation|
           Diagnostic.build(
             RULE_CODES.fetch(violation.rule),
             message: violation.message,
@@ -59,6 +61,31 @@ module Lutaml
             length: violation.position&.length,
           )
         end
+      end
+
+      # Version negotiation: a document may declare the language version
+      # it speaks with an `lml "x.y"` prologue. A version newer than this
+      # build is a warning, not an error (forward compatibility).
+      def version_diagnostics
+        declared = @document.lml_version.to_s
+        return [] if declared.empty?
+        return [] unless newer_language_version?(declared)
+
+        position = @document.source_position
+        [Diagnostic.build(
+          'contract/LML-C06',
+          message: "document declares LML #{declared}; this build supports #{Grammar.version}",
+          file: @document.source_path,
+          line: position&.line,
+          column: position&.column,
+          length: position&.length,
+        )]
+      end
+
+      def newer_language_version?(declared)
+        Gem::Version.new(declared) > Gem::Version.new(Grammar.version)
+      rescue ArgumentError
+        false
       end
 
       def violations

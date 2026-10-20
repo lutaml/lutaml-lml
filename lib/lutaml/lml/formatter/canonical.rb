@@ -44,6 +44,10 @@ module Lutaml
       # ---- document ----
 
       def render_document(doc)
+        unless doc.lml_version.to_s.empty?
+          line("lml #{quote_always(doc.lml_version)}")
+          blank_line
+        end
         Array(doc.requires).each { |path| line("require #{quote_always(path)}") }
         blank_line if Array(doc.requires).any?
 

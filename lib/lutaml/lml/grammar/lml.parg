@@ -29,6 +29,11 @@ grammar Lml version "1.0.0" {
   atomic kw_visibility_sp = "visibility" 1*" "
   atomic kw_version_sp = "version" 1*" "
   version_declaration = kw_version_sp quoted_string as version
+  # ---- Language version ----
+  # `lml "1.0"` prologue: the grammar version a document speaks. It is
+  # optional and, when present, comes before every other construct.
+  atomic kw_lml_sp = "lml" 1*" "
+  lml_prologue = [ whitespace ] kw_lml_sp quoted_string as lml_version
   atomic kw_abstract_sp = "abstract" 1*" "
   atomic kw_collection_sp = "collection" 1*" "
   atomic kw_condition_sp = "condition" 1*" "
@@ -330,7 +335,7 @@ grammar Lml version "1.0.0" {
   export_format = [ whitespace ] kw_format_sp variable as format_type [ whitespace ] "{" [ whitespace ] attributes "}" [ whitespace ]
 
   # ---- Root (RS 3001: a document interleaves declarations) ----
-  diagram = [ require_block ] ( *( top_level_definition ) ) as members
+  diagram = [ lml_prologue ] [ require_block ] ( *( top_level_definition ) ) as members
 
   top_level_definition = ( models / diagram_definitions / view_definitions / instances / instance / model_definitions ) [ whitespace ]
 }
@@ -342,6 +347,8 @@ entry diagram: diagram
 test diagram {
   accept "// leading\nclass Ceramic { }\n"
   accept "class /* inline */ Ceramic { }\n"
+  accept "lml \"1.0\"\nclass A { }\n"
+  reject "lml 1.0\nclass A { }\n"
   accept "models M {\n}\n"
   accept "instance X {\n  a = -42\n}\n"
   accept "models M { }"

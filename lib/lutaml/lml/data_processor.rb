@@ -18,6 +18,7 @@ module Lutaml
       include ViewProcessing
 
       KEY_HANDLERS = {
+        lml_version: :process_lml_version,
         requires: :process_requires,
         instances: :process_instances,
         instance: :process_instance,
@@ -46,6 +47,10 @@ module Lutaml
 
       def process_requires(obj)
         obj.map { |req| process_value(req).last }
+      end
+
+      def process_lml_version(value)
+        value.is_a?(Hash) ? value[:string] : value
       end
     end
   end

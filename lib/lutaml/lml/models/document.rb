@@ -13,6 +13,7 @@ module Lutaml
 
       # Core attributes
       attribute :name, :string
+      attribute :lml_version, :string
       attribute :title, :string
       attribute :caption, :string
       attribute :groups, "Lutaml::Lml::Group", collection: true, default: -> { [] }

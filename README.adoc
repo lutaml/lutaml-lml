@@ -82,6 +82,7 @@ json` emits the diagnostic array machine-readably.
 |`contract/LML-C03` |Input file could not be read or parsed in its format |Check the input file and its format.
 |`contract/LML-C04` |Invalid cardinality token while compiling |Use a cardinality token such as `1`, `0..1`, or `0..n`.
 |`contract/LML-C05` |View import could not be resolved |Check the imported view path and the imported files.
+|`contract/LML-C06` |Document declares a newer language version |Use a supported language version or upgrade lutaml-lml.
 |===
 
 == Value semantics
@@ -133,6 +134,22 @@ lutaml compile model.lml       # lutaml-model classes
 lutaml compile model.lml --schema json -o schemas/
 lutaml compile model.lml --schema yaml -o ceramic.schema.yaml
 ....
+
+== Language version
+
+A document may declare the LML grammar version it speaks with an
+optional first line:
+
+....
+lml "1.0"
+
+class Ceramic { }
+....
+
+The supported version is the version compiled into the grammar artifact.
+A document declaring a newer version parses, with a warning diagnostic
+(`contract/LML-C06`): forward compatibility is preserved and the
+declaration is recorded on `Document#lml_version`.
 
 == Editor support (LSP)
 

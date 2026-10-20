@@ -1,3 +1,5 @@
+lml "1.0"
+
 models M {
   enum GlazeTechnique {
     definition "Techniques for glazing ceramics"
