@@ -2,6 +2,8 @@
 
 module Lutaml
   module Lml
+    # Expands `include` directives before parsing. Unterminated block
+    # comments are rejected here; line comments are grammar trivia.
     class Preprocessor
       attr_reader :input_file
 
