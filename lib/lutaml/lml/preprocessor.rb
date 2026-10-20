@@ -46,7 +46,7 @@ module Lutaml
               'parse/LML-003',
               message: "circular include detected: #{path}",
               file: file_path, line: line_number, column: 1
-            )
+            ),
           )
         end
 
@@ -77,7 +77,7 @@ module Lutaml
             'parse/LML-003',
             message: "cannot read include: #{path}",
             file: file_path, line: line_number, column: 1
-          )
+          ),
         )
       end
 
@@ -122,7 +122,7 @@ module Lutaml
             'parse/LML-002',
             message: 'unterminated block comment',
             file: file_path, line: line, column: column
-          )
+          ),
         )
       end
     end

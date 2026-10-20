@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # A user-defined data type declaration.
     class DataType < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 

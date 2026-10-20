@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # An enumeration declaration with its value members.
     class Enum < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 
@@ -17,7 +18,7 @@ module Lutaml
 
       # From Enum
       attribute :attributes, "Lutaml::Lml::TopElementAttribute", collection: true,
-                                                                   default: -> { [] }
+                                                                 default: -> { [] }
       attribute :modifier, :string
       attribute :member_fields, "Lutaml::Lml::MemberField", collection: true, default: -> { [] }
       attribute :from_table_name, :string

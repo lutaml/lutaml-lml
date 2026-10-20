@@ -386,15 +386,15 @@ module Lutaml
 
         def error_diagnostic(error, input_path)
           diagnostic = error.diagnostic
-          return diagnostic if diagnostic && diagnostic.file
+          return diagnostic if diagnostic&.file
 
           Diagnostic.build(
-            (diagnostic&.code || 'parse/LML-001'),
+            diagnostic&.code || 'parse/LML-001',
             message: diagnostic&.message || error.message.lines.first.to_s.strip,
             file: input_path.to_s,
             line: diagnostic&.line,
             column: diagnostic&.column,
-            length: diagnostic&.length
+            length: diagnostic&.length,
           )
         end
 

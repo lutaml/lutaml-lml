@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # A value construct member.
     class Value < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 

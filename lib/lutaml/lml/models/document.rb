@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # The parsed LML document model.
     class Document < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 
@@ -49,9 +50,7 @@ module Lutaml
       def merge_instances(incoming)
         names = @instances.collections.map(&:name)
         incoming.collections.each do |collection|
-          if names.include?(collection.name)
-            raise Lutaml::Lml::Error, "duplicate collection name '#{collection.name}'"
-          end
+          raise Lutaml::Lml::Error, "duplicate collection name '#{collection.name}'" if names.include?(collection.name)
         end
         @instances.instances.concat(incoming.instances)
         @instances.imports.concat(incoming.imports)

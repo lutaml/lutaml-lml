@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # An attribute declaration or instance assignment entry.
     class TopElementAttribute < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 

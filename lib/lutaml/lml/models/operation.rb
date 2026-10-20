@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # A class operation with parameters and a return type.
     class Operation < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 
@@ -19,7 +20,7 @@ module Lutaml
       attribute :is_static, :boolean, default: false
       attribute :is_abstract, :boolean, default: false
       attribute :owned_parameter, "Lutaml::Lml::OperationParameter", collection: true,
-                                                                          default: -> { [] }
+                                                                     default: -> { [] }
     end
   end
 end

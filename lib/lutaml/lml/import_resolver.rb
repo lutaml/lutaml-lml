@@ -4,6 +4,7 @@ require "set"
 
 module Lutaml
   module Lml
+    # Resolves `view import` paths and merges the imported entities.
     class ImportResolver
       def initialize(base_dir)
         @base_dir = base_dir
@@ -24,7 +25,16 @@ module Lutaml
 
         collect_local_entities(document, entity_index, associations)
 
-        raise ImportError, @failures.join("\n") if @failures.any?
+        if @failures.any?
+          raise ImportError.new(
+            @failures.join("\n"),
+            diagnostic: Diagnostic.build(
+              'contract/LML-C05',
+              message: @failures.first,
+              file: document.source_path,
+            ),
+          )
+        end
 
         [entity_index, associations]
       end
@@ -34,12 +44,11 @@ module Lutaml
       def resolve_import(path, entity_index, associations, visited, base_dir)
         abs_pattern = File.expand_path(path, base_dir)
         files = Dir.glob(abs_pattern)
-        if files.empty?
-          @failures << "import matched no files: #{path} (resolved to #{abs_pattern})"
-        end
+        @failures << "import matched no files: #{path} (resolved to #{abs_pattern})" if files.empty?
 
         files.each do |file_path|
           next if visited.include?(file_path)
+
           visited.add(file_path)
 
           doc = parse_file(file_path)

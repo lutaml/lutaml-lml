@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # A diagram declaration.
     class Diagram < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 

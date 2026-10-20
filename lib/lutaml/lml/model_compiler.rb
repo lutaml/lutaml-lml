@@ -81,8 +81,8 @@ module Lutaml
           diagnostic: Diagnostic.build(
             'hydration/LML-H01',
             message: e.message,
-            file: input.is_a?(Document) ? input.source_path : nil
-          )
+            file: input.is_a?(Document) ? input.source_path : nil,
+          ),
         )
       end
 
@@ -247,7 +247,11 @@ module Lutaml
         return Float::INFINITY if UNBOUNDED_TOKENS.include?(val.to_s)
         return val.to_i if val.to_s.match?(/\A\d+\z/)
 
-        raise ValidationError, "Unrecognized cardinality token: #{val.inspect}"
+        message = "Unrecognized cardinality token: #{val.inspect}"
+        raise ValidationError.new(
+          message,
+          diagnostic: Diagnostic.build('contract/LML-C04', message: message),
+        )
       end
 
       def declare_derived_fields(compiled_klass, def_obj)

@@ -2,6 +2,7 @@
 
 module Lutaml
   module Lml
+    # A class declaration with its members.
     class UmlClass < Lutaml::Model::Serializable
       include Lutaml::Lml::Positioned
 

@@ -20,7 +20,7 @@ module Lutaml
         'reference_validity' => 'validation/LML-V07',
         'reference_circularity' => 'validation/LML-V08',
         'pattern_conformity' => 'validation/LML-V09',
-        'pattern_compiles' => 'validation/LML-V10'
+        'pattern_compiles' => 'validation/LML-V10',
       }.freeze
 
       PRIMITIVE_CONFORMITY = {
@@ -28,7 +28,7 @@ module Lutaml
         'Number' => /\A-?\d+\z/,
         'Float' => /\A-?\d+\.\d+\z/,
         'Boolean' => /\A(true|false)\z/,
-        'Null' => /\Anull\z/
+        'Null' => /\Anull\z/,
       }.freeze
 
       COLLECTION_KEYS = %i[properties attributes instances].freeze
@@ -56,7 +56,7 @@ module Lutaml
             file: @document.source_path,
             line: violation.position&.line,
             column: violation.position&.column,
-            length: violation.position&.length
+            length: violation.position&.length,
           )
         end
       end
@@ -80,7 +80,7 @@ module Lutaml
         [
           *Array(@document.classes),
           *Array(@document.enums),
-          *Array(@document.data_types)
+          *Array(@document.data_types),
         ]
       end
 
@@ -94,10 +94,9 @@ module Lutaml
 
       def all_definitions
         @all_definitions ||= begin
-          pairs = []
-          Array(@document.classes).each { |c| pairs << [c.name.to_s, c] }
-          Array(@document.enums).each { |e| pairs << [e.name.to_s, e] }
-          Array(@document.data_types).each { |d| pairs << [d.name.to_s, d] }
+          pairs = Array(@document.classes).map { |c| [c.name.to_s, c] } +
+                  Array(@document.enums).map { |e| [e.name.to_s, e] } +
+                  Array(@document.data_types).map { |d| [d.name.to_s, d] }
           Array(@document.packages).each { |pkg| collect_package_definitions(pkg, pairs) }
           pairs
         end
@@ -125,7 +124,7 @@ module Lutaml
             Violation.new(
               rule: 'unique_names',
               message: "'#{name}' is defined #{count} times in #{scope_label}",
-              position: definitions.find { |definition| definition.name.to_s == name }&.source_position
+              position: definitions.find { |definition| definition.name.to_s == name }&.source_position,
             )
           end
         end
@@ -140,7 +139,7 @@ module Lutaml
           Violation.new(
             rule: 'unique_attribute_names',
             message: "#{name}: duplicate attribute(s) #{dupes.inspect}",
-            position: definition.source_position
+            position: definition.source_position,
           )
         end
       end
@@ -176,7 +175,7 @@ module Lutaml
             rule: 'pattern_conformity',
             message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
                      "does not match #{attr.pattern.inspect}, got #{literal.inspect}",
-            position: entry_position(instance, name)
+            position: entry_position(instance, name),
           )
         end
       end
@@ -191,7 +190,7 @@ module Lutaml
         Violation.new(
           rule: 'pattern_compiles',
           message: "#{type}: attribute '#{name}' has an invalid pattern #{attr.pattern.inspect}",
-          position: attr.source_position
+          position: attr.source_position,
         )
       end
 
@@ -223,7 +222,7 @@ module Lutaml
             rule: 'values_set_membership',
             message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
                      "must be one of #{attr.value_set.inspect}, got #{literal.to_s.inspect}",
-            position: entry_position(instance, name)
+            position: entry_position(instance, name),
           )
         end
       end
@@ -234,13 +233,13 @@ module Lutaml
 
         declared = attribute_names(definition)
         instance_attribute_pairs(instance)
-          .reject { |name, _value| declared.include?(name) }
+          .reject { |pair| declared.include?(pair[0]) }
           .map do |name, _value|
             Violation.new(
               rule: 'unknown_attributes',
               message: "instance '#{instance_name(instance)}' (#{definition_type(instance)}): " \
                        "unknown attribute '#{name}'",
-              position: entry_position(instance, name)
+              position: entry_position(instance, name),
             )
           end
       end
@@ -261,7 +260,7 @@ module Lutaml
             rule: 'mandatory_attributes',
             message: "instance '#{instance_name(instance)}' (#{definition_type(instance)}): " \
                      "mandatory attribute '#{attr.name}' is not populated",
-            position: instance.source_position
+            position: instance.source_position,
           )
         end
       end
@@ -269,8 +268,6 @@ module Lutaml
       def mandatory?(attr)
         attr.cardinality && attr.cardinality.min == '1'
       end
-
-
 
       def type_conformity_violations(instance)
         definition = type_definitions[definition_type(instance)]
@@ -293,7 +290,7 @@ module Lutaml
           rule: 'type_conformity',
           message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
                    "expects #{attr.type}, got #{value.to_s.inspect}",
-          position: entry_position(instance, name)
+          position: entry_position(instance, name),
         )
       end
 
@@ -305,7 +302,7 @@ module Lutaml
               rule: 'reference_validity',
               message: "instance '#{instance_name(instance)}': attribute '#{name}' " \
                        "references unknown path '#{path}'",
-              position: entry_position(instance, name)
+              position: entry_position(instance, name),
             )
           end
 
@@ -338,7 +335,7 @@ module Lutaml
           rule: 'reference_validity',
           message: "instance '#{instance_name(instance)}': reference '#{path}' " \
                    "does not resolve (no attribute '#{segment}' on '#{target}')",
-          position: entry_position(instance, name)
+          position: entry_position(instance, name),
         )
       end
 
@@ -395,7 +392,7 @@ module Lutaml
           Violation.new(
             rule: 'reference_circularity',
             message: "circular reference: #{cycle.join(' -> ')}",
-            position: instances.find { |instance| instance_name(instance) == cycle.first }&.source_position
+            position: instances.find { |instance| instance_name(instance) == cycle.first }&.source_position,
           )
         end
       end
@@ -406,7 +403,7 @@ module Lutaml
           path = walk_for_cycle(graph, start)
           cycles << path if path
         end
-        cycles.uniq { |cycle| cycle.sort }
+        cycles.uniq(&:sort)
       end
 
       def walk_for_cycle(graph, start)
