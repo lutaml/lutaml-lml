@@ -36,3 +36,8 @@ failure: broken input still raises `ParsingError`, but the position no
 longer points at the deepest failure. Record it upstream (parsanol) with
 this repro before changing the suite or pinning a floor.
 
+First scheduled-workflow dispatch (2026-10-21, run 39531086873):
+lutaml-model HEAD green, moxml HEAD green, parsanol HEAD red with the
+same error-position finding. The workflow reports success under the
+allow-failure rollout as designed.
+
