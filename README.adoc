@@ -20,6 +20,14 @@ serialization mappings (XML elements/attributes/content, key-value
 wire names, namespaces), `isa`, `derive`, `string_format`, enum
 member payloads and `from_table` artifact references.
 
+Tooling: a canonical form with a `lutaml format [--check]` formatter and
+an idempotence guarantee; structured diagnostics (code, position,
+remedy) across parse, validation, and hydration; a stdio language
+server (`lutaml-lml-lsp`); language-version negotiation via the
+`lml "x.y"` prologue; and seeded generative round-trip laws (value,
+key, document, idempotence) that run at reduced depth in CI and
+nightly at full depth.
+
 == Installation
 
 ....
