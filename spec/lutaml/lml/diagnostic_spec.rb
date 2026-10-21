@@ -78,7 +78,9 @@ RSpec.describe Lutaml::Lml::Diagnostic do
       Dir.mktmpdir do |dir|
         path = write(dir, "bad.lml", "class A {\n")
 
-        expect { parse_file(path) }.to raise_error(Lutaml::Lml::ParsingError, /Failed to match/)
+        # parsanol's phrasing may evolve (it reworded EOF failures in
+        # 1.3.99); the invariant is that the position stays in the text.
+        expect { parse_file(path) }.to raise_error(Lutaml::Lml::ParsingError, /at line 1 char 10\./)
       end
     end
   end
