@@ -41,3 +41,10 @@ lutaml-model HEAD green, moxml HEAD green, parsanol HEAD red with the
 same error-position finding. The workflow reports success under the
 allow-failure rollout as designed.
 
+Resolution (2026-10-21): parsanol fixed the deepest-cause regression in
+`520deef` (parsanol-ruby#267, resolving #265) and released 1.3.99 /
+1.3.100. Full lutaml-lml suite green against parsanol HEAD `ac5af8d`.
+1.3.99 also reworded EOF failures ("Unexpected end of input" instead of
+"Failed to match"); the diagnostic spec now pins the position invariant
+rather than parsanol's phrasing.
+
