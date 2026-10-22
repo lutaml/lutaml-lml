@@ -48,3 +48,7 @@ Resolution (2026-10-21): parsanol fixed the deepest-cause regression in
 "Failed to match"); the diagnostic spec now pins the position invariant
 rather than parsanol's phrasing.
 
+Promotion (2026-10-22): with parsanol 1.3.100 released and all three
+HEAD jobs green, the workflow left allow-failure mode. Making the job a
+required status check is a branch-protection setting for the repo owner.
+
