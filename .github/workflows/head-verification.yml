@@ -12,9 +12,9 @@ jobs:
   head:
     name: ${{ matrix.dependency }} HEAD
     runs-on: ubuntu-latest
-    # Rollout discipline: allow-failure until green for seven
-    # consecutive days; then drop this key and mark the job required.
-    continue-on-error: true
+    # Promoted out of allow-failure on 2026-10-22: all three dependency
+    # HEAD jobs are green (parsanol's deepest-cause regression was fixed
+    # and released in 1.3.99/1.3.100).
     strategy:
       fail-fast: false
       matrix:
