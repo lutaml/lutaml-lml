@@ -32,6 +32,8 @@ module Lutaml
       attribute :serialization_mappings, "Lutaml::Lml::SerializationMapping", collection: true, default: -> { [] }
 
       # LML-specific
+      # In-class `namespace "uri"` declaration (issue #49)
+      attribute :xml_namespace, "Lutaml::Lml::Namespace"
       attribute :parent_class, :string
 
       yaml do
@@ -42,6 +44,7 @@ module Lutaml
         map "stereotype", to: :stereotype
         map "visibility", to: :visibility
         map "type", to: :type
+        map "xml_namespace", to: :xml_namespace
         map "attributes", to: :attributes
         map "operations", to: :operations
         map "constraints", to: :constraints

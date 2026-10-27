@@ -359,4 +359,56 @@ RSpec.describe "lutaml format" do
       expect { run("format", path, "--check") }.not_to raise_error
     end
   end
+
+  describe "XML namespace and node kind (issue #49)" do
+    let(:source) do
+      <<~LML
+        class Car {
+          namespace "xyz" prefix "x"
+          wheels Wheel[4] as :element
+          vin: String as :attribute
+        }
+      LML
+    end
+
+    let(:formatted) { Lutaml::Formatter::Canonical.new(Lutaml::Lml.parse_document(source)).render }
+
+    it "renders the class namespace and the as-role of each attribute" do
+      expect(formatted).to include('namespace "xyz" prefix "x"')
+        .and include("wheels: Wheel [4] as :element")
+        .and include("vin: String as :attribute")
+    end
+
+    it "is a fixed point of parse and render" do
+      reparsed = Lutaml::Lml.parse_document(formatted)
+      expect(Lutaml::Formatter::Canonical.new(reparsed).render).to eq(formatted)
+    end
+  end
+  describe "XML roles with attribute block options" do
+    let(:source) do
+      <<~LML
+        class Car {
+          attribute vin as :attribute {
+            type String
+            cardinality 1
+            values { "A", "B" }
+            pattern /[AB]/
+            default = "A"
+          }
+        }
+      LML
+    end
+    let(:document) { Lutaml::Lml.parse_document(source) }
+    let(:formatted) { Lutaml::Formatter::Canonical.new(document).render }
+
+    it "preserves the role and all block options when formatting" do
+      original = document.classes.first.attributes.first
+      reparsed = Lutaml::Lml.parse_document(formatted).classes.first.attributes.first
+      expect(original.xml_role).to eq("attribute")
+      expect(original.pattern).to eq("[AB]")
+      expect(original.value_set).to eq(%w[A B])
+      expect(reparsed.to_hash).to eq(original.to_hash)
+      expect(Lutaml::Formatter::Canonical.new(Lutaml::Lml.parse_document(formatted)).render).to eq(formatted)
+    end
+  end
 end

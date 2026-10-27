@@ -163,6 +163,16 @@ RSpec.describe Lutaml::Cli::LmlCommands do
       described_class.start(["compile", *args])
     end
 
+    it "reports a clear error when the input is a directory" do
+      Dir.mktmpdir do |dir|
+        File.write(File.join(dir, "models.lml"), "models C { class Kiln {} }")
+
+        expect { run_compile(dir) }
+          .to output("Expected a file, got directory: #{dir}\n").to_stderr
+          .and raise_error(SystemExit)
+      end
+    end
+
     it "emits one JSON Schema per compiled model into a directory" do
       Dir.mktmpdir do |dir|
         src = File.join(dir, "models.lml")

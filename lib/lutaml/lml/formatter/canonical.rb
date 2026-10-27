@@ -140,6 +140,7 @@ module Lutaml
         render_block(class_header(klass)) do
           render_comments(klass.comments)
           member { render_definition(klass.definition) } if definition_present?(klass.definition)
+          member { render_class_namespace(klass.xml_namespace) } if klass.xml_namespace&.uri
           Array(klass.attributes).each { |attribute| member { render_attribute(attribute) } }
           Array(klass.operations).each { |operation| member { render_operation(operation) } }
           Array(klass.derived_fields).each do |field|
@@ -150,6 +151,12 @@ module Lutaml
             member { render_mapping(mapping, with_target: false) }
           end
         end
+      end
+
+      def render_class_namespace(namespace)
+        text = "namespace #{quote_always(namespace.uri)}"
+        text += " prefix #{quote_always(namespace.prefix)}" if namespace.prefix
+        line(text)
       end
 
       def class_header(klass)
@@ -304,6 +311,8 @@ module Lutaml
       def render_attribute(attribute)
         return if attribute.name.to_s.empty?
 
+        return render_attribute_block(attribute) if attribute.xml_role && attribute_block_options?(attribute)
+
         if terse_attribute?(attribute)
           line("attribute #{attribute.name}, #{attribute.type}")
         elsif naked_attribute?(attribute)
@@ -315,6 +324,11 @@ module Lutaml
         end
       end
 
+      def attribute_block_options?(attribute)
+        Array(attribute.value_set).any? || Array(attribute.properties).any? ||
+          !attribute.pattern.nil? || !attribute.default.nil?
+      end
+
       def terse_attribute?(attribute)
         public_visibility?(attribute.visibility) &&
           bare_name?(attribute.name) &&
@@ -324,7 +338,7 @@ module Lutaml
           Array(attribute.properties).empty? &&
           attribute.pattern.nil? && attribute.default.nil? &&
           Array(attribute.stereotype).empty? && !attribute.literal &&
-          !definition_present?(attribute.definition)
+          attribute.xml_role.nil? && !definition_present?(attribute.definition)
       end
 
       def naked_attribute?(attribute)
@@ -335,14 +349,14 @@ module Lutaml
           Array(attribute.properties).empty? &&
           attribute.pattern.nil? && attribute.default.nil? &&
           Array(attribute.stereotype).empty? && !attribute.literal &&
-          !definition_present?(attribute.definition)
+          attribute.xml_role.nil? && !definition_present?(attribute.definition)
       end
 
       def bare_attribute?(attribute)
         !public_visibility?(attribute.visibility) ||
           !bare_name?(attribute.name) ||
           Array(attribute.stereotype).any? || attribute.literal ||
-          definition_present?(attribute.definition)
+          !attribute.xml_role.nil? || definition_present?(attribute.definition)
       end
 
       def render_bare_attribute(attribute)
@@ -351,6 +365,7 @@ module Lutaml
         header += ": #{type}" if type != ''
         cardinality = attribute_cardinality(attribute)
         header += " [#{cardinality}]" if cardinality
+        header += " as :#{attribute.xml_role}" if attribute.xml_role
 
         if definition_present?(attribute.definition)
           render_block(header) { render_definition(attribute.definition) }
@@ -376,7 +391,9 @@ module Lutaml
       end
 
       def render_attribute_block(attribute)
-        render_block("attribute #{attribute_name_text(attribute.name)}") do
+        header = "attribute #{attribute_name_text(attribute.name)}"
+        header += " as :#{attribute.xml_role}" if attribute.xml_role
+        render_block(header) do
           line("type #{attribute.type}") if attribute.type.to_s != ''
           cardinality = attribute_cardinality(attribute)
           line("cardinality #{cardinality}") if cardinality

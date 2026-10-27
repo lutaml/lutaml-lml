@@ -402,11 +402,21 @@ module Lutaml
         if (section = hash.delete(:default_string_formats))
           model.default_string_formats << build_string_format(section)
         end
+        expand_class_namespace(model, hash)
         return unless (derived = hash.delete(:derived_field))
 
         model.derived_fields << build(:derived_field,
                                       name: derived[:name],
                                       type: unquote(derived[:type]))
+      end
+
+      # Issue #49: an in-class `namespace "uri" [prefix "p"]` line
+      def expand_class_namespace(model, hash)
+        decl = hash.delete(:class_namespace) or return
+
+        model.xml_namespace = build(:namespace,
+                                    uri: unquote(decl[:uri]),
+                                    prefix: unquote(decl[:prefix]))
       end
 
       # L7a: from_table declares the enum's members as an artifact table

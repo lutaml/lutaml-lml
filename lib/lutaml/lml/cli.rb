@@ -167,6 +167,7 @@ module Lutaml
                              desc: 'Schema output path (file for one model, directory for many)'
       def compile(path)
         raise Thor::Error, "File does not exist: #{path}" unless File.exist?(path)
+        raise Thor::Error, "Expected a file, got directory: #{path}" if File.directory?(path)
 
         ns = options[:namespace] || (::Lutaml::Lml::ModelCompiler::DEFAULT_NAMESPACE if options[:schema])
         result = File.open(path) { |file| Lutaml::Lml::ModelCompiler.new(namespace: ns).compile(file) }
