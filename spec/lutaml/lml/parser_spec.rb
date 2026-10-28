@@ -20,7 +20,7 @@ RSpec.describe Lutaml::Lml::Parser do
         let(:klass) { doc.classes.find { |c| c.name == "AddressClassProfile" } }
 
         it "exists and has correct definition" do
-          expect(klass).not_to be_nil, "Expected AddressClassProfile class to exist" 
+          expect(klass).not_to be_nil, "Expected AddressClassProfile class to exist"
           expect(klass.definition).to include("this is multiline")
         end
 
@@ -239,7 +239,7 @@ RSpec.describe Lutaml::Lml::Parser do
         collections = doc.instances.collections
         expect(collections.map(&:name)).to eq(%w[test_suite_1 test_suite_2])
         suite = collections.first
-        expect(suite.includes).to eq(["laptop_123", "desktop_1", "desktop_2"])
+        expect(suite.includes).to eq(%w[laptop_123 desktop_1 desktop_2])
         expect(suite.validations).to eq(["count >= 3", "all? { |i| i.components.count > 0 }"])
         expect(collections.last.includes).to eq(["gaming_pc"])
       end
@@ -301,7 +301,7 @@ RSpec.describe Lutaml::Lml::Parser do
         step_export = exports.find { |exp| exp.format_type == "step" }
         expect(step_export.attributes.map(&:name)).to include("file", "reference_format")
         expect(step_export.attributes.find { |a| a.name == "file" }.value).to eq("output/products.stp")
-        expect(step_export.attributes.find { |a| a.name == "reference_format" }.value).to eq("#%{id}")
+        expect(step_export.attributes.find { |a| a.name == "reference_format" }.value).to eq("#%{id}") # rubocop:disable Style/FormatStringToken -- literal reference template
       end
 
       it "maps product inheritance and template correctly" do
@@ -313,6 +313,35 @@ RSpec.describe Lutaml::Lml::Parser do
         expect(components_attr.instances.first.type).to eq("Component")
         expect(products.last.parent).to eq("base_computer")
       end
+    end
+  end
+
+  describe "XML namespace and node kind (issue #49)" do
+    let(:car) do
+      source = <<~LML
+        class Car {
+          namespace "xyz" prefix "x"
+          wheels Wheel[4] as :element
+          vin: String as :attribute
+          plain Wheel
+        }
+        class Wheel {
+          tire
+        }
+      LML
+      Lutaml::Lml.parse_document(source).classes.first
+    end
+
+    it "records the class namespace instead of an attribute" do
+      expect([car.xml_namespace.uri, car.xml_namespace.prefix]).to eq(%w[xyz x])
+      expect(car.attributes.map(&:name)).to eq(%w[wheels vin plain])
+    end
+
+    it "records the node kind on the attribute and keeps type and cardinality" do
+      wheels, vin, plain = car.attributes
+      expect([wheels.type, wheels.cardinality.min, wheels.xml_role]).to eq(%w[Wheel 4 element])
+      expect([vin.type, vin.xml_role]).to eq(%w[String attribute])
+      expect([plain.type, plain.xml_role]).to eq(["Wheel", nil])
     end
   end
 end

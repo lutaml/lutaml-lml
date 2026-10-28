@@ -181,6 +181,85 @@ RSpec.describe Lutaml::Lml::ModelCompiler do
       expect(Lutaml::Model::Schema.to_yaml(result["Widget"])).to start_with("%YAML 1.1")
       file.close!
     end
+
+    context "when attributes reference other models (issue #49)" do
+      let(:lml) do
+        <<~LML
+          class Concept {
+            related: RelatedConcept [0..*]
+            origin: RelatedConcept
+            name: String [1..1]
+          }
+          class RelatedConcept {
+            id: String
+          }
+        LML
+      end
+
+      [nil, "LmlRefSpec"].each do |namespace|
+        it "emits $ref to the referenced definition (namespace: #{namespace.inspect})" do
+          require "lutaml/model/schema"
+          result = described_class.new(namespace: namespace).compile(lml)
+          parsed = YAML.safe_load(Lutaml::Model::Schema.to_yaml(result["Concept"]))
+          prefix = namespace ? "#{namespace}_" : ""
+          props = parsed["$defs"]["#{prefix}Concept"]["properties"]
+
+          expect(props["related"]).to eq(
+            "type" => "array", "items" => { "$ref" => "#/$defs/#{prefix}RelatedConcept" },
+          )
+          expect(props["origin"]).to eq("$ref" => "#/$defs/#{prefix}RelatedConcept")
+          expect(parsed["$defs"]).to have_key("#{prefix}RelatedConcept")
+        end
+      end
+    end
+
+    context "with the issue #49 namespace and `as :element` syntax" do
+      let(:lml) do
+        <<~LML
+          class Car {
+            namespace "xyz"
+            wheels Wheel[4] as :element
+            vin: String as :attribute
+          }
+          class Wheel {
+            tire
+          }
+        LML
+      end
+
+      it "carries the namespace and element/attribute kinds into the XML mapping" do
+        car = described_class.new.compile(lml)["Car"]
+        mapping = car.mappings_for(:xml)
+
+        expect(mapping.namespace_uri).to eq("xyz")
+        expect(mapping.elements.map(&:name)).to eq(["wheels"])
+        expect(mapping.attributes.map(&:name)).to eq(["vin"])
+      end
+
+      it "does not turn namespace or `as` into string properties" do
+        car = described_class.new.compile(lml)["Car"]
+        expect(car.attributes.keys).to contain_exactly(:wheels, :vin)
+      end
+
+      it "generates a YAML Schema with only the declared properties" do
+        require "lutaml/model/schema"
+        car = described_class.new.compile(lml)["Car"]
+        props = YAML.safe_load(Lutaml::Model::Schema.to_yaml(car))["$defs"]["Car"]["properties"]
+
+        expect(props.keys).to contain_exactly("wheels", "vin")
+        expect(props["wheels"]["items"]).to eq("$ref" => "#/$defs/Wheel")
+      end
+
+      it "keeps the namespace on an empty class" do
+        klass = described_class.new.compile("class Empty {\n namespace \"xyz\"\n}\n")["Empty"]
+        expect(klass.mappings_for(:xml).namespace_uri).to eq("xyz")
+      end
+
+      it "keeps an attribute literally named namespace" do
+        klass = described_class.new.compile("class A {\n  namespace: String\n}\n")["A"]
+        expect(klass.attributes.keys).to eq([:namespace])
+      end
+    end
   end
 
   describe "Lutaml::Lml.compile" do

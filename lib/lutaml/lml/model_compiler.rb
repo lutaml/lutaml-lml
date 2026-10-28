@@ -59,6 +59,7 @@ module Lutaml
         @declared_namespaces = []
         @serialization_mappings = []
         @namespace_classes = {}
+        @class_defs = {}
       end
 
       def compile(input)
@@ -140,6 +141,7 @@ module Lutaml
 
       def compile_class(klass_def)
         name = klass_def.name.to_s
+        @class_defs[name] = klass_def
         compiled_klass = build_compiled_class(klass_def)
         apply_declared_mappings(compiled_klass, klass_def)
         declare_derived_fields(compiled_klass, klass_def)
@@ -293,9 +295,15 @@ module Lutaml
 
       def register(name, klass)
         @compiled[name] = klass
-        return unless @namespace
+        return name_anonymous_class(klass, name) unless @namespace
 
         namespace_module.const_set(name, klass)
+      end
+
+      # Without a target namespace the class stays anonymous, and
+      # lutaml-model's schema generators need a class name for $defs/$ref.
+      def name_anonymous_class(klass, name)
+        klass.define_singleton_method(:name) { name }
       end
 
       def namespace_module

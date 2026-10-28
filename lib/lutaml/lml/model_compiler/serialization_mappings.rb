@@ -49,16 +49,38 @@ module Lutaml
           end
         end
 
+        # Default XML mapping: every attribute an element, except those
+        # declared `as :attribute`; an in-class `namespace "uri"` becomes
+        # the class's XML namespace (issue #49).
         def apply_xml_mapping(klass, root_name)
           attr_names = klass.attributes.keys
-          return if attr_names.empty?
-
+          def_obj = @class_defs[root_name]
+          roles = xml_roles_of(def_obj)
+          ns_class = inline_namespace_class(def_obj)
           klass.xml do |mapping|
             mapping.element(root_name)
+            mapping.namespace(ns_class) if ns_class
             attr_names.each do |attr_name|
-              mapping.map_element(attr_name.to_s, to: attr_name)
+              if roles[attr_name] == 'attribute'
+                mapping.map_attribute(attr_name.to_s, to: attr_name)
+              else
+                mapping.map_element(attr_name.to_s, to: attr_name)
+              end
             end
           end
+        end
+
+        def xml_roles_of(def_obj)
+          Array(def_obj&.attributes).each_with_object({}) do |attr, roles|
+            roles[attr.name.to_sym] = attr.xml_role if attr.xml_role
+          end
+        end
+
+        def inline_namespace_class(def_obj)
+          decl = def_obj.xml_namespace if def_obj.is_a?(UmlClass)
+          return nil unless decl&.uri
+
+          build_namespace_class("#{decl.uri}|#{decl.prefix}", decl.uri, decl.prefix.to_s)
         end
 
         # RS 3010 extension: key-value mapping blocks for the declared
@@ -89,7 +111,7 @@ module Lutaml
           check_namespace_ambiguity(mapping)
           ns_class = namespace_class_for(mapping.namespace_ref) if mapping.namespace_ref
           rule_ns = mapping.rules.select { |r| r.kind == 'namespace' }
-                                 .to_h { |r| [r.field, namespace_class_for(r.field)] }
+                           .to_h { |r| [r.field, namespace_class_for(r.field)] }
           klass.xml do |m|
             m.element(mapping.element_name) if mapping.element_name
             m.namespace(ns_class) if ns_class
@@ -149,12 +171,16 @@ module Lutaml
           declared = @declared_namespaces.find { |ns| ns.name.to_s == ref }
           raise ArgumentError, "unknown namespace '#{ref}'" unless declared
 
-          ns_class = Class.new(Lutaml::Xml::Namespace)
-          uri = declared.uri
-          prefix = declared.prefix.to_s
-          ns_class.define_singleton_method(:uri) { uri }
-          ns_class.define_singleton_method(:prefix_default) { prefix }
-          @namespace_classes[ref] = ns_class
+          build_namespace_class(ref, declared.uri, declared.prefix.to_s)
+        end
+
+        def build_namespace_class(key, uri, prefix)
+          require 'lutaml/xml/namespace' unless defined?(Lutaml::Xml::Namespace)
+
+          @namespace_classes[key] ||= Class.new(Lutaml::Xml::Namespace).tap do |ns_class|
+            ns_class.define_singleton_method(:uri) { uri }
+            ns_class.define_singleton_method(:prefix_default) { prefix }
+          end
         end
       end
     end

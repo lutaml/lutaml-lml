@@ -24,6 +24,8 @@ module Lutaml
       attribute :default, :string
       attribute :value_set, :string, collection: true, default: -> { [] }
       attribute :pattern, :string
+      # `as :element` / `as :attribute`: the XML node kind (issue #49)
+      attribute :xml_role, :string
 
       # LML-specific attributes
       attribute :properties, "Lutaml::Lml::TopElementAttribute", collection: true, default: -> { [] }
@@ -60,6 +62,7 @@ module Lutaml
         map "default", to: :default
         map "value_set", to: :value_set
         map "pattern", to: :pattern
+        map "xml_role", to: :xml_role
         map "properties", to: :properties
         map "value", to: :value, with: { to: :value_to, from: :value_from }
         map "attributes", to: :attributes
