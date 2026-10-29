@@ -9,7 +9,28 @@
 # capture binds the whole match (Parslet's `.repeat.as(:x)` shape);
 # `[ x as k ]` yields k: nil when absent (Parslet omits the key —
 # consumers treat nil and absent as equivalent).
-grammar Lml version "1.0.0" {
+grammar Lml version "1.0.0" edition 2 {
+  # ---- Glue (parsanol-ruby#364) ----
+  # Edition 2 names every uncaptured rule reference; these are the
+  # token mechanics the tree must not see: separators that eat `;` and
+  # comments, verbatim-scan classes, quote delimiters, identifier
+  # runs and keyword tokens. Declaring the whole chain keeps the tree
+  # the authored captures only — byte-identical to edition 1 (the
+  # corpus differential proves it). Un-glue a rule when its node
+  # should surface.
+  glue whitespace line_comment block_comment
+  glue any_char quotes
+  glue word nonspace class_run class_name_chars type_run type_token quoted_name_run
+  glue definition_content
+  glue kw_abstract_sp kw_artifact_sp kw_association_sp kw_attribute_sp kw_caption_sp
+  glue kw_class_sp kw_collection_sp kw_condition_sp kw_data_type_sp kw_definition_sp
+  glue kw_derive_sp kw_element_sp kw_enum_sp kw_fontname_sp kw_format_sp kw_hide_sp
+  glue kw_import_sp kw_instance_sp kw_isa_sp kw_lml_sp kw_map_attribute_sp kw_map_content_sp
+  glue kw_map_element_sp kw_map_key_sp kw_map_sp kw_map_value_sp kw_mapping_sp kw_member_sp
+  glue kw_member_type_sp kw_namespace_sp kw_owner_sp kw_owner_type_sp kw_package_sp
+  glue kw_pattern_sp kw_prefix_sp kw_primitive_sp kw_require_sp kw_show_sp
+  glue kw_string_format_sp kw_title_sp kw_to_instance_sp kw_uri_sp kw_value_sp
+  glue kw_values_sp kw_version_sp kw_visibility_sp
   # ---- Trivia (parsanol-ruby#134 skip rule) ----
   # Grammar-native trivia replaces the pre-parse comment stripping:
   # `//` line and `/* */` block comments (RS 3001 par. Comment) plus
