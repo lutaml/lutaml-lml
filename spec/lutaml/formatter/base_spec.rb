@@ -21,33 +21,31 @@ RSpec.describe Lutaml::Formatter::Base do
     end
   end
 
-  describe ".inherited" do
-    it "registers subclasses in Formatter.all" do
-      expect(Lutaml::Formatter.all).to include(Lutaml::Formatter::Graphviz)
+  describe "formatter registry" do
+    let!(:registered_class) do
+      stub_const("Lutaml::Formatter::Sample", Class.new(described_class))
     end
-  end
 
-  describe ".formatter_name" do
-    it "returns downcased last segment of class name" do
-      expect(Lutaml::Formatter::Graphviz.formatter_name).to eq(:graphviz)
+    after { Lutaml::Formatter.all.delete(registered_class) }
+
+    it "registers subclasses in Formatter.all" do
+      expect(Lutaml::Formatter.all).to include(registered_class)
+    end
+
+    it "returns the downcased last segment of the class name" do
+      expect(registered_class.formatter_name).to eq(:sample)
     end
 
     it "does not shadow Class#name" do
-      expect(Lutaml::Formatter::Graphviz.name).to eq("Lutaml::Formatter::Graphviz")
+      expect(registered_class.name).to eq("Lutaml::Formatter::Sample")
     end
 
     it "finds a formatter by name" do
-      expect(Lutaml::Formatter.find_by_name("graphviz")).to eq(Lutaml::Formatter::Graphviz)
+      expect(Lutaml::Formatter.find_by_name("sample")).to eq(registered_class)
     end
-  end
 
-  describe ".format" do
-    it "creates an instance and delegates to #format" do
-      skip "GraphViz 'dot' not available" unless system("which dot > /dev/null 2>&1")
-
-      doc = Lutaml::Lml::Document.new
-      result = Lutaml::Formatter::Graphviz.format(doc)
-      expect(result).to be_a(String)
+    it "no longer ships the graphviz formatter (lives in lutaml-graphviz)" do
+      expect(Lutaml::Formatter.constants).not_to include(:Graphviz)
     end
   end
 

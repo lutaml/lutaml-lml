@@ -93,6 +93,28 @@ RSpec.describe Lutaml::Cli::LmlCommands do
     end
   end
 
+  describe "generate without the lutaml-graphviz gem" do
+    before do
+      allow_any_instance_of(described_class)
+        .to receive(:require).with("lutaml/graphviz").and_raise(LoadError)
+    end
+
+    it "fails with install guidance instead of a LoadError" do
+      Dir.mktmpdir do |dir|
+        path = write_yaml("lml/data_s102_check.lml", dir)
+
+        expect { generate(path, dir) }
+          .to output(/requires the lutaml-graphviz gem/).to_stderr
+          .and raise_error(SystemExit)
+      end
+    end
+
+    it "still lets non-rendering commands run" do
+      expect { described_class.start(["validate", fixtures_path("lml/data_s102_check.lml")]) }
+        .not_to raise_error
+    end
+  end
+
   describe "validate" do
     def run_validate(*args)
       described_class.start(["validate", *args])

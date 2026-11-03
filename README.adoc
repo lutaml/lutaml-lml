@@ -2,7 +2,8 @@
 
 LutaML Model Language (LML) — a text DSL for describing UML-style
 models and their data instances, parsed into typed domain models and
-rendered as diagrams via GraphViz.
+rendered as diagrams via GraphViz (provided by the separate
+`lutaml-graphviz` gem; add it to your Gemfile).
 
 == Status
 

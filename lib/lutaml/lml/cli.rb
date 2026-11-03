@@ -38,12 +38,9 @@ module Lutaml
 
       def initialize(*args)
         super
-        @formatter = case options[:layout]
-                     when 'elk'
-                       ::Lutaml::Formatter::Elk.new
-                     else
-                       ::Lutaml::Formatter::Graphviz.new
-                     end
+        # Graphviz is built lazily in #generate so commands that never
+        # render (validate, format, ...) work without lutaml-graphviz.
+        @formatter = ::Lutaml::Formatter::Elk.new if options[:layout] == 'elk'
         @out_object = $stdout
       end
 
@@ -82,6 +79,7 @@ module Lutaml
       def generate(*paths)
         assert_input_paths(paths)
 
+        @formatter ||= build_graphviz_formatter
         setup_options
         @paths = paths.map { |path| Pathname.new(path) }
 
@@ -436,6 +434,17 @@ module Lutaml
           return handler.call(input_path) if handler
 
           raise Thor::Error, "Unsupported input format: #{@input_format}"
+        end
+
+        # Graphviz rendering lives in the lutaml-graphviz gem so ruby-graphviz
+        # never enters this gemspec; consumers add it to their own Gemfile.
+        def build_graphviz_formatter
+          require 'lutaml/graphviz'
+          ::Lutaml::Formatter::Graphviz.new
+        rescue LoadError
+          raise Thor::Error,
+                'Graphviz output requires the lutaml-graphviz gem: add ' \
+                '`gem "lutaml-graphviz"` to your Gemfile (or use --layout elk)'
         end
 
         def setup_options

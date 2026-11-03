@@ -34,3 +34,11 @@ gem "vectory"
 # Direct PDF emission for the ELK engine (issue #53): SVG -> PDF, no
 # external tools (soft dependency: required only for --type pdf)
 gem "pdfrb"
+# Graphviz rendering (`lutaml lml generate` default layout) lives in
+# lutaml-graphviz; the gemspec deliberately does not depend on it.
+graphviz = File.expand_path("../lutaml-graphviz", __dir__)
+if File.directory?(graphviz)
+  gem "lutaml-graphviz", path: graphviz
+else
+  gem "lutaml-graphviz", github: "lutaml/lutaml-graphviz"
+end

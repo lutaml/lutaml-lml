@@ -31,5 +31,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency "lutaml-model", "~> 0.8.159"
   spec.add_dependency "parsanol", "~> 1.3.68"
   spec.add_dependency "moxml", ">= 0.1.24"
-  spec.add_dependency "ruby-graphviz"
 end
