@@ -10,7 +10,9 @@ lutaml = File.expand_path("../lutaml", __dir__)
 if File.directory?(lutaml)
   gem "lutaml", path: lutaml
 else
-  gem "lutaml", github: "lutaml/lutaml"
+  # TEMPORARY: lutaml main still depends on lutaml-lml (circular); pin the
+  # reorg branch until lutaml#236 merges, then return to main.
+  gem "lutaml", github: "lutaml/lutaml", branch: "feat/reorg-l1-l3"
 end
 
 gem "rake"
