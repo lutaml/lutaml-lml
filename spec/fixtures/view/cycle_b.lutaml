@@ -1,3 +1,0 @@
-view CycleB {
-  import "cycle_a.lutaml"
-}

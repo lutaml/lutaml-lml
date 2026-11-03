@@ -1,7 +1,0 @@
-lml "1.0"
-
-models Ceramics {
-  class Kiln {
-    attribute program, String
-  }
-}
