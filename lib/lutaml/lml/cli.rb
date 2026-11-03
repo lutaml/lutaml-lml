@@ -29,8 +29,16 @@ module Lutaml
         'yaml' => ->(path) { Lutaml::Lml::YamlParser.parse(path.to_s) },
         'yml' => ->(path) { Lutaml::Lml::YamlParser.parse(path.to_s) },
         'exp' => lambda { |path|
-          require 'lutaml/express'
-          Lutaml::Express::Parsers::Exp.parse(File.new(path))
+          # EXPRESS is handled by expressir (the EXPRESS front), not lutaml.
+          begin
+            require 'expressir'
+            require 'expressir/express/parser'
+          rescue LoadError
+            raise Thor::Error,
+                  'EXPRESS (.exp) input requires the expressir gem: add ' \
+                  '`gem "expressir"` to your Gemfile'
+          end
+          Expressir::Express::Parser.from_files([path.to_s])
         },
       }.freeze
 

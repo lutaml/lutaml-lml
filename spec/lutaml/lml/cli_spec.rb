@@ -115,6 +115,17 @@ RSpec.describe Lutaml::Cli::LmlCommands do
     end
   end
 
+  describe "PARSE_HANDLERS exp" do
+    it "points at expressir when it is not installed" do
+      handler = described_class::PARSE_HANDLERS["exp"]
+      allow(handler.binding.receiver).to receive(:require).and_call_original
+      allow(handler.binding.receiver).to receive(:require).with("expressir").and_raise(LoadError)
+
+      expect { handler.call(Pathname.new("x.exp")) }
+        .to raise_error(Thor::Error, /requires the expressir gem/)
+    end
+  end
+
   describe "validate" do
     def run_validate(*args)
       described_class.start(["validate", *args])
