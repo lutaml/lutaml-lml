@@ -1,3 +1,0 @@
-view NestedView {
-  import "import_model.lutaml"
-}

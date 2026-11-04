@@ -3,13 +3,9 @@
 # task gates NEW offenses on files changed by a PR. Everything else runs
 # with defaults.
 AllCops:
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 3.2
   NewCops: enable
   SuggestExtensions: false
-  Exclude:
-    - 'lib/lutaml/lml/grammar/lml.artifact.json'
-    - 'vendor/**/*'
-    - 'tmp/**/*'
 
 Metrics:
   Enabled: false
@@ -30,3 +26,7 @@ Style/TrailingCommaInHashLiteral:
 # corpus; wrapping them would bury the shape they document.
 Layout/LineLength:
   Enabled: false
+
+Naming/FileName:
+  Exclude:
+    - lib/lutaml-lml.rb

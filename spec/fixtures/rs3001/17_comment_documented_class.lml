@@ -1,5 +1,0 @@
-lml "1.0"
-
-class Ceramic {
-  attribute glazeType, GlazeType
-}

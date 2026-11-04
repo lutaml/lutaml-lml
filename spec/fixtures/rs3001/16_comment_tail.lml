@@ -1,5 +1,0 @@
-lml "1.0"
-
-class Studio {
-  attribute location, String
-}
