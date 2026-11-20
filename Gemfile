@@ -4,13 +4,15 @@ source "https://rubygems.org"
 
 gemspec
 
-# Until the lutaml release that contains LML is published, resolve it from
-# a sibling checkout or GitHub main.
-lutaml = File.expand_path("../lutaml", __dir__)
-if File.directory?(lutaml)
-  gem "lutaml", path: lutaml
+# The LML front ships inside the lutaml gem (lutaml >= 0.11.8, monorepo
+# packages/lutaml), so the released gem covers every consumer. A sibling
+# monorepo checkout overrides it for local development; CI and everyone
+# else resolve from rubygems.
+lutaml_pkg = File.expand_path("../lutaml/packages/lutaml", __dir__)
+if File.directory?(lutaml_pkg)
+  gem "lutaml", path: lutaml_pkg
 else
-  gem "lutaml", github: "lutaml/lutaml", branch: "main"
+  gem "lutaml"
 end
 
 gem "rake"
