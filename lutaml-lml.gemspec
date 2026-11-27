@@ -8,10 +8,12 @@ Gem::Specification.new do |spec|
   spec.authors = ["Ribose Inc."]
   spec.email = ["open.source@ribose.com"]
 
-  spec.summary = "Transitional alias for lutaml (LML was absorbed into it)"
-  spec.description = "LutaML Model Language (LML) now ships inside the lutaml " \
-                     "gem. This gem only depends on lutaml for one " \
-                     "deprecation window; depend on lutaml directly."
+  spec.summary = "Retired: the LML core ships in lutaml-model; rendering in lutaml-diagram"
+  spec.description = "RETIRED. The LutaML Model Language (LML) core ships inside "
+                     "lutaml-model >= 0.8.188 (require \"lutaml/lml\"); the "
+                     "render backends (ELK, DOT emission, SVG/PDF) ship in "
+                     "lutaml-diagram. Depend on lutaml-model (and "
+                     "lutaml-diagram for rendering) — not on this gem."
   spec.homepage = "https://github.com/lutaml/lutaml-lml"
   spec.license = "MIT"
 
@@ -26,5 +28,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.required_ruby_version = ">= 3.2.0"
 
-  spec.add_dependency "lutaml", ">= 0.11.8" # version carrying lib/lutaml/lml.rb (the #231 absorption this alias forwards to)
+  spec.add_dependency "lutaml-model", "~> 0.8.188" # carries lib/lutaml/lml (the subsume this alias forwards to)
 end
